@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Hello World",
+    "date": "2026-01-09",
+    "tags": ["杂记", "开始"],
+    "path": "posts/hello.md"
+  },
+  {
+    "title": "Git 常用命令速查",
+    "date": "2026-01-08",
+    "tags": ["git"],
+    "path": "posts/git-cheatsheet.md"
+  }
+]
