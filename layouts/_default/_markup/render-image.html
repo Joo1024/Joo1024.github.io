@@ -1,4 +1,6 @@
 <figure>
-  <img src="{{ if hasPrefix .Destination "http" }}{{ .Destination }}{{ else }}{{ .Destination | relURL }}{{ end }}" alt="{{ .Text }}" loading="lazy" decoding="async"{{ with .Title }} title="{{ . }}"{{ end }}>
+  {{ $src := .Destination }}
+  {{ if and (hasPrefix $src "/") (not (hasPrefix $src "//")) }}{{ $src = strings.TrimPrefix "/" $src | relURL }}{{ end }}
+  <img src="{{ $src }}" alt="{{ .Text }}" loading="lazy" decoding="async"{{ with .Title }} title="{{ . }}"{{ end }}>
   {{ with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}
 </figure>

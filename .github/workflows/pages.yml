@@ -1,0 +1,56 @@
+name: Publish Sanctum
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Install verified Hugo
+        env:
+          HUGO_INSTALL_DIR: ${{ runner.temp }}/hugo-bin
+        run: |
+          bash scripts/install-hugo.sh
+          echo "$HUGO_INSTALL_DIR" >> "$GITHUB_PATH"
+      - name: Build
+        env:
+          HUGO_ENVIRONMENT: production
+          PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: hugo --minify --baseURL "$PAGES_BASE_URL/"
+      - name: Validate generated site
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: python3 tests/check_site.py public --base-path "${PAGES_BASE_PATH}/"
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
