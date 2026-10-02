@@ -1,7 +1,9 @@
 <ol class="entry-list">
   {{ range .pages }}
+  {{ $date := .Date }}
+  {{ if $.updated }}{{ $date = .Lastmod }}{{ end }}
   <li>
-    <time datetime="{{ if $.updated }}{{ .Lastmod.Format "2006-01-02" }}{{ else }}{{ .Date.Format "2006-01-02" }}{{ end }}">{{ if $.updated }}{{ .Lastmod.Format "2006.01.02" }}{{ else }}{{ .Date.Format "2006.01.02" }}{{ end }}</time>
+    <time datetime="{{ $date.Format "2006-01-02" }}">{{ $date.Format "2006.01.02" }}</time>
     <div class="entry-main">
       <a class="entry-title" href="{{ .RelPermalink }}">{{ .Title }}</a>
       {{ if $.descriptions }}<p class="entry-description">{{ .Description }}</p>{{ end }}

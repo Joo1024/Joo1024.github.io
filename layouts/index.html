@@ -18,14 +18,13 @@
   <div class="section-heading"><h2 id="recent-heading">最近落笔 <span>Recent entries</span></h2><a href="{{ "archive/" | relURL }}">所有文字 <span aria-hidden="true">↗</span></a></div>
   {{ partial "entry-list.html" (dict "pages" (first 4 $entries.ByDate.Reverse) "descriptions" false) }}
 </section>
-{{ $shownNote := false }}
 {{ range $entries.ByLastmod.Reverse }}
-{{ if and (not $shownNote) .Params.later_notes }}
+{{ if .Params.later_notes }}
 <aside class="home-later" aria-label="旧文的新想法">
   <span class="eyebrow">旧文 · 新的想法</span>
   <a href="{{ .RelPermalink }}#later-notes">{{ .Title }} <span aria-hidden="true">↗</span></a><span class="quiet">{{ .Lastmod.Format "2006.01.02" }} 追加后记</span>
 </aside>
-{{ $shownNote = true }}
+{{ break }}
 {{ end }}
 {{ end }}
 {{ end }}

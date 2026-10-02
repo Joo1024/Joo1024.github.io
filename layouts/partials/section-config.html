@@ -1,4 +1,0 @@
-{{ $config := dict }}
-{{ $slug := lower . }}
-{{ range site.Data.sections }}{{ if eq .slug $slug }}{{ $config = . }}{{ end }}{{ end }}
-{{ return $config }}

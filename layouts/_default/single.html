@@ -1,42 +1,8 @@
 {{ define "main" }}
 {{ $isArticle := partial "is-article.html" . }}
-{{ $fixedFiles := slice "about.md" }}
-{{ range site.Data.sections }}
-  {{ if eq .kind "page" }}{{ $fixedFiles = $fixedFiles | append (printf "%s.md" .slug) }}{{ end }}
-{{ end }}
-{{ with .File }}
-  {{ if and (not $isArticle) (not (in $fixedFiles .Path)) }}{{ errorf "Put articles directly in content/posts/: %s" .Path }}{{ end }}
-{{ end }}
-{{ if $isArticle }}
-{{ if not .Params.title }}{{ errorf "Missing original title in %s" .File.Path }}{{ end }}
-{{ if gt (strings.Count "/" .File.Path) 1 }}{{ errorf "Put articles directly in content/posts/: %s" .File.Path }}{{ end }}
-{{ if isset .Params "categories" }}{{ errorf "Remove categories from %s; use optional type, domains, paths and tags" .File.Path }}{{ end }}
-{{ if isset .Params "type" }}
-  {{ if ne (printf "%T" .Params.type) "string" }}{{ errorf "type must be a single string in %s" .File.Path }}{{ end }}
-{{ end }}
-{{ $page := . }}
-{{ range slice "domains" "paths" "tags" }}
-  {{ $field := . }}
-  {{ if isset $page.Params $field }}
-    {{ $value := index $page.Params $field }}
-    {{ if not (reflect.IsSlice $value) }}
-      {{ errorf "%s must be a flat array of nonempty strings in %s" $field $page.File.Path }}
-    {{ else }}
-      {{ range $value }}
-        {{ if ne (printf "%T" .) "string" }}{{ errorf "%s must be a flat array of nonempty strings in %s" $field $page.File.Path }}
-        {{ else if not (strings.TrimSpace .) }}{{ errorf "%s must be a flat array of nonempty strings in %s" $field $page.File.Path }}{{ end }}
-      {{ end }}
-    {{ end }}
-  {{ end }}
-{{ end }}
-{{ with .Params.status }}{{ if not (in (slice "note" "reflection" "ongoing" "archived") .) }}{{ errorf "Invalid status in %s; use ongoing or archived, or omit status" $.File.Path }}{{ end }}{{ end }}
-{{ if not .Params.date }}{{ errorf "Missing original date in %s" .File.Path }}{{ end }}
-{{ if lt .Lastmod .Date }}{{ errorf "lastmod predates date in %s" .File.Path }}{{ end }}
-{{ range .Params.later_notes }}{{ if gt (time.AsTime .date) $.Lastmod }}{{ errorf "Update lastmod to include later note date in %s" $.File.Path }}{{ end }}{{ end }}
-{{ end }}
 <article class="reading-page">
   <header class="article-heading">
-    <p class="eyebrow">{{ if $isArticle }}<a href="{{ .CurrentSection.RelPermalink }}">{{ partial "section-name.html" .Section }}</a>{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
+    <p class="eyebrow">{{ if $isArticle }}{{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ .Params.chinese }} · {{ .Title }}</a>{{ end }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
     <h1>{{ if .Params.chinese }}{{ .Params.chinese }} <span lang="en">{{ .Title }}</span>{{ else }}{{ .Title }}{{ end }}</h1>
     {{ with .Description }}<p class="article-description">{{ . }}</p>{{ end }}
     <div class="article-meta">

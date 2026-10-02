@@ -2,33 +2,25 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.parse import unquote, urlsplit
-import os
+from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
 import shutil
-import subprocess
 import unittest
 import xml.etree.ElementTree as ET
 
-from check_site import Document
-
-ROOT = Path(__file__).resolve().parents[1]
-BASE = 'https://example.com/sanctum/'
+from check_site import Document, check
+from hugo_helpers import ROOT, BASE, build_site, create_content
 
 
 class MetadataTest(unittest.TestCase):
     def build(self, root, metadata='', directory='posts', articles=True):
-        content = root / 'content'
-        content.mkdir()
-        shutil.copyfile(ROOT / 'content/_content.gotmpl', content / '_content.gotmpl')
+        content = create_content(root)
         (content / 'now.md').write_text('---\ntitle: Now\nlastmod: 2025-01-01\n---\nLiving page.\n')
         if articles:
             section = content / directory
             section.mkdir(parents=True, exist_ok=True)
             (section / 'entry.md').write_text('---\ntitle: Field journal\ndate: 2025-03-01\n' + metadata + '---\n\n## Observations\n\nOne entry.\n')
-        output = root / 'public'
-        result = subprocess.run([os.environ.get('HUGO_BIN', str(ROOT / '.tools/bin/hugo')),
-                                 '--source', str(ROOT), '--contentDir', str(content),
-                                 '--destination', str(output), '--baseURL', BASE], capture_output=True, text=True)
-        return result, output
+        return build_site(root)
 
     def html(self, output, route):
         return (output / unquote(route).removeprefix('/sanctum/').strip('/') / 'index.html').read_text()
@@ -98,6 +90,28 @@ class MetadataTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('lastmod predates date', result.stdout + result.stderr)
 
+    def test_metadata_validation_cannot_be_bypassed_with_another_layout(self):
+        cases = (
+            ('layout: archive\nstatus: level-9\n', 'Invalid status'),
+            ('layout: list\nlastmod: 2024-01-01\n', 'lastmod predates date'),
+        )
+        for metadata, message in cases:
+            with self.subTest(metadata=metadata), TemporaryDirectory(prefix='sanctum-layout-validation-') as tmp:
+                result, _ = self.build(Path(tmp), metadata)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(message, result.stdout + result.stderr)
+
+    def test_site_checker_reports_invalid_feed_without_crashing(self):
+        with TemporaryDirectory(prefix='sanctum-invalid-feed-') as tmp:
+            result, output = self.build(Path(tmp))
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            (output / 'index.xml').write_text('<rss><channel>')
+            errors = StringIO()
+            with redirect_stderr(errors), redirect_stdout(StringIO()):
+                status = check(output, '/sanctum/')
+            self.assertEqual(status, 1)
+            self.assertIn('Invalid index.xml:', errors.getvalue())
+
     def test_original_date_and_title_cannot_be_omitted(self):
         for field in ('title', 'date'):
             with self.subTest(field=field), TemporaryDirectory(prefix='sanctum-missing-field-') as tmp:
@@ -106,9 +120,7 @@ class MetadataTest(unittest.TestCase):
                 article = root / 'content/posts/entry.md'
                 lines = [line for line in article.read_text().splitlines() if not line.startswith(field + ':')]
                 article.write_text('\n'.join(lines) + '\n')
-                result = subprocess.run([os.environ.get('HUGO_BIN', str(ROOT / '.tools/bin/hugo')),
-                                         '--source', str(ROOT), '--contentDir', str(root / 'content'),
-                                         '--destination', str(output), '--baseURL', BASE],capture_output=True,text=True)
+                result, _ = build_site(root)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn('Missing original ' + field, result.stdout + result.stderr)
 
@@ -143,9 +155,7 @@ class MetadataTest(unittest.TestCase):
             _, output = self.build(root, articles=False)
             for name in ('now.md', 'path.md', 'about.md'):
                 shutil.copyfile(ROOT / 'content' / name, root / 'content' / name)
-            result = subprocess.run([os.environ.get('HUGO_BIN', str(ROOT / '.tools/bin/hugo')),
-                                     '--source', str(ROOT), '--contentDir', str(root / 'content'),
-                                     '--destination', str(output), '--baseURL', BASE], capture_output=True, text=True)
+            result, _ = build_site(root)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             for route in ('now', 'path', 'about', 'posts'):
                 self.assertTrue((output / route / 'index.html').is_file())

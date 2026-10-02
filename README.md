@@ -62,7 +62,7 @@ python3 tests/check_site.py public
 │   │   ├── rss.xml            # 全文订阅，包含后记
 │   │   ├── legacy.html        # 旧入口自动跳转与无 JS 阅读链接
 │   │   └── _markup/render-image.html
-│   └── partials/              # metadata、导航、文章列表、后记
+│   └── partials/              # 内容校验、metadata、导航、文章列表、后记
 ├── assets/css/main.css        # 排版与浅色/深色配色
 ├── assets/js/theme.js         # 配色选择与旧文章直链迁移
 ├── static/
@@ -73,6 +73,7 @@ python3 tests/check_site.py public
 │   ├── check_site.py          # Python 标准库生成结果与断链验收
 │   ├── test_content.py        # 独立 Markdown 边界用例，不依赖示例文章
 │   ├── test_metadata.py       # 可选字段、跨维度索引、旧订阅与空集合回归
+│   ├── hugo_helpers.py        # 独立测试共用的真实 Hugo 构建与内容初始化
 │   └── browser_smoke.py       # 可选浏览器验收，开发依赖 Playwright
 ├── docs/
 │   ├── writing.md             # 完整写作指南

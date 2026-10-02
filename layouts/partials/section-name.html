@@ -1,3 +1,0 @@
-{{ $name := . }}
-{{ with partial "section-config.html" . }}{{ $name = printf "%s · %s" .chinese .name }}{{ end }}
-{{ return $name }}

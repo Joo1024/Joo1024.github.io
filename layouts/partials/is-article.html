@@ -1,2 +1,1 @@
-{{ $config := partial "section-config.html" .Section }}
-{{ return (and .IsPage (eq $config.kind "articles")) }}
+{{ return (and .IsPage (in (partial "article-sections.html" .) .Section)) }}

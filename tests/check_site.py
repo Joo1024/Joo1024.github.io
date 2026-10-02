@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 class Document(HTMLParser):
     def __init__(self, text):
         super().__init__()
+        self.text = text
         self.links = []
         self.ids = set()
         self.duplicate_ids = []
@@ -66,9 +67,16 @@ def check(root, base, examples=False):
         path = root / route
         require(path.is_file(), f'Missing generated page: {route}')
         return path.read_text() if path.is_file() else ''
+    def parse_xml(route, text):
+        if text:
+            try:
+                return ET.fromstring(text)
+            except ET.ParseError as exc:
+                problems.append(f'Invalid {route}: {exc}')
     home = read('index.html')
+    home_document = Document(home)
     require('Sanctum' in home, 'Home must identify Sanctum')
-    section_links = Document(home).section_links
+    section_links = home_document.section_links
     require(bool(section_links), 'Home must expose the configured sections')
     for link in section_links:
         route = unquote(urlsplit(link).path)
@@ -88,21 +96,16 @@ def check(root, base, examples=False):
         require('highlight' in practice and '<pre' in practice and '<blockquote' in practice, 'Markdown code and quote must render')
         journey = read('journey/before-the-ridge/index.html')
         require(any(i.get('loading') == 'lazy' for i in Document(journey).images), 'Journey images must be lazy loaded')
-    require('canonical' in home and bool(Document(home).meta.get('description')), 'SEO metadata must be present')
-    for file in ('index.xml', 'sitemap.xml'):
-        text = read(file)
-        if text:
-            try:
-                ET.fromstring(text)
-            except ET.ParseError as exc:
-                problems.append(f'Invalid {file}: {exc}')
+    require('canonical' in home and bool(home_document.meta.get('description')), 'SEO metadata must be present')
     rss = read('index.xml')
+    rss_xml = parse_xml('index.xml', rss)
+    parse_xml('sitemap.xml', read('sitemap.xml'))
     if examples:
         require('后记' in rss and 'on-keeping-a-place' in rss, 'RSS must include article content and later notes')
     documents = {p: Document(p.read_text()) for p in root.rglob('*.html')}
     articles = [s for d in documents.values() for s in d.schemas if s.get('@type') == 'BlogPosting']
-    if rss:
-        feed_items = ET.fromstring(rss).findall('./channel/item')
+    if rss_xml is not None:
+        feed_items = rss_xml.findall('./channel/item')
         require(len(feed_items) == len(articles), 'RSS must include every published article exactly once')
         for schema in articles:
             require(schema.get('datePublished') <= schema.get('dateModified'), 'Article modification must not predate publication')
@@ -110,9 +113,8 @@ def check(root, base, examples=False):
             require(f'year-{year}' in archive, f'Archive must retain original publication year {year}')
             require(any(item.findtext('link') == schema.get('mainEntityOfPage') for item in feed_items), 'Article missing from RSS')
     for path, document in documents.items():
-        text = path.read_text()
         require(not document.duplicate_ids, f'Duplicate anchors: {path.relative_to(root)} {document.duplicate_ids}')
-        require('cdn.jsdelivr.net' not in text, f'Runtime CDN dependency in {path.relative_to(root)}')
+        require('cdn.jsdelivr.net' not in document.text, f'Runtime CDN dependency in {path.relative_to(root)}')
         for img in document.images:
             require(bool(img.get('alt')), f'Missing image alt text: {path.relative_to(root)}')
             require(img.get('loading') == 'lazy', f'Image missing lazy loading: {path.relative_to(root)}')
