@@ -1,4 +1,4 @@
-{{/* Generate navigation pages without making writers maintain index files. */}}
+{{/* Generate Posts, Archive and Updates; navigation labels live in data/. */}}
 {{ $seen := slice }}
 {{ range site.Data.sections }}
   {{ if not (in (slice "page" "articles") .kind) }}
@@ -12,11 +12,3 @@
 {{ end }}
 {{ .AddPage (dict "kind" "page" "path" "archive" "title" "Archive" "layout" "archive" "description" "沿着年份与标签，回看全部文字。") }}
 {{ .AddPage (dict "kind" "page" "path" "updates" "title" "Updates" "layout" "updates" "description" "新的记录与旧文后记，按最后更新时间排列。") }}
-{{ range site.Data.legacy }}
-  {{ $legacy := dict "key" .key "term" .term }}
-  {{ $title := .title }}
-  {{ range slice .slug (printf "categories/%s" .slug) }}
-    {{ $.AddPage (dict "kind" "section" "path" . "title" $title "layout" "legacy" "outputs" (slice "HTML" "RSS") "params" (dict "legacy" $legacy) "build" (dict "list" "never" "render" "always")) }}
-  {{ end }}
-{{ end }}
-{{ .AddPage (dict "kind" "section" "path" "categories" "title" "旧分类索引" "layout" "legacy" "outputs" (slice "HTML" "RSS") "params" (dict "legacy" (dict "key" "tags" "all" true)) "build" (dict "list" "never" "render" "always")) }}

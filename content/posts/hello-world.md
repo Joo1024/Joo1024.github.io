@@ -7,7 +7,7 @@ tags: [杂记, 开始]
 status: archived
 toc: false
 url: /notes/hello-world/
-type: note
+form: note
 ---
 
 # Hello World

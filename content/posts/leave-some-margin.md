@@ -4,11 +4,10 @@ date: 2026-10-02
 lastmod: 2026-10-02
 description: 空白不是等待被填满的地方。
 tags: [生活, 时间]
-status: note
 sample: true
 toc: false
 url: /notes/leave-some-margin/
-type: note
+form: note
 domains: [life]
 paths: [自在]
 ---

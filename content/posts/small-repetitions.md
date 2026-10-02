@@ -7,7 +7,7 @@ tags: [练习, 技术, 方法]
 status: ongoing
 sample: true
 url: /practice/small-repetitions/
-type: practice
+form: practice
 domains: [body, craft]
 paths: [精进]
 ---

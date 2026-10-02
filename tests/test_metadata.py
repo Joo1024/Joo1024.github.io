@@ -13,24 +13,24 @@ from hugo_helpers import ROOT, BASE, build_site, create_content
 
 
 class MetadataTest(unittest.TestCase):
-    def build(self, root, metadata='', directory='posts', articles=True):
+    def build(self, root, metadata='', directory='posts', articles=True, layout_dir=None):
         content = create_content(root)
         (content / 'now.md').write_text('---\ntitle: Now\nlastmod: 2025-01-01\n---\nLiving page.\n')
         if articles:
             section = content / directory
             section.mkdir(parents=True, exist_ok=True)
             (section / 'entry.md').write_text('---\ntitle: Field journal\ndate: 2025-03-01\n' + metadata + '---\n\n## Observations\n\nOne entry.\n')
-        return build_site(root)
+        return build_site(root, layout_dir=layout_dir)
 
     def html(self, output, route):
         return (output / unquote(route).removeprefix('/sanctum/').strip('/') / 'index.html').read_text()
 
     def test_cross_domain_article_has_all_four_native_indices_and_feeds(self):
         with TemporaryDirectory(prefix='sanctum-dimensions-') as tmp:
-            result, output = self.build(Path(tmp), 'type: practice\ndomains: [mind, body]\npaths: [明心, 精进]\ntags: [AI, 倒立]\n')
+            result, output = self.build(Path(tmp), 'form: practice\ndomains: [mind, body]\npaths: [明心, 精进]\ntags: [AI, 倒立]\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             article = Document((output / 'posts/entry/index.html').read_text())
-            for route in ('/sanctum/types/practice/', '/sanctum/domains/mind/', '/sanctum/domains/body/'):
+            for route in ('/sanctum/forms/practice/', '/sanctum/domains/mind/', '/sanctum/domains/body/'):
                 self.assertIn(route, article.links)
                 self.assertIn('Field journal', self.html(output, route))
             for key in ('paths', 'tags'):
@@ -43,7 +43,7 @@ class MetadataTest(unittest.TestCase):
                     feed = ET.fromstring(path.read_text())
                     self.assertEqual([item.findtext('title') for item in feed.findall('./channel/item')], ['Field journal'])
             hub = Document((output / 'tags/index.html').read_text())
-            for anchor in ('dimension-type', 'dimension-domains', 'dimension-paths', 'dimension-tags'):
+            for anchor in ('dimension-form', 'dimension-domains', 'dimension-paths', 'dimension-tags'):
                 self.assertIn(anchor, hub.ids)
             for path in ('index.html', 'archive/index.html', 'updates/index.html'):
                 self.assertIn('Field journal', (output / path).read_text())
@@ -59,17 +59,17 @@ class MetadataTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             for path in ('index.html', 'archive/index.html', 'updates/index.html', 'index.xml'):
                 self.assertIn('Field journal', (output / path).read_text())
-            self.assertFalse((output / 'types/posts/index.html').exists(), 'The folder is not an automatic form')
+            self.assertFalse((output / 'forms/posts/index.html').exists(), 'The folder is not an automatic form')
             hub = Document((output / 'tags/index.html').read_text())
-            self.assertNotIn('dimension-type', hub.ids)
+            self.assertNotIn('dimension-form', hub.ids)
             self.assertNotIn('dimension-domains', hub.ids)
 
     def test_unregistered_vocabulary_and_empty_arrays_are_supported(self):
         with TemporaryDirectory(prefix='sanctum-vocabulary-') as tmp:
-            result, output = self.build(Path(tmp), 'type: letter\ndomains: [friendship]\npaths: [闲游]\ntags: []\n')
+            result, output = self.build(Path(tmp), 'form: letter\ndomains: [friendship]\npaths: [闲游]\ntags: []\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             article = Document((output / 'posts/entry/index.html').read_text())
-            self.assertIn('/sanctum/types/letter/', article.links)
+            self.assertIn('/sanctum/forms/letter/', article.links)
             self.assertIn('/sanctum/domains/friendship/', article.links)
             self.assertNotIn('dimension-tags', Document((output / 'tags/index.html').read_text()).ids)
 
@@ -79,6 +79,56 @@ class MetadataTest(unittest.TestCase):
                 result, _ = self.build(Path(tmp), field + ': mind\n')
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(field + ' must be a flat array of nonempty strings', result.stdout + result.stderr)
+
+    def test_form_must_be_one_nonempty_string(self):
+        for value in ('[reflection]', '42', '" "'):
+            with self.subTest(value=value), TemporaryDirectory(prefix='sanctum-invalid-form-') as tmp:
+                result, _ = self.build(Path(tmp), 'form: ' + value + '\n')
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('form must be a single nonempty string', result.stdout + result.stderr)
+
+    def test_old_type_field_requires_explicit_migration(self):
+        with TemporaryDirectory(prefix='sanctum-old-type-') as tmp:
+            result, _ = self.build(Path(tmp), 'type: reflection\n')
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('type is reserved by Hugo; use form for article format', result.stdout + result.stderr)
+
+    def test_status_describes_state_instead_of_form(self):
+        for status in ('note', 'reflection', 'false', '0', '[ongoing]'):
+            with self.subTest(status=status), TemporaryDirectory(prefix='sanctum-old-status-') as tmp:
+                result, _ = self.build(Path(tmp), 'form: reflection\nstatus: ' + status + '\n')
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('Invalid status', result.stdout + result.stderr)
+        for status, label in (('ongoing', '持续中'), ('archived', '已归档')):
+            with self.subTest(status=status), TemporaryDirectory(prefix='sanctum-valid-status-') as tmp:
+                result, output = self.build(Path(tmp), 'form: reflection\nstatus: ' + status + '\n')
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn(label, (output / 'posts/entry/index.html').read_text())
+
+    def test_form_does_not_select_hugo_content_templates(self):
+        with TemporaryDirectory(prefix='sanctum-form-template-') as tmp:
+            root = Path(tmp)
+            layouts = root / 'layouts'
+            shutil.copytree(ROOT / 'layouts', layouts)
+            (layouts / 'reflection').mkdir()
+            (layouts / 'reflection/single.html').write_text('{{ define "main" }}Wrong content type template{{ end }}')
+            result, output = self.build(root, 'form: reflection\n', layout_dir=layouts)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            article = (output / 'posts/entry/index.html').read_text()
+            self.assertIn('One entry.', article)
+            self.assertNotIn('Wrong content type template', article)
+            self.assertIn('/sanctum/forms/reflection/', Document(article).links)
+
+    def test_obsolete_column_pages_and_feeds_are_not_generated(self):
+        with TemporaryDirectory(prefix='sanctum-no-legacy-') as tmp:
+            result, output = self.build(Path(tmp), 'form: practice\nurl: /practice/entry/\n')
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertTrue((output / 'practice/entry/index.html').is_file())
+            old_routes = ('reflection', 'practice', 'making', 'notes', 'reading', 'journey',
+                          'yearly', 'categories', 'categories/practice', 'types', 'types/practice')
+            for route in old_routes:
+                for filename in ('index.html', 'index.xml'):
+                    self.assertFalse((output / route / filename).exists(), route + '/' + filename)
 
     def test_dates_and_optional_status_remain_validated(self):
         with TemporaryDirectory(prefix='sanctum-invalid-status-') as tmp:
@@ -124,30 +174,25 @@ class MetadataTest(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn('Missing original ' + field, result.stdout + result.stderr)
 
-    def test_old_article_url_guid_and_old_section_feeds_remain_valid(self):
-        with TemporaryDirectory(prefix='sanctum-old-url-') as tmp:
-            result, output = self.build(Path(tmp), 'url: /practice/entry/\ntype: practice\n')
+    def test_original_article_url_and_feed_guid_remain_valid(self):
+        with TemporaryDirectory(prefix='sanctum-original-url-') as tmp:
+            result, output = self.build(Path(tmp), 'url: /practice/entry/\nform: practice\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertTrue((output / 'practice/entry/index.html').is_file())
-            for path in ('index.xml', 'practice/index.xml', 'categories/practice/index.xml', 'types/practice/index.xml'):
+            for path in ('index.xml', 'posts/index.xml', 'forms/practice/index.xml'):
                 rss = ET.fromstring((output / path).read_text())
                 self.assertEqual(rss.findtext('./channel/item/guid'), BASE + 'practice/entry/', path)
                 self.assertIn('2025', rss.findtext('./channel/item/pubDate'), path)
-            for path in ('practice/index.html', 'categories/practice/index.html'):
-                self.assertIn(BASE + 'types/practice/', (output / path).read_text())
 
-    def test_empty_legacy_targets_fall_back_and_do_not_enter_sitemap(self):
+    def test_empty_site_has_valid_empty_indices_and_feeds(self):
         with TemporaryDirectory(prefix='sanctum-empty-') as tmp:
             result, output = self.build(Path(tmp), articles=False)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            for path in ('practice/index.html', 'categories/practice/index.html'):
-                self.assertIn(BASE + 'types/', (output / path).read_text())
-            for path in ('index.xml', 'practice/index.xml', 'categories/practice/index.xml'):
+            for route in ('posts', 'forms', 'domains', 'paths', 'tags', 'archive', 'updates'):
+                self.assertTrue((output / route / 'index.html').is_file(), route)
+            for path in ('index.xml', 'posts/index.xml', 'forms/index.xml', 'domains/index.xml',
+                         'paths/index.xml', 'tags/index.xml'):
                 self.assertFalse(ET.fromstring((output / path).read_text()).findall('./channel/item'))
-            sitemap = ET.fromstring((output / 'sitemap.xml').read_text())
-            urls = [node.text for node in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
-            self.assertNotIn(BASE + 'practice/', urls)
-            self.assertNotIn(BASE + 'categories/practice/', urls)
 
     def test_fixed_pages_survive_deleting_all_sample_articles(self):
         with TemporaryDirectory(prefix='sanctum-delete-samples-') as tmp:

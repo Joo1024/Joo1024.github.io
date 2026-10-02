@@ -19,7 +19,7 @@ class ContentTest(unittest.TestCase):
             root = Path(tmp)
             section = create_content(root) / 'posts'
             section.mkdir()
-            (section / 'empty.md').write_text('---\ntitle: Empty\ndate: 2026-01-01\nstatus: note\nlater_notes: []\n---\nContent.\n')
+            (section / 'empty.md').write_text('---\ntitle: Empty\ndate: 2026-01-01\nlater_notes: []\n---\nContent.\n')
             result, output = build_site(root)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             home = Document((output / 'index.html').read_text())
@@ -36,7 +36,6 @@ title: Fixture
 url: /reflection/entry/
 date: 2025-01-01
 lastmod: 2026-01-03
-status: reflection
 later_notes:
   - date: 2026-01-02
     text: |
@@ -62,7 +61,7 @@ Original body.[^1]
 
 [Other](../other/)
 ''')
-            (section / 'other.md').write_text('---\ntitle: Other\nurl: /reflection/other/\ndate: 2025-01-02\nstatus: note\n---\nOther article.\n')
+            (section / 'other.md').write_text('---\ntitle: Other\nurl: /reflection/other/\ndate: 2025-01-02\n---\nOther article.\n')
             result, output = build_site(root)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             article = Document((output / 'reflection/entry/index.html').read_text())

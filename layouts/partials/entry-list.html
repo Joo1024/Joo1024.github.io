@@ -8,7 +8,7 @@
       <a class="entry-title" href="{{ .RelPermalink }}">{{ .Title }}</a>
       {{ if $.descriptions }}<p class="entry-description">{{ .Description }}</p>{{ end }}
       {{ $meta := slice }}
-      {{ with .Params.type }}{{ $meta = $meta | append (partial "term-label.html" (dict "key" "type" "term" .)) }}{{ end }}
+      {{ with .Params.form }}{{ $meta = $meta | append (partial "term-label.html" (dict "key" "form" "term" .)) }}{{ end }}
       {{ if .Params.sample }}{{ $meta = $meta | append "示例" }}{{ end }}
       {{ if eq .Params.status "ongoing" }}{{ $meta = $meta | append "持续中" }}{{ end }}
       {{ if eq .Params.status "archived" }}{{ $meta = $meta | append "已归档" }}{{ end }}

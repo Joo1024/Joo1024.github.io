@@ -29,7 +29,7 @@ date: 2026-10-02
 ---
 title: 练倒立时，想到的自由
 date: 2026-10-02
-type: practice
+form: practice
 domains: [body, mind]
 paths: [自在, 精进]
 tags: [倒立, 自由]
@@ -38,18 +38,35 @@ tags: [倒立, 自由]
 
 | 字段 | 用途 | 示例 |
 | --- | --- | --- |
-| `type` | 单个写作形式 | reflection 随笔、note 短记、practice 实践记录、making 作品记录 |
+| `form` | 单个写作形式 | reflection 随笔、note 短记、practice 实践记录、making 作品记录 |
 | `domains` | 涉及的人生领域，平面数组 | `[mind, body]`；常用 mind/body/work/life/craft |
 | `paths` | 长期愿意走下去的方向，平面数组 | `[明心, 自在]` |
 | `tags` | 具体主题，平面数组 | `[AI, 死亡, 瓦尔登湖]` |
 
 四个维度均可省略；数组可写成 `[]`。不要写 `domains: mind, body`，应写 `domains: [mind, body]`。不必建立“修炼/身体/力量/倒立”这样的层级，也不必把每篇文章贴满标签。
 
-词汇开放。例如 `type: letter`、`domains: [friendship]`、`paths: [闲游]` 会直接生成对应索引，无需登记配置。常用英文词的中文显示别名保存在 `data/dimensions.yaml`，它不是白名单；新词原样显示。
+词汇开放。例如 `form: letter`、`domains: [friendship]`、`paths: [闲游]` 会直接生成对应索引，无需登记配置。常用英文词的中文显示别名保存在 `data/dimensions.yaml`，它不是白名单；新词原样显示。
 
-阅读、行旅、年度回顾通常可使用 `type: reflection`，再加 `[阅读]`、`[行旅]` 或 `[年度回顾]` 主题。每年的回顾也只是一篇普通文章，例如 `posts/2026.md`，原始日期会让它自然进入对应年份的存档。
+阅读、行旅、年度回顾通常可使用 `form: reflection`，再加 `[阅读]`、`[行旅]` 或 `[年度回顾]` 主题。每年的回顾也只是一篇普通文章，例如 `posts/2026.md`，原始日期会让它自然进入对应年份的存档。
 
-`/tags/` 集中展示非空维度；各维度也有独立索引：`/types/`、`/domains/`、`/paths/`。点击任意词条，按时间查看跨年份的文章。所有这些索引由 Hugo 原生生成，不需要维护文章名单。
+`/tags/` 集中展示非空维度；各维度也有独立索引：`/forms/`、`/domains/`、`/paths/`。点击任意词条，按时间查看跨年份的文章。所有这些索引由 Hugo 原生生成，不需要维护文章名单。
+
+Hugo 的 `type` 是保留字段，会参与内容类型和模板选择。文章形式改用 `form`；旧的 `type` 写法会给出迁移提示。本站使用下面的原生配置，让单值 `form` 直接进入索引：
+
+```toml
+[taxonomies]
+form = 'form'
+domain = 'domains'
+path = 'paths'
+tag = 'tags'
+
+[permalinks.taxonomy]
+form = '/forms/'
+[permalinks.term]
+form = '/forms/:slug/'
+```
+
+taxonomy 配置右侧是 Hugo 读取的 metadata 字段名；写成 `form = 'forms'` 会读取 `forms`，无法索引这里的单值 `form`。公开地址统一使用 `/forms/`，无需额外转换或重复字段。
 
 ## 其他 metadata
 
@@ -59,7 +76,7 @@ tags: [倒立, 自由]
 | `date` | 必填，原始发布日；公开后不要为了更新而重写 |
 | `lastmod` | 可选，最后实质更新日；省略时回退到 date |
 | `description` | 可选，一句介绍，用于列表与 SEO；省略时使用站点描述 |
-| `status` | 可选，`ongoing` 持续中或 `archived` 已归档；兼容旧 note/reflection 值 |
+| `status` | 可选，`ongoing` 持续中或 `archived` 已归档；note/reflection 属于 form |
 | `later_notes` | 可选后记，包含 `date` 与 Markdown `text` |
 | `toc` | 默认展示可折叠目录；短文可设 `false` |
 | `draft` | `true` 时不发布 |
@@ -79,7 +96,7 @@ tags: [倒立, 自由]
 
 Now、Path 更新时可以把旧片段追加到 `later_notes`，只修改 `lastmod`。近期行动留在 Now，Path 不需要待办、进度或固定回顾频率。
 
-存档、最近更新和文字总页由 `content/_content.gotmpl` 生成，不需要另建 Markdown 索引。首页三个入口由 `data/sections.yaml` 管理；页首最近更新、存档、标签、关于由 `data/navigation.yaml` 管理。写新文章不需要改这些配置。
+存档、最近更新和文字总页由 `content/_content.gotmpl` 在构建时创建，各自模板从 posts 读取文章、按时间生成列表，不需要另建 Markdown 索引或填写文章名单。首页三个入口由 `data/sections.yaml` 管理；页首最近更新、存档、标签、关于由 `data/navigation.yaml` 管理。写新文章不需要改这些配置。
 
 ## 观点改变：追加后记
 
@@ -148,8 +165,8 @@ git push origin HEAD:main
 
 ## 迁移与订阅
 
-既有九篇文章已经移动到 posts，并通过 `url` 保留原发布地址、RSS guid、日期和后记。此后不要因为整理元数据而更改这个字段。
+既有九篇文章已使用 `form`，清除了 note/reflection 等旧 status 值，并通过 `url` 保留原发布地址、RSS guid、日期和后记。此后不要因为整理元数据而更改这个字段。
 
-旧栏目与分类网页根据 `data/legacy.yaml` 跳转到相应形式或主题，不出现在日常导航与 sitemap。旧 `index.xml` 继续输出对应维度的有效 RSS；“观心录”订阅如今对应随笔形式，也包含阅读、行旅和年度回顾中的随笔。最后一篇相关文字删除后，旧入口回退到相应维度索引。
+旧栏目总页、旧分类索引、旧 `/types/` 索引与它们的 RSS 已移除，不再生成兼容跳转页。文章页仍使用 metadata 中的 `url`；这些原地址与旧栏目总页是独立的。
 
 全站订阅始终为 `/index.xml`。`/posts/index.xml`、四个维度及其词条都有独立订阅，阅读器中使用页面提供的 RSS 地址即可。原站 `?p=posts/hello.md` 也继续指向保留的 Hello World。

@@ -15,9 +15,12 @@ def create_content(root):
     return content
 
 
-def build_site(root):
+def build_site(root, layout_dir=None):
     output = root / 'public'
-    result = subprocess.run([os.environ.get('HUGO_BIN', str(ROOT / '.tools/bin/hugo')),
-                             '--source', str(ROOT), '--contentDir', str(root / 'content'),
-                             '--destination', str(output), '--baseURL', BASE], capture_output=True, text=True)
+    command = [os.environ.get('HUGO_BIN', str(ROOT / '.tools/bin/hugo')),
+               '--source', str(ROOT), '--contentDir', str(root / 'content'),
+               '--destination', str(output), '--baseURL', BASE]
+    if layout_dir:
+        command.extend(['--layoutDir', str(layout_dir)])
+    result = subprocess.run(command, capture_output=True, text=True)
     return result, output

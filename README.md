@@ -4,6 +4,8 @@ A place for reflection, practice, and making.
 
 一间用 Markdown 写作的数字书房。记录思考、练习、创作、阅读与行旅，沿着年份回看生活。允许旧文不成熟，允许判断改变；后来的想法追加在后记里。
 
+三个常驻页面，一条时间长河，四种可选坐标。Now 是此刻，Path 是方向，Posts 是来路；form / domains / paths / tags 帮助重新找到这些文字。
+
 ## 为什么是 Hugo
 
 | 方案 | 适合之处 | 本项目的取舍 |
@@ -41,10 +43,9 @@ python3 tests/check_site.py public
 ├── data/
 │   ├── sections.yaml          # 今朝、道途、文字三个入口
 │   ├── dimensions.yaml        # 四个维度的显示名，常用词中文别名（非词汇白名单）
-│   ├── legacy.yaml            # 历史栏目与分类入口的兼容映射
 │   └── navigation.yaml        # 全站导航：最近更新、存档、标签、关于
 ├── content/
-│   ├── _content.gotmpl        # 生成文章总页、存档、更新及兼容入口
+│   ├── _content.gotmpl        # 生成 Posts 总页、Archive、Updates
 │   ├── now.md                 # 今朝
 │   ├── path.md                # 道途，简短的长期方向
 │   ├── about.md               # 关于此地
@@ -60,7 +61,6 @@ python3 tests/check_site.py public
 │   │   ├── archive.html       # 年份索引
 │   │   ├── updates.html       # 最后更新时间索引
 │   │   ├── rss.xml            # 全文订阅，包含后记
-│   │   ├── legacy.html        # 旧入口自动跳转与无 JS 阅读链接
 │   │   └── _markup/render-image.html
 │   └── partials/              # 内容校验、metadata、导航、文章列表、后记
 ├── assets/css/main.css        # 排版与浅色/深色配色
@@ -72,7 +72,7 @@ python3 tests/check_site.py public
 ├── tests/
 │   ├── check_site.py          # Python 标准库生成结果与断链验收
 │   ├── test_content.py        # 独立 Markdown 边界用例，不依赖示例文章
-│   ├── test_metadata.py       # 可选字段、跨维度索引、旧订阅与空集合回归
+│   ├── test_metadata.py       # 可选字段、跨维度索引、状态与空集合回归
 │   ├── hugo_helpers.py        # 独立测试共用的真实 Hugo 构建与内容初始化
 │   └── browser_smoke.py       # 可选浏览器验收，开发依赖 Playwright
 ├── docs/
@@ -83,9 +83,9 @@ python3 tests/check_site.py public
 
 日常只编辑三个固定单页和 `posts/*.md`。文章只要求 `title` 与原始 `date`，无需填写 `categories`、注册栏目或创建 `_index.md`。所有公开文章自动进入首页、归档、最近更新与全站 RSS；相邻文章沿全部文字的时间顺序排列。
 
-可选元数据：`type` 是单个形式（如 reflection/note/practice/making），`domains` 是人生领域数组，`paths` 是长期方向数组，`tags` 是具体主题数组。词汇开放，新增值就会生成索引，不需要修改配置；数组留空或省略都可以。阅读、行旅与年度回顾通过主题标签关联。不要建立复杂的层级，也不必给每篇文章填满四个维度。
+可选元数据：`form` 是单个形式（如 reflection/note/practice/making），`domains` 是人生领域数组，`paths` 是长期方向数组，`tags` 是具体主题数组。词汇开放，新增值就会生成索引，不需要修改配置；数组留空或省略都可以。`status` 只表示 ongoing/archived，也可省略。阅读、行旅与年度回顾通过主题标签关联。不要建立复杂的层级，也不必给每篇文章填满四个维度。
 
-Hugo 原生生成 `/types/`、`/domains/`、`/paths/`、`/tags/` 与各词条页；`/tags/` 集中展示所有非空维度。`/archive/`、`/updates/` 由 content adapter 自动生成。旧 `/categories/` 与七个栏目只保留兼容入口，不再是内容分类。`public/`、工具二进制和缓存不进入 Git。页首导航统一，页脚保留 RSS。
+Hugo 原生生成 `/forms/`、`/domains/`、`/paths/`、`/tags/` 与各词条页；`/tags/` 集中展示所有非空维度。`content/_content.gotmpl` 是构建时运行的 content adapter：创建 Posts 总页、Archive 和 Updates，再由模板从实际文章计算列表，无需维护文章名单。导航文案与链接分别在 `data/sections.yaml`、`data/navigation.yaml` 管理，新增文章无需修改它们。旧栏目总页、旧分类索引及其 RSS 已移除。`public/`、工具二进制和缓存不进入 Git。页首导航统一，页脚保留 RSS。
 
 ## 写下一篇
 
@@ -131,7 +131,7 @@ git push origin HEAD:main
 - 站点名、标题、正文与导航统一使用系统无衬线，代码使用等宽字体；通过字号、字重与留白区分层级。栏目中文为主、英文为辅。正文 17–18px、行高 1.8、宽度 680px；导航与说明 13–14px，日期至少 12px。
 - 原生 Markdown 目录、脚注、引用、代码高亮、表格、图片图注与懒加载。
 - 基础 SEO：描述、canonical、Open Graph、BlogPosting 日期数据、sitemap、robots。
-- 全站订阅 `/index.xml`；文章总页、各维度及各词条也有 `index.xml`。旧栏目与分类订阅地址继续返回有效 RSS。
+- 全站订阅 `/index.xml`；文章总页、各维度及各词条也有 `index.xml`。
 - 无广告、统计、追踪、弹窗、登录、点赞、评论指标或社交分享组件。
 
 旧站 `?p=posts/hello.md` 会跳转到新的 `/notes/hello-world/`。原始发布日期 2026-01-09 保留；迁移只补全了原文未闭合的代码围栏。旧站文章列表中不存在的 Git 速查页没有虚构补写。
@@ -142,7 +142,7 @@ git push origin HEAD:main
 # 所有实际文章、HTML 内部链接/锚点、RSS、SEO 等
 python3 tests/check_site.py public
 
-# 多维索引、最简文章、旧订阅、后记脚注等独立回归
+# 多维索引、最简文章、状态、后记脚注等独立回归
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 # 首版示例仍保留时，额外验收脚注、目录、代码与后记

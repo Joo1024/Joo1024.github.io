@@ -1,4 +1,0 @@
-{{ $legacy := .Params.legacy }}
-{{ $target := site.GetPage (printf "/%s/%s" $legacy.key ($legacy.term | default "")) }}
-{{ if not $target }}{{ $target = site.GetPage (printf "/%s" $legacy.key) }}{{ end }}
-{{ return ($target | default site.Home) }}

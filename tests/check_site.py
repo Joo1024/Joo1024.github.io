@@ -83,7 +83,7 @@ def check(root, base, examples=False):
         require(route.startswith(base), f'Section escapes base path: {link}')
         if route.startswith(base):
             read(route[len(base):].rstrip('/') + '/index.html')
-    for route in ('archive/index.html', 'updates/index.html', 'tags/index.html', 'categories/index.html', '404.html'):
+    for route in ('archive/index.html', 'updates/index.html', 'tags/index.html', 'forms/index.html', '404.html'):
         read(route)
     archive = read('archive/index.html')
     if examples:

@@ -7,7 +7,7 @@ tags: [写作, 工具, 开源]
 status: ongoing
 sample: true
 url: /making/a-small-writing-tool/
-type: making
+form: making
 domains: [craft, work]
 paths: [精进]
 ---

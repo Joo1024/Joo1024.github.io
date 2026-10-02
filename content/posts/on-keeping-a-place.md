@@ -4,7 +4,6 @@ date: 2025-11-16
 lastmod: 2026-09-20
 description: 一个地方的价值，也许不在于它展示了什么，而在于它允许什么留下。
 tags: [时间, 写作, 自我理解]
-status: reflection
 sample: true
 later_notes:
   - date: 2026-09-20
@@ -13,7 +12,7 @@ later_notes:
 
       我仍然想保留一个长期写作的地方，但不再要求每一段经历都成为记录。**档案可以有空白，生活不需要为档案服务。** 原来的判断留在上面，让这次变化也有来处。
 url: /reflection/on-keeping-a-place/
-type: reflection
+form: reflection
 domains: [mind, life]
 paths: [明心, 自在]
 ---

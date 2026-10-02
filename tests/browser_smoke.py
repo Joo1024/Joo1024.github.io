@@ -76,7 +76,7 @@ def run(base, chromium, screenshots):
             page.set_viewport_size({'width': width, 'height': 900})
             for route in ('/', '/now/', '/path/', '/reflection/on-keeping-a-place/',
                           '/practice/small-repetitions/', '/journey/before-the-ridge/',
-                          '/archive/', '/tags/', '/types/', '/domains/', '/paths/', '/updates/'):
+                          '/archive/', '/tags/', '/forms/', '/domains/', '/paths/', '/updates/'):
                 response = page.goto(base + route)
                 assert response.status == 200, route
                 assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), (width, route)

@@ -10,16 +10,16 @@ enableRobotsTXT = true
   subtitle = 'A place for reflection, practice, and making.'
 
 [taxonomies]
-  form = 'type'
+  form = 'form'
   domain = 'domains'
   path = 'paths'
   tag = 'tags'
 
-# Native taxonomy values come from the plural key; keep authors' scalar type.
+# Match the author's scalar form field; expose a plural public URL.
 [permalinks.taxonomy]
-  type = '/types/'
+  form = '/forms/'
 [permalinks.term]
-  type = '/types/:slug/'
+  form = '/forms/:slug/'
 
 [frontmatter]
   lastmod = ['lastmod', 'date']

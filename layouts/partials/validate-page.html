@@ -11,9 +11,11 @@
 {{ if $isArticle }}
 {{ if not .Params.title }}{{ errorf "Missing original title in %s" .File.Path }}{{ end }}
 {{ if gt (strings.Count "/" .File.Path) 1 }}{{ errorf "Put articles directly in content/posts/: %s" .File.Path }}{{ end }}
-{{ if isset .Params "categories" }}{{ errorf "Remove categories from %s; use optional type, domains, paths and tags" .File.Path }}{{ end }}
-{{ if isset .Params "type" }}
-  {{ if ne (printf "%T" .Params.type) "string" }}{{ errorf "type must be a single string in %s" .File.Path }}{{ end }}
+{{ if isset .Params "categories" }}{{ errorf "Remove categories from %s; use optional form, domains, paths and tags" .File.Path }}{{ end }}
+{{ if isset .Params "type" }}{{ errorf "type is reserved by Hugo; use form for article format in %s" .File.Path }}{{ end }}
+{{ if isset .Params "form" }}
+  {{ if ne (printf "%T" .Params.form) "string" }}{{ errorf "form must be a single nonempty string in %s" .File.Path }}
+  {{ else if not (strings.TrimSpace .Params.form) }}{{ errorf "form must be a single nonempty string in %s" .File.Path }}{{ end }}
 {{ end }}
 {{ $page := . }}
 {{ range slice "domains" "paths" "tags" }}
@@ -30,7 +32,7 @@
     {{ end }}
   {{ end }}
 {{ end }}
-{{ with .Params.status }}{{ if not (in (slice "note" "reflection" "ongoing" "archived") .) }}{{ errorf "Invalid status in %s; use ongoing or archived, or omit status" $.File.Path }}{{ end }}{{ end }}
+{{ if isset .Params "status" }}{{ if not (in (slice "ongoing" "archived") .Params.status) }}{{ errorf "Invalid status in %s; use ongoing or archived, or omit status" .File.Path }}{{ end }}{{ end }}
 {{ if not .Params.date }}{{ errorf "Missing original date in %s" .File.Path }}{{ end }}
 {{ if lt .Lastmod .Date }}{{ errorf "lastmod predates date in %s" .File.Path }}{{ end }}
 {{ range .Params.later_notes }}{{ if gt (time.AsTime .date) $.Lastmod }}{{ errorf "Update lastmod to include later note date in %s" $.File.Path }}{{ end }}{{ end }}
