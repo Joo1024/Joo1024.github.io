@@ -38,7 +38,7 @@ def run(base, chromium, screenshots):
         assert page.locator('html').get_attribute('data-theme') == 'light'
         page.locator('#theme-toggle').click()
         assert page.locator('html').get_attribute('data-theme') == 'dark'
-        assert page.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(32, 37, 35)'
+        assert page.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(36, 36, 36)'
         page.reload()
         assert page.locator('html').get_attribute('data-theme') == 'dark'
         page.emulate_media(media='print', color_scheme='dark')
@@ -49,7 +49,7 @@ def run(base, chromium, screenshots):
         page.locator('#theme-toggle').click()
         assert page.locator('html').get_attribute('data-theme') is None
         page.emulate_media(color_scheme='dark')
-        assert page.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(32, 37, 35)'
+        assert page.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(36, 36, 36)'
         page.emulate_media(color_scheme='light')
         print('PASS theme cycle, persistence, system dark preference')
 

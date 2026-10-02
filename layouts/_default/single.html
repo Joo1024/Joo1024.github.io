@@ -17,7 +17,7 @@
 <article class="reading-page">
   <header class="article-heading">
     <p class="eyebrow">{{ if $isArticle }}<a href="{{ .CurrentSection.RelPermalink }}">{{ partial "section-name.html" .Section }}</a>{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
-    <h1>{{ .Title }}{{ with .Params.chinese }} <span>{{ . }}</span>{{ end }}</h1>
+    <h1>{{ if .Params.chinese }}{{ .Params.chinese }} <span lang="en">{{ .Title }}</span>{{ else }}{{ .Title }}{{ end }}</h1>
     {{ with .Description }}<p class="article-description">{{ . }}</p>{{ end }}
     <div class="article-meta">
       {{ if $isArticle }}<span>发布于 <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.01.02" }}</time></span>{{ end }}

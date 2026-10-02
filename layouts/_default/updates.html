@@ -4,5 +4,5 @@
 <h2 class="list-label">文章</h2>
 {{ partial "entry-list.html" (dict "pages" $entries.ByLastmod.Reverse "updated" true "descriptions" true) }}
 <h2 class="list-label">持续更新的页面</h2>
-<ul class="living-updates">{{ range where .Site.Data.sections "kind" "page" }}{{ with site.GetPage .slug }}<li><time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2006.01.02" }}</time><a href="{{ .RelPermalink }}">{{ .Title }} · {{ .Params.chinese }}</a></li>{{ end }}{{ end }}</ul>
+<ul class="living-updates">{{ range where .Site.Data.sections "kind" "page" }}{{ with site.GetPage .slug }}<li><time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2006.01.02" }}</time><a href="{{ .RelPermalink }}">{{ .Params.chinese }} · {{ .Title }}</a></li>{{ end }}{{ end }}</ul>
 {{ end }}

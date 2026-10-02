@@ -8,7 +8,7 @@
 <nav class="home-sections" aria-label="栏目入口">
   {{ range .Site.Data.sections }}
   <a href="{{ printf "%s/" .slug | relURL }}">
-    <span class="section-name">{{ .name }} <span>{{ .chinese }}</span></span>
+    <span class="section-name">{{ .chinese }} <span lang="en">{{ .name }}</span></span>
     <span class="section-description">{{ .description }}</span>
   </a>
   {{ end }}

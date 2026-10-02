@@ -16,7 +16,7 @@
   {{ $page := . }}
   {{ range .Site.Data.sections }}
   {{ $url := printf "%s/" .slug | relURL }}
-  <a href="{{ $url }}" {{ if or (eq $page.Section .slug) (eq $page.RelPermalink $url) }}aria-current="page"{{ end }}>{{ .name }}</a>
+  <a href="{{ $url }}" {{ if or (eq $page.Section .slug) (eq $page.RelPermalink $url) }}aria-current="page"{{ end }}>{{ .chinese }}</a>
   {{ end }}
 </nav>
 {{ end }}
