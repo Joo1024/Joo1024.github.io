@@ -1,6 +1,8 @@
 ---
-title: 关于
+title: About
+chinese: 关于
 description: 一个人在时间中留下修行痕迹的地方
+lastmod: 2026-10-02
 toc: false
 ---
 

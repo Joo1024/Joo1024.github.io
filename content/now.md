@@ -1,7 +1,6 @@
 ---
 title: Now
 chinese: 今朝
-description: 此时此地，正在做的事。不必完整，也不必宏大。
 lastmod: 2026-10-02
 status: ongoing
 ---
