@@ -3,7 +3,6 @@ title: 怎样算是好好度过了一天
 date: 2026-08-18
 lastmod: 2026-08-18
 description: 从完成了多少，转向是否认真地在场。
-categories: [reflection]
 tags: [生活, 时间]
 status: note
 sample: true

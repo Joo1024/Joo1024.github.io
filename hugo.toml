@@ -15,15 +15,6 @@ disableKinds = []
   category = 'categories'
   tag = 'tags'
 
-[permalinks]
-  reflection = '/reflection/:contentbasename/'
-  practice = '/practice/:contentbasename/'
-  making = '/making/:contentbasename/'
-  reading = '/reading/:contentbasename/'
-  journey = '/journey/:contentbasename/'
-  notes = '/notes/:contentbasename/'
-  yearly = '/yearly/:contentbasename/'
-
 [frontmatter]
   lastmod = ['lastmod', 'date']
 

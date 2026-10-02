@@ -5,7 +5,7 @@
   <p class="home-subtitle">{{ .Site.Params.subtitle }}</p>
   <p class="home-description">记录思考与练习，书页与行旅。<br>让尚未完成的自己，也有一处可以停留。</p>
 </section>
-<nav class="home-sections" aria-label="九个栏目">
+<nav class="home-sections" aria-label="栏目入口">
   {{ range .Site.Data.sections }}
   <a href="{{ printf "%s/" .slug | relURL }}">
     <span class="section-name">{{ .name }} <span>{{ .chinese }}</span></span>

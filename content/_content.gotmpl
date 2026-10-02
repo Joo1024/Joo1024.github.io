@@ -1,0 +1,14 @@
+{{/* Native Hugo content adapter: sections and inherited categories share one source. */}}
+{{ $seen := slice }}
+{{ range site.Data.sections }}
+  {{ if not (in (slice "page" "articles") .kind) }}
+    {{ errorf "Section %s kind must be page or articles in data/sections.yaml" .slug }}
+  {{ end }}
+  {{ if in $seen .slug }}{{ errorf "Duplicate section %s in data/sections.yaml" .slug }}{{ end }}
+  {{ $seen = $seen | append .slug }}
+  {{ if eq .kind "articles" }}
+    {{ $params := dict "chinese" .chinese "group_by_year" (.group_by_year | default false) }}
+    {{ $cascade := slice (dict "params" (dict "categories" (slice .slug)) "target" (dict "kind" "page")) }}
+    {{ $.AddPage (dict "kind" "section" "path" .slug "title" .name "description" .description "params" $params "cascade" $cascade) }}
+  {{ end }}
+{{ end }}

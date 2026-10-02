@@ -1,36 +1,46 @@
 - slug: now
+  kind: page
   name: Now
   chinese: 今朝
   description: 此时此地，正在做的事。
 - slug: path
+  kind: page
   name: Path
   chinese: 道途
   description: 几条愿意长久走下去的路。
 - slug: reflection
+  kind: articles
   name: Reflection
   chinese: 观心录
   description: 留下思考，也留下改变。
 - slug: practice
+  kind: articles
   name: Practice
   chinese: 修炼录
   description: 在一次次重复中，慢慢靠近。
 - slug: making
+  kind: articles
   name: Making
   chinese: 造物录
   description: 把想法带到现实里。
 - slug: reading
+  kind: articles
   name: Reading
   chinese: 读书札记
   description: 书页之外，思想之内。
 - slug: journey
+  kind: articles
   name: Journey
   chinese: 行旅录
   description: 走过的地方，留下的风景。
 - slug: notes
+  kind: articles
   name: Notes
   chinese: 杂记
   description: 一些尚未长成文章的念头。
 - slug: yearly
+  kind: articles
+  group_by_year: true
   name: Yearly
   chinese: 岁录
   description: 以年为刻度，回看来时的路。

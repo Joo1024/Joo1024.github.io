@@ -20,10 +20,16 @@ class Document(HTMLParser):
         self.schemas = []
         self.json_script = False
         self.json_text = ''
+        self.section_links = []
+        self.in_sections = False
         self.feed(text)
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == 'nav' and 'home-sections' in attrs.get('class', '').split():
+            self.in_sections = True
+        if tag == 'a' and self.in_sections and 'href' in attrs:
+            self.section_links.append(attrs['href'])
         if 'id' in attrs:
             if attrs['id'] in self.ids:
                 self.duplicate_ids.append(attrs['id'])
@@ -44,6 +50,8 @@ class Document(HTMLParser):
             self.json_text += data
 
     def handle_endtag(self, tag):
+        if tag == 'nav':
+            self.in_sections = False
         if tag == 'script' and self.json_script:
             self.schemas.append(json.loads(self.json_text))
             self.json_script = False
@@ -60,9 +68,13 @@ def check(root, base, examples=False):
         return path.read_text() if path.is_file() else ''
     home = read('index.html')
     require('Sanctum' in home, 'Home must identify Sanctum')
-    for section in ('now', 'path', 'reflection', 'practice', 'making', 'reading', 'journey', 'notes', 'yearly'):
-        read(f'{section}/index.html')
-        require(f'{base}{section}/' in home, f'Home must link {section}')
+    section_links = Document(home).section_links
+    require(bool(section_links), 'Home must expose the configured sections')
+    for link in section_links:
+        route = unquote(urlsplit(link).path)
+        require(route.startswith(base), f'Section escapes base path: {link}')
+        if route.startswith(base):
+            read(route[len(base):].rstrip('/') + '/index.html')
     for route in ('archive/index.html', 'updates/index.html', 'tags/index.html', 'categories/index.html', '404.html'):
         read(route)
     archive = read('archive/index.html')
@@ -126,7 +138,7 @@ def check(root, base, examples=False):
     if problems:
         print('\n'.join(f'FAIL {p}' for p in problems), file=sys.stderr)
         return 1
-    print(f'PASS {len(documents)} HTML pages, {len(articles)} articles; local links/anchors, nine sections, dates/archive, RSS, sitemap, lazy images, SEO' + ('; example Markdown/TOC/footnotes/later notes' if examples else ''))
+    print(f'PASS {len(documents)} HTML pages, {len(articles)} articles, {len(section_links)} configured sections; local links/anchors, dates/archive, RSS, sitemap, lazy images, SEO' + ('; example Markdown/TOC/footnotes/later notes' if examples else ''))
     return 0
 
 

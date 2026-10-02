@@ -3,7 +3,6 @@ title: 让写作只需要打开一个文件
 date: 2026-09-12
 lastmod: 2026-10-01
 description: 为长期记录搭建一个小工具，减少写作之前需要做的事。
-categories: [making]
 tags: [写作, 工具, 开源]
 status: ongoing
 sample: true

@@ -13,7 +13,7 @@ status: ongoing
 
 - **Current**：把模糊感受写成可以追问的问题。
 - **Progress**：开始分清事实、判断和情绪，不急着消除矛盾。
-- **Next**：每周选一个问题，写一篇[观心录]({{< relref "reflection/_index.md" >}})。
+- **Next**：每周选一个问题，写一篇[观心录]({{< relref "/reflection" >}})。
 
 ## Body · 身体
 
@@ -43,4 +43,4 @@ status: ongoing
 
 - **Current**：留出空白，照顾居所，和亲近的人认真相处。
 - **Progress**：不再把每一段时间都当作需要利用的资源。
-- **Next**：每月走到自然里一次，留下一篇[行旅记录]({{< relref "journey/_index.md" >}})。
+- **Next**：每月走到自然里一次，留下一篇[行旅记录]({{< relref "/journey" >}})。

@@ -3,7 +3,6 @@ title: 给一天留一点余地
 date: 2026-10-02
 lastmod: 2026-10-02
 description: 空白不是等待被填满的地方。
-categories: [notes]
 tags: [生活, 时间]
 status: note
 sample: true

@@ -5,7 +5,7 @@
   {{ with .Description }}<p class="page-description">{{ . }}</p>{{ end }}
 </header>
 {{ with .Content }}<div class="prose section-intro">{{ . }}</div>{{ end }}
-{{ if eq .Section "yearly" }}
+{{ if .Params.group_by_year }}
   {{ range .RegularPages.GroupByDate "2006" }}
     <section class="year-group"><h2>{{ .Key }}</h2>{{ partial "entry-list.html" (dict "pages" .Pages.ByDate.Reverse "descriptions" true) }}</section>
   {{ else }}<p class="empty-state">这一年的文字，还在路上。</p>{{ end }}

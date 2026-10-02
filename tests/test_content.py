@@ -8,6 +8,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import os
+import shutil
 import subprocess
 import unittest
 import xml.etree.ElementTree as ET
@@ -37,6 +38,7 @@ class ContentTest(unittest.TestCase):
             root = Path(tmp)
             section = root / 'content' / 'notes'
             section.mkdir(parents=True)
+            shutil.copyfile(ROOT / 'content/_content.gotmpl', root / 'content/_content.gotmpl')
             (section / 'empty.md').write_text('---\ntitle: Empty\ndate: 2026-01-01\nstatus: note\nlater_notes: []\n---\nContent.\n')
             output = root / 'public'
             result = subprocess.run([os.environ.get('HUGO_BIN', str(ROOT / '.tools/bin/hugo')),
@@ -52,7 +54,7 @@ class ContentTest(unittest.TestCase):
             root = Path(tmp)
             section = root / 'content' / 'reflection'
             section.mkdir(parents=True)
-            (section / '_index.md').write_text('---\ntitle: Reflection\n---\n')
+            shutil.copyfile(ROOT / 'content/_content.gotmpl', root / 'content/_content.gotmpl')
             (section / 'entry.md').write_text('''---
 title: Fixture
 date: 2025-01-01

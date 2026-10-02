@@ -36,10 +36,13 @@ python3 tests/check_site.py public
 
 ```text
 .
-├── hugo.toml                   # 站点地址、语言、永久链接、Markdown 与输出配置
+├── hugo.toml                   # 站点地址、语言、Markdown 与输出配置
 ├── archetypes/default.md       # 新文章 metadata 模板
-├── data/sections.yaml          # 九栏目名称、中文与一句描述
+├── data/
+│   ├── sections.yaml           # 栏目唯一配置：类型、名称、中文、描述与年份分组
+│   └── navigation.yaml         # 全站导航：最近更新、存档、标签、关于
 ├── content/
+│   ├── _content.gotmpl         # 自动生成栏目页，按目录继承分类
 │   ├── now.md                 # 今朝
 │   ├── path.md                # 道途，六个长期方向
 │   ├── archive.md             # 按原始年份归档
@@ -74,6 +77,7 @@ python3 tests/check_site.py public
 ├── tests/
 │   ├── check_site.py          # Python 标准库生成结果与断链验收
 │   ├── test_content.py        # 独立 Markdown 边界用例，不依赖示例文章
+│   ├── test_sections.py       # 新栏目、分类推导、一致性与全站导航检查
 │   └── browser_smoke.py       # 可选浏览器验收，开发依赖 Playwright
 ├── docs/
 │   ├── writing.md             # 完整写作指南
@@ -81,7 +85,9 @@ python3 tests/check_site.py public
 └── .github/workflows/pages.yml
 ```
 
-每个文章栏目有 `_index.md` 提供介绍，模板自动生成列表。Hugo 自动生成 `/tags/`、`/categories/`、`/sitemap.xml`、`/robots.txt`；无需在 content 下另建文件。生成的 `public/`、工具二进制和缓存不进入 Git。
+栏目列表只维护在 `data/sections.yaml`：`kind: page` 是 Now、Path 这样的持续更新页；`kind: articles` 是文章栏目。Hugo 原生 content adapter 自动创建文章栏目页，并把目录名作为分类继承给文章；首页、归档、RSS、文章模板和 SEO 共用同一配置。无需给文章填写 `categories`，也无需手动创建栏目 `_index.md`。旧文章若保留 `categories`，其值必须是与目录一致的单项数组，否则构建报错，提示删去该字段。
+
+Hugo 自动生成 `/tags/`、`/categories/`、`/sitemap.xml`、`/robots.txt`。生成的 `public/`、工具二进制和缓存不进入 Git。最近更新、存档、标签、关于统一位于所有页面的页首导航；页脚保留 RSS。
 
 ## 写下一篇
 
@@ -93,7 +99,6 @@ title: 一个值得留下的问题
 date: 2026-10-02
 lastmod: 2026-10-02
 description: 一句话介绍。
-categories: [reflection]
 tags: [选择]
 status: reflection
 ---
@@ -114,6 +119,8 @@ git push origin HEAD:main
 ```
 
 更多 metadata、脚注、图片、后记、草稿与年度回顾见 [写作指南](docs/writing.md)。首页最近四篇、分类、标签、归档和 RSS 都自动更新。文件名决定 URL，标题修改不会造成断链。同栏目上一篇/下一篇按原始日期排列。
+
+新增栏目也只需在 `data/sections.yaml` 注册一次，再写入对应目录；步骤见写作指南中的“新增栏目”。不再维护另一份文章栏目名单或逐栏目 URL 配置。
 
 ## GitHub Pages
 

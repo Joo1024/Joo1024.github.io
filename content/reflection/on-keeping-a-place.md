@@ -3,7 +3,6 @@ title: 给未完成的自己，留一处地方
 date: 2025-11-16
 lastmod: 2026-09-20
 description: 一个地方的价值，也许不在于它展示了什么，而在于它允许什么留下。
-categories: [reflection]
 tags: [时间, 写作, 自我理解]
 status: reflection
 sample: true

@@ -12,7 +12,6 @@ title: 一个还没有答案的问题
 date: 2026-10-02
 lastmod: 2026-10-02
 description: 用一句话记下文章从哪里开始。
-categories: [reflection]
 tags: [选择, 自我理解]
 status: reflection
 ---
@@ -30,7 +29,7 @@ status: reflection
 | `date` | 原始发布日；一旦公开不要为了更新而重写 |
 | `lastmod` | 最后实质更新日；初次发布与 date 相同；省略时回退到 date |
 | `description` | 一句描述，用于列表、SEO 与分享链接预览 |
-| `categories` | 栏目 slug 数组，如 `[practice]`，自动进入分类索引 |
+| `categories` | 无需填写，由文章目录自动继承。仅兼容旧文章；若填写，必须为与目录相同的单项数组，如 `[practice]`；不一致或空数组会报错，删去字段即可 |
 | `tags` | 可选，多主题数组，如 `[技术, 方法]`；不必太多 |
 | `status` | 必填：`note`、`reflection`、`ongoing`、`archived` |
 | `later_notes` | 可选后记列表，字段为 `date` 与 Markdown `text` |
@@ -55,7 +54,25 @@ status: reflection
 | `content/notes/` | 100–500 字的小想法和短记录 |
 | `content/yearly/` | 年度回顾，例如 `2026.md`；可以一年数篇 |
 
-`_index.md` 是栏目介绍，不是文章，不要覆盖它。Now 与 Path 可在更新时把旧片段追加到 later_notes，也可放到对应年份的岁录中。只更新 `lastmod`，不用给这两页新增文章日期。
+栏目名称、介绍和类型都放在 `data/sections.yaml`。文章栏目页由 `content/_content.gotmpl` 自动创建，不要另建同名 `_index.md` 覆盖它。Now 与 Path 可在更新时把旧片段追加到 later_notes，也可放到对应年份的岁录中。只更新 `lastmod`，不用给这两页新增文章日期。
+
+## 新增栏目
+
+在 `data/sections.yaml` 追加一项：
+
+```yaml
+- slug: fieldwork
+  kind: articles
+  name: Fieldwork
+  chinese: 田野
+  description: 对日常环境的观察。
+```
+
+然后创建 `content/fieldwork/my-observation.md`，按普通文章填写 title、date、description、tags、status；不用填写 `categories`。首页导航、栏目页、文章类型、分类、归档、最近更新、RSS 和 SEO 会自动包含它，地址为 `/fieldwork/my-observation/`。未注册的新文章目录会让构建明确报错，避免内容静默遗漏。
+
+`kind: page` 用于持续更新的单页，在 `content/<slug>.md` 写正文；它会进入导航与持续更新列表，不进入文章归档或文章 RSS。需要像 Yearly 一样按年份分组的文章栏目，可加 `group_by_year: true`。
+
+全站的“最近更新、存档、标签、关于”在 `data/navigation.yaml` 管理，并统一显示在页首。
 
 ## 观点改变：追加后记
 

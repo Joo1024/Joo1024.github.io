@@ -1,6 +1,14 @@
 {{ define "main" }}
-{{ $isArticle := in (slice "reflection" "practice" "making" "reading" "journey" "notes" "yearly") .Section }}
+{{ $section := partial "section-config.html" .Section }}
+{{ if and .Section (not $section) }}{{ errorf "Register section %s in data/sections.yaml" .Section }}{{ end }}
+{{ $isArticle := partial "is-article.html" . }}
 {{ if $isArticle }}
+{{ $categories := .Params.categories }}
+{{ if not (reflect.IsSlice $categories) }}
+  {{ errorf "categories must match section %s in %s; omit the field to derive it automatically" .Section .File.Path }}
+{{ else if or (ne (len $categories) 1) (ne (index $categories 0) .Section) }}
+  {{ errorf "categories must match section %s in %s; omit the field to derive it automatically" .Section .File.Path }}
+{{ end }}
 {{ if not (in (slice "note" "reflection" "ongoing" "archived") .Params.status) }}{{ errorf "Invalid or missing status in %s; use note, reflection, ongoing, or archived" .File.Path }}{{ end }}
 {{ if not .Params.date }}{{ errorf "Missing original date in %s" .File.Path }}{{ end }}
 {{ if lt .Lastmod .Date }}{{ errorf "lastmod predates date in %s" .File.Path }}{{ end }}

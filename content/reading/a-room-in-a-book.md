@@ -3,7 +3,6 @@ title: 在一本书里，辨认自己的生活
 date: 2026-09-03
 lastmod: 2026-09-03
 description: 读《瓦尔登湖》时，留下的问题比留下的答案更多。
-categories: [reading]
 tags: [阅读, 生活, 自由]
 status: reflection
 sample: true

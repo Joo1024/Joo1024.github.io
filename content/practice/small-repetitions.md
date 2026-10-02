@@ -3,7 +3,6 @@ title: 把练习缩小，直到能够重复
 date: 2026-09-26
 lastmod: 2026-09-28
 description: 技术学习和身体训练，都从一次可以再做的动作开始。
-categories: [practice]
 tags: [练习, 技术, 方法]
 status: ongoing
 sample: true

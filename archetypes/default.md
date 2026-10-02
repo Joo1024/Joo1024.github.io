@@ -3,7 +3,6 @@ title: "{{ replace .File.ContentBaseName `-` ` ` | title }}"
 date: {{ .Date }}
 lastmod: {{ .Date }}
 description: "一句简短的介绍。"
-categories: ["{{ .Section }}"]
 tags: []
 status: note
 draft: true
@@ -12,4 +11,3 @@ draft: true
 从一个真实的念头开始。
 
 ## 留下什么
-
