@@ -14,6 +14,7 @@ class Document(HTMLParser):
         super().__init__()
         self.links = []
         self.ids = set()
+        self.duplicate_ids = []
         self.images = []
         self.meta = {}
         self.schemas = []
@@ -24,6 +25,8 @@ class Document(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         if 'id' in attrs:
+            if attrs['id'] in self.ids:
+                self.duplicate_ids.append(attrs['id'])
             self.ids.add(attrs['id'])
         for key in ('href', 'src'):
             if key in attrs:
@@ -96,6 +99,7 @@ def check(root, base, examples=False):
             require(any(item.findtext('link') == schema.get('mainEntityOfPage') for item in feed_items), 'Article missing from RSS')
     for path, document in documents.items():
         text = path.read_text()
+        require(not document.duplicate_ids, f'Duplicate anchors: {path.relative_to(root)} {document.duplicate_ids}')
         require('cdn.jsdelivr.net' not in text, f'Runtime CDN dependency in {path.relative_to(root)}')
         for img in document.images:
             require(bool(img.get('alt')), f'Missing image alt text: {path.relative_to(root)}')

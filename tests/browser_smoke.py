@@ -41,6 +41,9 @@ def run(base, chromium, screenshots):
         assert page.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(32, 37, 35)'
         page.reload()
         assert page.locator('html').get_attribute('data-theme') == 'dark'
+        page.emulate_media(media='print', color_scheme='dark')
+        assert page.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(255, 255, 255)', 'Printing should use light paper even with explicit dark preference'
+        page.emulate_media(media='screen', color_scheme='light')
         if screenshots:
             page.screenshot(path=str(screenshots / 'home-dark.png'), full_page=True)
         page.locator('#theme-toggle').click()

@@ -176,7 +176,11 @@ main { min-height: 55vh; }
 }
 @media (max-width: 360px) { .site-shell { padding: 0 18px; } .section-name > span { display: block; margin-left: 0; } }
 @media print {
-  :root { --paper: #fff; --ink: #222; --muted: #555; --rule: #ccc; }
+  :root, :root[data-theme], :root:not([data-theme]) {
+    color-scheme: light;
+    --paper: #fff; --ink: #222; --muted: #555; --faint: #666;
+    --rule: #ccc; --accent: #56634f; --soft: #f5f5f0; --code: #f5f5f0;
+  }
   .site-shell { max-width: none; padding: 0; }
   .site-header, .section-nav, .site-footer, .theme-toggle, .article-toc, .post-navigation, .skip-link { display: none; }
   .reading-page { max-width: none; }

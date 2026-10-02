@@ -73,6 +73,7 @@ python3 tests/check_site.py public
 ├── scripts/install-hugo.sh
 ├── tests/
 │   ├── check_site.py          # Python 标准库生成结果与断链验收
+│   ├── test_content.py        # 独立 Markdown 边界用例，不依赖示例文章
 │   └── browser_smoke.py       # 可选浏览器验收，开发依赖 Playwright
 ├── docs/
 │   ├── writing.md             # 完整写作指南
@@ -141,6 +142,9 @@ git push origin HEAD:main
 ```sh
 # 所有实际文章、HTML 内部链接/锚点、RSS、SEO 等
 python3 tests/check_site.py public
+
+# 后记脚注、空后记与订阅相对地址回归
+python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 # 首版示例仍保留时，额外验收脚注、目录、代码与后记
 python3 tests/check_site.py public --examples

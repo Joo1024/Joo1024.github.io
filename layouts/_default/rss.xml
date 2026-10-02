@@ -15,11 +15,7 @@
       <guid isPermaLink="true">{{ .Permalink }}</guid>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>
       {{ range .Params.categories }}<category>{{ . }}</category>{{ end }}
-      {{ $notes := partial "later-notes.html" . }}
-      {{ $origin := urls.Parse .Site.BaseURL }}
-      {{ $body := printf "%s%s" .Content $notes }}
-      {{ $body = replaceRE `(href|src)="(/[^\"]*)"` (printf `$1="%s://%s$2"` $origin.Scheme $origin.Host) $body }}
-      <description>{{ $body }}</description>
+      <description>{{ partial "rss-content.html" . }}</description>
     </item>
     {{ end }}
   </channel>

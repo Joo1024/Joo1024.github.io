@@ -15,6 +15,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +39,10 @@ jobs:
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
         run: python3 tests/check_site.py public --base-path "${PAGES_BASE_PATH}/"
+      - name: Check Markdown edge cases
+        env:
+          HUGO_BIN: ${{ runner.temp }}/hugo-bin/hugo
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
