@@ -1,0 +1,9 @@
+{{ $page := . }}
+{{ range site.Data.dimensions }}
+  {{ $dimension := . }}
+  {{ with $page.GetTerms .key }}
+    <div class="metadata-row"><span class="metadata-label">{{ $dimension.name }}</span>
+      {{ range . }}<a href="{{ .RelPermalink }}">{{ partial "term-label.html" (dict "key" $dimension.key "term" .Data.Term) }}</a>{{ end }}
+    </div>
+  {{ end }}
+{{ end }}

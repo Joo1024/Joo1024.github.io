@@ -1,15 +1,35 @@
 {{ define "main" }}
-{{ $section := partial "section-config.html" .Section }}
-{{ if and .Section (not $section) }}{{ errorf "Register section %s in data/sections.yaml" .Section }}{{ end }}
 {{ $isArticle := partial "is-article.html" . }}
-{{ if $isArticle }}
-{{ $categories := .Params.categories }}
-{{ if not (reflect.IsSlice $categories) }}
-  {{ errorf "categories must match section %s in %s; omit the field to derive it automatically" .Section .File.Path }}
-{{ else if or (ne (len $categories) 1) (ne (index $categories 0) .Section) }}
-  {{ errorf "categories must match section %s in %s; omit the field to derive it automatically" .Section .File.Path }}
+{{ $fixedFiles := slice "about.md" }}
+{{ range site.Data.sections }}
+  {{ if eq .kind "page" }}{{ $fixedFiles = $fixedFiles | append (printf "%s.md" .slug) }}{{ end }}
 {{ end }}
-{{ if not (in (slice "note" "reflection" "ongoing" "archived") .Params.status) }}{{ errorf "Invalid or missing status in %s; use note, reflection, ongoing, or archived" .File.Path }}{{ end }}
+{{ with .File }}
+  {{ if and (not $isArticle) (not (in $fixedFiles .Path)) }}{{ errorf "Put articles directly in content/posts/: %s" .Path }}{{ end }}
+{{ end }}
+{{ if $isArticle }}
+{{ if not .Params.title }}{{ errorf "Missing original title in %s" .File.Path }}{{ end }}
+{{ if gt (strings.Count "/" .File.Path) 1 }}{{ errorf "Put articles directly in content/posts/: %s" .File.Path }}{{ end }}
+{{ if isset .Params "categories" }}{{ errorf "Remove categories from %s; use optional type, domains, paths and tags" .File.Path }}{{ end }}
+{{ if isset .Params "type" }}
+  {{ if ne (printf "%T" .Params.type) "string" }}{{ errorf "type must be a single string in %s" .File.Path }}{{ end }}
+{{ end }}
+{{ $page := . }}
+{{ range slice "domains" "paths" "tags" }}
+  {{ $field := . }}
+  {{ if isset $page.Params $field }}
+    {{ $value := index $page.Params $field }}
+    {{ if not (reflect.IsSlice $value) }}
+      {{ errorf "%s must be a flat array of nonempty strings in %s" $field $page.File.Path }}
+    {{ else }}
+      {{ range $value }}
+        {{ if ne (printf "%T" .) "string" }}{{ errorf "%s must be a flat array of nonempty strings in %s" $field $page.File.Path }}
+        {{ else if not (strings.TrimSpace .) }}{{ errorf "%s must be a flat array of nonempty strings in %s" $field $page.File.Path }}{{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ with .Params.status }}{{ if not (in (slice "note" "reflection" "ongoing" "archived") .) }}{{ errorf "Invalid status in %s; use ongoing or archived, or omit status" $.File.Path }}{{ end }}{{ end }}
 {{ if not .Params.date }}{{ errorf "Missing original date in %s" .File.Path }}{{ end }}
 {{ if lt .Lastmod .Date }}{{ errorf "lastmod predates date in %s" .File.Path }}{{ end }}
 {{ range .Params.later_notes }}{{ if gt (time.AsTime .date) $.Lastmod }}{{ errorf "Update lastmod to include later note date in %s" $.File.Path }}{{ end }}{{ end }}
@@ -22,9 +42,10 @@
     <div class="article-meta">
       {{ if $isArticle }}<span>发布于 <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.01.02" }}</time></span>{{ end }}
       {{ if not .Lastmod.IsZero }}<span>更新于 <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2006.01.02" }}</time></span>{{ end }}
-      {{ with .Params.status }}<span class="status-label">{{ . }}</span>{{ end }}
+      {{ if eq .Params.status "ongoing" }}<span class="status-label">持续中</span>{{ end }}
+      {{ if eq .Params.status "archived" }}<span class="status-label">已归档</span>{{ end }}
     </div>
-    {{ if $isArticle }}<div class="article-taxonomy">{{ range .GetTerms "categories" }}<a href="{{ .RelPermalink }}">{{ partial "section-name.html" .LinkTitle }}</a>{{ end }}{{ range .GetTerms "tags" }}<a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>{{ end }}</div>{{ end }}
+    {{ if $isArticle }}<div class="article-taxonomy">{{ partial "article-metadata.html" . }}</div>{{ end }}
   </header>
   {{ if .Params.sample }}<p class="sample-notice">示例内容 · 用于呈现写作与排版方式，可替换为你自己的记录。</p>{{ end }}
   {{ if and (ne .Params.toc false) (gt (len (findRE "<li>" .TableOfContents)) 0) }}
@@ -32,7 +53,7 @@
   {{ end }}
   <div class="prose">{{ .Content }}{{ partial "later-notes.html" . }}</div>
   {{ if $isArticle }}
-  <nav class="post-navigation" aria-label="同栏目相邻文章">
+  <nav class="post-navigation" aria-label="按时间相邻的文字">
     <div>{{ with .PrevInSection }}<span>上一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} ←</a>{{ end }}</div>
     <div>{{ with .NextInSection }}<span>下一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}</div>
   </nav>

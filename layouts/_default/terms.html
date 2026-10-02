@@ -1,8 +1,23 @@
 {{ define "main" }}
-<header class="page-heading"><p class="eyebrow">Index / 索引</p><h1>{{ if eq .Data.Singular "tag" }}标签 <span>Tags</span>{{ else }}分类 <span>Categories</span>{{ end }}</h1><p class="page-description">{{ if eq .Data.Singular "tag" }}循着一个念头，寻找相邻的文字。{{ else }}不同方向的记录，各自缓慢积累。{{ end }}</p></header>
-<ul class="term-list">
-  {{ range .Data.Terms.Alphabetical }}
-  <li><a href="{{ .Page.RelPermalink }}">{{ if eq $.Data.Singular "category" }}{{ partial "section-name.html" .Page.LinkTitle }}{{ else }}{{ .Page.LinkTitle }}{{ end }}<span>{{ .Count }} 篇</span></a></li>
-  {{ else }}<li class="empty-state">尚无条目。</li>{{ end }}
-</ul>
+{{ $dimension := partial "dimension.html" .Data.Plural }}
+{{ if eq .Data.Plural "tags" }}
+<header class="page-heading"><p class="eyebrow">Index / 索引</p><h1>标签 <span>Connections</span></h1><p class="page-description">时间是经，标签是纬。循着形式、领域、方向与主题，重新遇见不同年份的文字。</p></header>
+{{ $hasWords := false }}
+{{ range site.Data.dimensions }}
+  {{ $terms := index site.Taxonomies .key }}
+  {{ if $terms }}
+    {{ $hasWords = true }}
+    <section class="dimension-section" id="dimension-{{ .key }}">
+      <h2>{{ .name }} <span lang="en">{{ .english }}</span></h2>
+      <p>{{ .description }}</p>
+      {{ partial "dimension-index.html" (dict "dimension" . "terms" $terms) }}
+    </section>
+  {{ end }}
+{{ end }}
+{{ if not $hasWords }}<p class="empty-state">标签可以留空。文字会先沿着时间生长。</p>{{ end }}
+{{ else }}
+<header class="page-heading"><p class="eyebrow">Index / 索引</p><h1>{{ $dimension.name }} <span lang="en">{{ $dimension.english }}</span></h1><p class="page-description">{{ $dimension.description }}</p></header>
+{{ partial "dimension-index.html" (dict "dimension" $dimension "terms" .Data.Terms) }}
+<p class="back-link"><a href="{{ "tags/" | relURL }}">← 返回全部标签</a></p>
+{{ end }}
 {{ end }}

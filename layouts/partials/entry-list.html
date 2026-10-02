@@ -5,7 +5,12 @@
     <div class="entry-main">
       <a class="entry-title" href="{{ .RelPermalink }}">{{ .Title }}</a>
       {{ if $.descriptions }}<p class="entry-description">{{ .Description }}</p>{{ end }}
-      <span class="entry-meta">{{ partial "section-name.html" .Section }}{{ if .Params.sample }} <span class="sample-mark">· 示例</span>{{ end }}{{ if eq .Params.status "ongoing" }} · 持续中{{ end }}{{ if eq .Params.status "archived" }} · 已归档{{ end }}</span>
+      {{ $meta := slice }}
+      {{ with .Params.type }}{{ $meta = $meta | append (partial "term-label.html" (dict "key" "type" "term" .)) }}{{ end }}
+      {{ if .Params.sample }}{{ $meta = $meta | append "示例" }}{{ end }}
+      {{ if eq .Params.status "ongoing" }}{{ $meta = $meta | append "持续中" }}{{ end }}
+      {{ if eq .Params.status "archived" }}{{ $meta = $meta | append "已归档" }}{{ end }}
+      {{ with $meta }}<span class="entry-meta">{{ delimit . " · " }}</span>{{ end }}
     </div>
   </li>
   {{ else }}

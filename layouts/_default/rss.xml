@@ -1,5 +1,4 @@
-{{- $pages := .RegularPages -}}
-{{- if .IsHome -}}{{- $pages = partial "entries.html" . -}}{{- end -}}
+{{- $pages := partial "feed-pages.html" . -}}
 {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -8,13 +7,16 @@
     <description>{{ .Description | default .Site.Params.description }}</description>
     <language>zh-CN</language>
     {{ with .OutputFormats.Get "RSS" }}<atom:link href="{{ .Permalink }}" rel="self" type="application/rss+xml"/>{{ end }}
-    {{ range $pages.ByDate.Reverse }}
+    {{ range sort $pages "Date" "desc" }}
     <item>
       <title>{{ .Title }}</title>
       <link>{{ .Permalink }}</link>
       <guid isPermaLink="true">{{ .Permalink }}</guid>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" }}</pubDate>
-      {{ range .Params.categories }}<category>{{ . }}</category>{{ end }}
+      {{ $page := . }}
+      {{ range site.Data.dimensions }}
+        {{ range $page.GetTerms .key }}<category domain="{{ .Parent.Permalink }}">{{ .Data.Term }}</category>{{ end }}
+      {{ end }}
       <description>{{ partial "rss-content.html" . }}</description>
     </item>
     {{ end }}

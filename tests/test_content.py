@@ -36,7 +36,7 @@ class ContentTest(unittest.TestCase):
     def test_empty_later_notes_do_not_create_a_homepage_link(self):
         with TemporaryDirectory(prefix='sanctum-empty-note-') as tmp:
             root = Path(tmp)
-            section = root / 'content' / 'notes'
+            section = root / 'content' / 'posts'
             section.mkdir(parents=True)
             shutil.copyfile(ROOT / 'content/_content.gotmpl', root / 'content/_content.gotmpl')
             (section / 'empty.md').write_text('---\ntitle: Empty\ndate: 2026-01-01\nstatus: note\nlater_notes: []\n---\nContent.\n')
@@ -52,11 +52,12 @@ class ContentTest(unittest.TestCase):
         """A reader can open media/links; each note points to its own footnote."""
         with TemporaryDirectory(prefix='sanctum-regression-') as tmp:
             root = Path(tmp)
-            section = root / 'content' / 'reflection'
+            section = root / 'content' / 'posts'
             section.mkdir(parents=True)
             shutil.copyfile(ROOT / 'content/_content.gotmpl', root / 'content/_content.gotmpl')
             (section / 'entry.md').write_text('''---
 title: Fixture
+url: /reflection/entry/
 date: 2025-01-01
 lastmod: 2026-01-03
 status: reflection
@@ -85,7 +86,7 @@ Original body.[^1]
 
 [Other](../other/)
 ''')
-            (section / 'other.md').write_text('---\ntitle: Other\ndate: 2025-01-02\nstatus: note\n---\nOther article.\n')
+            (section / 'other.md').write_text('---\ntitle: Other\nurl: /reflection/other/\ndate: 2025-01-02\nstatus: note\n---\nOther article.\n')
             output = root / 'public'
             command = [os.environ.get('HUGO_BIN', str(ROOT / '.tools/bin/hugo')),
                        '--source', str(ROOT), '--contentDir', str(root / 'content'),

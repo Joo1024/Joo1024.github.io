@@ -1,0 +1,4 @@
+{{ $label := .term }}
+{{ $dimension := partial "dimension.html" .key }}
+{{ with $dimension.labels }}{{ with index . (lower $.term) }}{{ $label = . }}{{ end }}{{ end }}
+{{ return $label }}

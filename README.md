@@ -30,7 +30,7 @@ bash scripts/install-hugo.sh
 python3 tests/check_site.py public
 ```
 
-无需数据库、API key、CMS 或第三方账户。示例内容有明确标记，可替换或删除。Now、Path 是持续更新单页，其余七个栏目每篇文章一个文件。
+无需数据库、API key、CMS 或第三方账户。示例内容有明确标记，可替换或删除。About、Now、Path 是固定单页；所有文章统一放在 `content/posts/`，不按主题分文件夹。时间是经，标签是纬。
 
 ## 目录
 
@@ -39,33 +39,28 @@ python3 tests/check_site.py public
 ├── hugo.toml                   # 站点地址、语言、Markdown 与输出配置
 ├── archetypes/default.md       # 新文章 metadata 模板
 ├── data/
-│   ├── sections.yaml           # 栏目唯一配置：类型、名称、中文、描述与年份分组
-│   └── navigation.yaml         # 全站导航：最近更新、存档、标签、关于
+│   ├── sections.yaml          # 今朝、道途、文字三个入口
+│   ├── dimensions.yaml        # 四个维度的显示名，常用词中文别名（非词汇白名单）
+│   ├── legacy.yaml            # 历史栏目与分类入口的兼容映射
+│   └── navigation.yaml        # 全站导航：最近更新、存档、标签、关于
 ├── content/
-│   ├── _content.gotmpl         # 自动生成栏目页，按目录继承分类
+│   ├── _content.gotmpl        # 生成文章总页、存档、更新及兼容入口
 │   ├── now.md                 # 今朝
-│   ├── path.md                # 道途，六个长期方向
-│   ├── archive.md             # 按原始年份归档
-│   ├── updates.md             # 最近更新与后记
+│   ├── path.md                # 道途，简短的长期方向
 │   ├── about.md               # 关于此地
-│   ├── reflection/            # 观心录
-│   ├── practice/              # 修炼录
-│   ├── making/                # 造物录
-│   ├── reading/               # 读书札记
-│   ├── journey/               # 行旅录
-│   ├── notes/                 # 杂记，保留原有 Hello World
-│   └── yearly/                # 岁录
+│   └── posts/                 # 每篇文章一个 Markdown 文件，含原有 Hello World
 ├── layouts/
-│   ├── index.html             # 首页：九入口、四近作、旧文后记
+│   ├── index.html             # 首页：三入口、四近作、旧文后记
 │   ├── 404.html
 │   ├── _default/
 │   │   ├── baseof.html        # 页面骨架
 │   │   ├── single.html        # 文章与持续更新页
-│   │   ├── list.html          # 栏目、单个标签/分类
-│   │   ├── terms.html         # 标签/分类索引
+│   │   ├── list.html          # 全部文章、维度词条
+│   │   ├── terms.html         # 多维标签总览与各维度索引
 │   │   ├── archive.html       # 年份索引
 │   │   ├── updates.html       # 最后更新时间索引
 │   │   ├── rss.xml            # 全文订阅，包含后记
+│   │   ├── legacy.html        # 旧入口自动跳转与无 JS 阅读链接
 │   │   └── _markup/render-image.html
 │   └── partials/              # metadata、导航、文章列表、后记
 ├── assets/css/main.css        # 排版与浅色/深色配色
@@ -77,7 +72,7 @@ python3 tests/check_site.py public
 ├── tests/
 │   ├── check_site.py          # Python 标准库生成结果与断链验收
 │   ├── test_content.py        # 独立 Markdown 边界用例，不依赖示例文章
-│   ├── test_sections.py       # 新栏目、分类推导、一致性与全站导航检查
+│   ├── test_metadata.py       # 可选字段、跨维度索引、旧订阅与空集合回归
 │   └── browser_smoke.py       # 可选浏览器验收，开发依赖 Playwright
 ├── docs/
 │   ├── writing.md             # 完整写作指南
@@ -85,22 +80,20 @@ python3 tests/check_site.py public
 └── .github/workflows/pages.yml
 ```
 
-栏目列表只维护在 `data/sections.yaml`：`kind: page` 是 Now、Path 这样的持续更新页；`kind: articles` 是文章栏目。Hugo 原生 content adapter 自动创建文章栏目页，并把目录名作为分类继承给文章；首页、归档、RSS、文章模板和 SEO 共用同一配置。无需给文章填写 `categories`，也无需手动创建栏目 `_index.md`。旧文章若保留 `categories`，其值必须是与目录一致的单项数组，否则构建报错，提示删去该字段。
+日常只编辑三个固定单页和 `posts/*.md`。文章只要求 `title` 与原始 `date`，无需填写 `categories`、注册栏目或创建 `_index.md`。所有公开文章自动进入首页、归档、最近更新与全站 RSS；相邻文章沿全部文字的时间顺序排列。
 
-Hugo 自动生成 `/tags/`、`/categories/`、`/sitemap.xml`、`/robots.txt`。生成的 `public/`、工具二进制和缓存不进入 Git。最近更新、存档、标签、关于统一位于所有页面的页首导航；页脚保留 RSS。
+可选元数据：`type` 是单个形式（如 reflection/note/practice/making），`domains` 是人生领域数组，`paths` 是长期方向数组，`tags` 是具体主题数组。词汇开放，新增值就会生成索引，不需要修改配置；数组留空或省略都可以。阅读、行旅与年度回顾通过主题标签关联。不要建立复杂的层级，也不必给每篇文章填满四个维度。
+
+Hugo 原生生成 `/types/`、`/domains/`、`/paths/`、`/tags/` 与各词条页；`/tags/` 集中展示所有非空维度。`/archive/`、`/updates/` 由 content adapter 自动生成。旧 `/categories/` 与七个栏目只保留兼容入口，不再是内容分类。`public/`、工具二进制和缓存不进入 Git。页首导航统一，页脚保留 RSS。
 
 ## 写下一篇
 
-创建 `content/reflection/my-question.md`：
+创建 `content/posts/my-question.md`：
 
 ```markdown
 ---
 title: 一个值得留下的问题
 date: 2026-10-02
-lastmod: 2026-10-02
-description: 一句话介绍。
-tags: [选择]
-status: reflection
 ---
 
 从一个真实的念头开始。
@@ -113,14 +106,12 @@ status: reflection
 提交并推送到 `main`，发布会自动进行：
 
 ```sh
-git add content/reflection/my-question.md
+git add content/posts/my-question.md
 git commit -m "write: 一个值得留下的问题"
 git push origin HEAD:main
 ```
 
-更多 metadata、脚注、图片、后记、草稿与年度回顾见 [写作指南](docs/writing.md)。首页最近四篇、分类、标签、归档和 RSS 都自动更新。文件名决定 URL，标题修改不会造成断链。同栏目上一篇/下一篇按原始日期排列。
-
-新增栏目也只需在 `data/sections.yaml` 注册一次，再写入对应目录；步骤见写作指南中的“新增栏目”。不再维护另一份文章栏目名单或逐栏目 URL 配置。
+更多 metadata、脚注、图片、后记、草稿与年度回顾见 [写作指南](docs/writing.md)。新文章地址默认为 `/posts/my-question/`，修改标题、形式或标签不会改变它。既有文章显式保留原 URL；移动后的文件路径与公开地址可以不同。
 
 ## GitHub Pages
 
@@ -139,7 +130,7 @@ git push origin HEAD:main
 - 站点名、标题、正文与导航统一使用系统无衬线，代码使用等宽字体；通过字号、字重与留白区分层级。栏目中文为主、英文为辅。正文 17–18px、行高 1.8、宽度 680px；导航与说明 13–14px，日期至少 12px。
 - 原生 Markdown 目录、脚注、引用、代码高亮、表格、图片图注与懒加载。
 - 基础 SEO：描述、canonical、Open Graph、BlogPosting 日期数据、sitemap、robots。
-- 全站订阅 `/index.xml`，每个文章栏目也有自己的 `index.xml`。
+- 全站订阅 `/index.xml`；文章总页、各维度及各词条也有 `index.xml`。旧栏目与分类订阅地址继续返回有效 RSS。
 - 无广告、统计、追踪、弹窗、登录、点赞、评论指标或社交分享组件。
 
 旧站 `?p=posts/hello.md` 会跳转到新的 `/notes/hello-world/`。原始发布日期 2026-01-09 保留；迁移只补全了原文未闭合的代码围栏。旧站文章列表中不存在的 Git 速查页没有虚构补写。
@@ -150,7 +141,7 @@ git push origin HEAD:main
 # 所有实际文章、HTML 内部链接/锚点、RSS、SEO 等
 python3 tests/check_site.py public
 
-# 后记脚注、空后记与订阅相对地址回归
+# 多维索引、最简文章、旧订阅、后记脚注等独立回归
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 # 首版示例仍保留时，额外验收脚注、目录、代码与后记

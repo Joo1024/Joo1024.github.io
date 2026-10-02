@@ -1,0 +1,12 @@
+{{ $target := . }}
+{{ with .Params.legacy }}{{ $target = partial "legacy-target.html" $ }}{{ end }}
+{{ $pages := $target.RegularPages }}
+{{ if or .IsHome .Params.legacy.all }}
+  {{ $pages = partial "entries.html" . }}
+{{ else if eq $target.Kind "taxonomy" }}
+  {{ $pages = slice }}
+  {{ range partial "entries.html" . }}
+    {{ if .GetTerms $target.Data.Plural }}{{ $pages = $pages | append . }}{{ end }}
+  {{ end }}
+{{ end }}
+{{ return $pages }}

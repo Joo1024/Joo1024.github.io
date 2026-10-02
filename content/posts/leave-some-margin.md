@@ -7,6 +7,10 @@ tags: [生活, 时间]
 status: note
 sample: true
 toc: false
+url: /notes/leave-some-margin/
+type: note
+domains: [life]
+paths: [自在]
 ---
 
 偶尔把一天安排得太满，连一阵风都像是打断。后来尝试在事情之间留一点间隔，不立刻走向下一项。

@@ -1,4 +1,4 @@
-{{/* Native Hugo content adapter: sections and inherited categories share one source. */}}
+{{/* Generate navigation pages without making writers maintain index files. */}}
 {{ $seen := slice }}
 {{ range site.Data.sections }}
   {{ if not (in (slice "page" "articles") .kind) }}
@@ -7,8 +7,16 @@
   {{ if in $seen .slug }}{{ errorf "Duplicate section %s in data/sections.yaml" .slug }}{{ end }}
   {{ $seen = $seen | append .slug }}
   {{ if eq .kind "articles" }}
-    {{ $params := dict "chinese" .chinese "group_by_year" (.group_by_year | default false) }}
-    {{ $cascade := slice (dict "params" (dict "categories" (slice .slug)) "target" (dict "kind" "page")) }}
-    {{ $.AddPage (dict "kind" "section" "path" .slug "title" .name "description" .description "params" $params "cascade" $cascade) }}
+    {{ $.AddPage (dict "kind" "section" "path" .slug "title" .name "description" .description "params" (dict "chinese" .chinese)) }}
   {{ end }}
 {{ end }}
+{{ .AddPage (dict "kind" "page" "path" "archive" "title" "Archive" "layout" "archive" "description" "沿着年份与标签，回看全部文字。") }}
+{{ .AddPage (dict "kind" "page" "path" "updates" "title" "Updates" "layout" "updates" "description" "新的记录与旧文后记，按最后更新时间排列。") }}
+{{ range site.Data.legacy }}
+  {{ $legacy := dict "key" .key "term" .term }}
+  {{ $title := .title }}
+  {{ range slice .slug (printf "categories/%s" .slug) }}
+    {{ $.AddPage (dict "kind" "section" "path" . "title" $title "layout" "legacy" "outputs" (slice "HTML" "RSS") "params" (dict "legacy" $legacy) "build" (dict "list" "never" "render" "always")) }}
+  {{ end }}
+{{ end }}
+{{ .AddPage (dict "kind" "section" "path" "categories" "title" "旧分类索引" "layout" "legacy" "outputs" (slice "HTML" "RSS") "params" (dict "legacy" (dict "key" "tags" "all" true)) "build" (dict "list" "never" "render" "always")) }}

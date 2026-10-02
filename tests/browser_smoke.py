@@ -29,7 +29,7 @@ def run(base, chromium, screenshots):
                 if urlsplit(request.url).netloc != urlsplit(base).netloc else None)
         page.goto(base + '/', wait_until='networkidle')
         assert page.title() == 'Sanctum'
-        assert page.locator('.home-sections > a').count() == 9
+        assert page.locator('.home-sections > a').count() == 3
         assert page.locator('.recent-section .entry-list > li').count() == 4
         assert page.locator('#theme-toggle').inner_text() == '配色 · 系统'
         if screenshots:
@@ -64,19 +64,19 @@ def run(base, chromium, screenshots):
         page.locator('.footnote-ref').click()
         assert page.locator('.footnotes').count() == 1
         page.locator('.post-navigation a').click()
-        assert page.url.endswith('/reflection/enough-for-a-day/')
-        page.locator('.article-taxonomy a', has_text='#生活').click()
+        assert page.url.endswith('/yearly/2025/')
+        page.locator('.article-taxonomy a[href*="/tags/"]', has_text='生活').click()
         assert page.locator('.entry-list a', has_text='怎样算是好好度过了一天').count() == 1
         page.goto(base + '/practice/small-repetitions/')
         assert page.locator('.highlight pre').count() == 1
         assert page.locator('blockquote').count() == 1
-        print('PASS article dates, later notes, TOC, footnotes, adjacent article, Chinese tag, code')
+        print('PASS preserved article dates, later notes, TOC, footnotes, chronological navigation, Chinese tag, code')
 
         for width in (320, 375, 768, 1440):
             page.set_viewport_size({'width': width, 'height': 900})
             for route in ('/', '/now/', '/path/', '/reflection/on-keeping-a-place/',
                           '/practice/small-repetitions/', '/journey/before-the-ridge/',
-                          '/archive/', '/tags/', '/categories/', '/updates/'):
+                          '/archive/', '/tags/', '/types/', '/domains/', '/paths/', '/updates/'):
                 response = page.goto(base + route)
                 assert response.status == 200, route
                 assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), (width, route)
@@ -85,7 +85,7 @@ def run(base, chromium, screenshots):
                 page.screenshot(path=str(screenshots / 'home-mobile.png'), full_page=True)
                 page.goto(base + '/reflection/on-keeping-a-place/')
                 page.screenshot(path=str(screenshots / 'article-mobile.png'), full_page=True)
-        print('PASS 40 responsive route/viewport checks (320–1440px)')
+        print('PASS 48 responsive route/viewport checks (320–1440px)')
 
         page.goto(base + '/?p=posts/hello.md')
         page.wait_for_url('**/notes/hello-world/')

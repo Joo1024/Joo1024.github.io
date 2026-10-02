@@ -6,6 +6,8 @@ description: 这间书房更早的一页，保留最初的记录。
 tags: [杂记, 开始]
 status: archived
 toc: false
+url: /notes/hello-world/
+type: note
 ---
 
 # Hello World

@@ -1,0 +1,6 @@
+{{ $dimension := .dimension }}
+<ul class="term-list">
+  {{ range .terms.Alphabetical }}
+  <li><a href="{{ .Page.RelPermalink }}">{{ partial "term-label.html" (dict "key" $dimension.key "term" .Page.Data.Term) }}<span>{{ .Count }} 篇</span></a></li>
+  {{ else }}<li class="empty-state">这里还留着空白。</li>{{ end }}
+</ul>

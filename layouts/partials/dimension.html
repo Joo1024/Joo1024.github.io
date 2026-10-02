@@ -1,0 +1,3 @@
+{{ $result := dict }}
+{{ range where site.Data.dimensions "key" . }}{{ $result = . }}{{ end }}
+{{ return $result }}

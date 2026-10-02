@@ -1,10 +1,6 @@
 ---
 title: "{{ replace .File.ContentBaseName `-` ` ` | title }}"
 date: {{ .Date }}
-lastmod: {{ .Date }}
-description: "一句简短的介绍。"
-tags: []
-status: note
 draft: true
 ---
 

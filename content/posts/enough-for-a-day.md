@@ -6,6 +6,10 @@ description: 从完成了多少，转向是否认真地在场。
 tags: [生活, 时间]
 status: note
 sample: true
+url: /reflection/enough-for-a-day/
+type: reflection
+domains: [life, mind]
+paths: [自在]
 ---
 
 ## 忙碌之外

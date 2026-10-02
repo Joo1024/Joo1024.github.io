@@ -3,9 +3,13 @@ title: 山脊之前，停下来的一刻
 date: 2026-09-19
 lastmod: 2026-09-19
 description: 一段短路程，一幅风景，以及不急于抵达的时间。
-tags: [自然, 行走]
+tags: [自然, 行走, 行旅]
 status: note
 sample: true
+url: /journey/before-the-ridge/
+type: reflection
+domains: [life]
+paths: [自在]
 ---
 
 ## 路上

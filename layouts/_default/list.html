@@ -1,20 +1,11 @@
 {{ define "main" }}
-{{ $chinese := .Params.chinese }}
-{{ if and (eq .Kind "term") (eq .Data.Singular "category") }}
-  {{ with partial "section-config.html" .Data.Term }}{{ $chinese = .chinese }}{{ end }}
-{{ end }}
+{{ $dimension := partial "dimension.html" .Data.Plural }}
 <header class="page-heading">
-  <p class="eyebrow">{{ if eq .Kind "term" }}{{ if eq .Data.Singular "tag" }}标签{{ else }}分类{{ end }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
-  <h1>{{ if $chinese }}{{ $chinese }} <span lang="en">{{ .Title }}</span>{{ else }}{{ .Title }}{{ end }}</h1>
+  <p class="eyebrow">{{ if eq .Kind "term" }}{{ $dimension.name }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
+  <h1>{{ if eq .Kind "term" }}{{ partial "term-label.html" (dict "key" .Data.Plural "term" .Data.Term) }}{{ else if .Params.chinese }}{{ .Params.chinese }} <span lang="en">{{ .Title }}</span>{{ else }}{{ .Title }}{{ end }}</h1>
   {{ with .Description }}<p class="page-description">{{ . }}</p>{{ end }}
 </header>
 {{ with .Content }}<div class="prose section-intro">{{ . }}</div>{{ end }}
-{{ if .Params.group_by_year }}
-  {{ range .RegularPages.GroupByDate "2006" }}
-    <section class="year-group"><h2>{{ .Key }}</h2>{{ partial "entry-list.html" (dict "pages" .Pages.ByDate.Reverse "descriptions" true) }}</section>
-  {{ else }}<p class="empty-state">这一年的文字，还在路上。</p>{{ end }}
-{{ else }}
-  {{ partial "entry-list.html" (dict "pages" .RegularPages.ByDate.Reverse "descriptions" true) }}
-{{ end }}
-{{ if eq .Kind "term" }}<p class="back-link"><a href="{{ printf "%s/" .Data.Plural | relURL }}">← 返回{{ if eq .Data.Singular "tag" }}标签{{ else }}分类{{ end }}索引</a></p>{{ end }}
+{{ partial "entry-list.html" (dict "pages" .RegularPages.ByDate.Reverse "descriptions" true) }}
+{{ if eq .Kind "term" }}<p class="back-link"><a href="{{ .Parent.RelPermalink }}">← 返回{{ $dimension.name }}索引</a> · <a href="{{ "tags/" | relURL }}">全部标签</a></p>{{ end }}
 {{ end }}

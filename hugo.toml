@@ -12,8 +12,16 @@ disableKinds = []
   subtitle = 'A place for reflection, practice, and making.'
 
 [taxonomies]
-  category = 'categories'
+  form = 'type'
+  domain = 'domains'
+  path = 'paths'
   tag = 'tags'
+
+# Native taxonomy values come from the plural key; keep authors' scalar type.
+[permalinks.taxonomy]
+  type = '/types/'
+[permalinks.term]
+  type = '/types/:slug/'
 
 [frontmatter]
   lastmod = ['lastmod', 'date']

@@ -1,0 +1,27 @@
+- key: type
+  name: 形式
+  english: Forms
+  description: 随笔、短记，或一次实践留下的记录。
+  labels:
+    reflection: 随笔
+    note: 短记
+    practice: 实践记录
+    making: 作品记录
+- key: domains
+  name: 领域
+  english: Domains
+  description: 一篇文字，可以经过生活的几个领域。
+  labels:
+    mind: 心智
+    body: 身体
+    work: 工作
+    life: 生活
+    craft: 手艺
+- key: paths
+  name: 方向
+  english: Paths
+  description: 与长期愿意走下去的方向相遇。
+- key: tags
+  name: 主题
+  english: Topics
+  description: 循着一个念头，寻找相邻的文字。

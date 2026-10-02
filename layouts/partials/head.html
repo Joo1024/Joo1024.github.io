@@ -4,10 +4,16 @@
 <title>{{ if not .IsHome }}{{ .Title }} · {{ end }}Sanctum</title>
 {{ $description := .Description | default .Site.Params.description }}
 <meta name="description" content="{{ $description }}">
-<link rel="canonical" href="{{ .Permalink }}">
+{{ $canonical := .Permalink }}
+{{ if .Params.legacy }}
+  {{ $target := partial "legacy-target.html" . }}
+  {{ $canonical = $target.Permalink }}
+  <meta http-equiv="refresh" content="0;url={{ $target.RelPermalink }}">
+{{ end }}
+<link rel="canonical" href="{{ $canonical }}">
 <meta property="og:title" content="{{ .Title }}">
 <meta property="og:description" content="{{ $description }}">
-<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:url" content="{{ $canonical }}">
 <meta property="og:site_name" content="Sanctum">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:type" content="{{ if partial "is-article.html" . }}article{{ else }}website{{ end }}">
