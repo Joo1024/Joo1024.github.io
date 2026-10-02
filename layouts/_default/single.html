@@ -1,0 +1,33 @@
+{{ define "main" }}
+{{ $isArticle := in (slice "reflection" "practice" "making" "reading" "journey" "notes" "yearly") .Section }}
+{{ if $isArticle }}
+{{ if not (in (slice "note" "reflection" "ongoing" "archived") .Params.status) }}{{ errorf "Invalid or missing status in %s; use note, reflection, ongoing, or archived" .File.Path }}{{ end }}
+{{ if not .Params.date }}{{ errorf "Missing original date in %s" .File.Path }}{{ end }}
+{{ if lt .Lastmod .Date }}{{ errorf "lastmod predates date in %s" .File.Path }}{{ end }}
+{{ range .Params.later_notes }}{{ if gt (time.AsTime .date) $.Lastmod }}{{ errorf "Update lastmod to include later note date in %s" $.File.Path }}{{ end }}{{ end }}
+{{ end }}
+<article class="reading-page">
+  <header class="article-heading">
+    <p class="eyebrow">{{ if $isArticle }}<a href="{{ .CurrentSection.RelPermalink }}">{{ partial "section-name.html" .Section }}</a>{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
+    <h1>{{ .Title }}{{ with .Params.chinese }} <span>{{ . }}</span>{{ end }}</h1>
+    {{ with .Description }}<p class="article-description">{{ . }}</p>{{ end }}
+    <div class="article-meta">
+      {{ if $isArticle }}<span>发布于 <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.01.02" }}</time></span>{{ end }}
+      {{ if not .Lastmod.IsZero }}<span>更新于 <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2006.01.02" }}</time></span>{{ end }}
+      {{ with .Params.status }}<span class="status-label">{{ . }}</span>{{ end }}
+    </div>
+    {{ if $isArticle }}<div class="article-taxonomy">{{ range .GetTerms "categories" }}<a href="{{ .RelPermalink }}">{{ partial "section-name.html" .LinkTitle }}</a>{{ end }}{{ range .GetTerms "tags" }}<a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>{{ end }}</div>{{ end }}
+  </header>
+  {{ if .Params.sample }}<p class="sample-notice">示例内容 · 用于呈现写作与排版方式，可替换为你自己的记录。</p>{{ end }}
+  {{ if and (ne .Params.toc false) (gt (len (findRE "<li>" .TableOfContents)) 0) }}
+  <details class="article-toc"><summary>此页目录 <span>Contents</span></summary>{{ .TableOfContents }}{{ if .Params.later_notes }}<a class="toc-later" href="#later-notes">后记 / Later notes</a>{{ end }}</details>
+  {{ end }}
+  <div class="prose">{{ .Content }}{{ partial "later-notes.html" . }}</div>
+  {{ if $isArticle }}
+  <nav class="post-navigation" aria-label="同栏目相邻文章">
+    <div>{{ with .PrevInSection }}<span>上一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} ←</a>{{ end }}</div>
+    <div>{{ with .NextInSection }}<span>下一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}</div>
+  </nav>
+  {{ else if .Params.later_notes }}<p class="quiet living-note">这是一页持续更新的记录。旧的片段保留在后记里。</p>{{ end }}
+</article>
+{{ end }}

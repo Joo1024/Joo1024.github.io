@@ -1,0 +1,16 @@
+{{ define "main" }}
+<header class="page-heading">
+  <p class="eyebrow">{{ if eq .Kind "term" }}{{ if eq .Data.Singular "tag" }}标签{{ else }}分类{{ end }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
+  <h1>{{ .Title }}{{ with .Params.chinese }} <span>{{ . }}</span>{{ end }}</h1>
+  {{ with .Description }}<p class="page-description">{{ . }}</p>{{ end }}
+</header>
+{{ with .Content }}<div class="prose section-intro">{{ . }}</div>{{ end }}
+{{ if eq .Section "yearly" }}
+  {{ range .RegularPages.GroupByDate "2006" }}
+    <section class="year-group"><h2>{{ .Key }}</h2>{{ partial "entry-list.html" (dict "pages" .Pages.ByDate.Reverse "descriptions" true) }}</section>
+  {{ else }}<p class="empty-state">这一年的文字，还在路上。</p>{{ end }}
+{{ else }}
+  {{ partial "entry-list.html" (dict "pages" .RegularPages.ByDate.Reverse "descriptions" true) }}
+{{ end }}
+{{ if eq .Kind "term" }}<p class="back-link"><a href="{{ printf "%s/" .Data.Plural | relURL }}">← 返回{{ if eq .Data.Singular "tag" }}标签{{ else }}分类{{ end }}索引</a></p>{{ end }}
+{{ end }}

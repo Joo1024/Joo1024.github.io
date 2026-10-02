@@ -1,0 +1,3 @@
+{{ $name := . }}
+{{ range site.Data.sections }}{{ if eq .slug $name }}{{ $name = printf "%s · %s" .name .chinese }}{{ end }}{{ end }}
+{{ return $name }}

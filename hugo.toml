@@ -1,0 +1,55 @@
+baseURL = 'https://joo1024.github.io/'
+title = 'Sanctum'
+languageCode = 'zh-CN'
+defaultContentLanguage = 'zh'
+timeZone = 'Asia/Shanghai'
+enableRobotsTXT = true
+enableEmoji = false
+disableKinds = []
+
+[params]
+  description = '一个记录思考、修炼、创作与时间的地方。A place for reflection, practice, and making.'
+  subtitle = 'A place for reflection, practice, and making.'
+
+[taxonomies]
+  category = 'categories'
+  tag = 'tags'
+
+[permalinks]
+  reflection = '/reflection/:contentbasename/'
+  practice = '/practice/:contentbasename/'
+  making = '/making/:contentbasename/'
+  reading = '/reading/:contentbasename/'
+  journey = '/journey/:contentbasename/'
+  notes = '/notes/:contentbasename/'
+  yearly = '/yearly/:contentbasename/'
+
+[frontmatter]
+  lastmod = ['lastmod', 'date']
+
+[outputs]
+  home = ['HTML', 'RSS']
+  section = ['HTML', 'RSS']
+  taxonomy = ['HTML', 'RSS']
+  term = ['HTML', 'RSS']
+
+[markup.goldmark.renderer]
+  unsafe = false
+[markup.goldmark.parser.attribute]
+  block = true
+  title = true
+[markup.tableOfContents]
+  startLevel = 2
+  endLevel = 3
+  ordered = false
+[markup.highlight]
+  noClasses = false
+  lineNos = false
+  tabWidth = 2
+
+[sitemap]
+  changeFreq = ''
+  priority = -1
+
+[build]
+  writeStats = false

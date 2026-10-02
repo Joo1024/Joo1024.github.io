@@ -1,0 +1,12 @@
+{{ with .Params.later_notes }}
+<section id="later-notes" class="later-notes" aria-labelledby="later-notes-heading">
+  <h2 id="later-notes-heading">后记 <span>Later notes</span></h2>
+  <p class="quiet">保留当时的文字，把后来的想法放在这里。</p>
+  {{ range sort . "date" }}
+  <div class="later-note">
+    <h3><time datetime="{{ .date }}">{{ (time.AsTime .date).Format "2006.01.02" }}</time></h3>
+    {{ .text | markdownify }}
+  </div>
+  {{ end }}
+</section>
+{{ end }}

@@ -1,0 +1,9 @@
+{{ define "main" }}
+{{ $entries := partial "entries.html" . }}
+<header class="page-heading"><p class="eyebrow">Time / 时间</p><h1>存档 <span>Archive</span></h1><p class="page-description">文字留在写下它们的年份里。后来改变的想法，留在后记里。</p></header>
+<nav class="archive-nav" aria-label="存档索引"><a href="{{ "categories/" | relURL }}">按分类</a><a href="{{ "tags/" | relURL }}">按标签</a><a href="{{ "updates/" | relURL }}">最近更新</a></nav>
+<nav class="year-nav" aria-label="选择年份">{{ range $entries.GroupByDate "2006" }}<a href="#year-{{ .Key }}">{{ .Key }}</a>{{ end }}</nav>
+{{ range $entries.GroupByDate "2006" }}
+<section class="year-group" id="year-{{ .Key }}"><h2>{{ .Key }}<span>{{ len .Pages }} 篇记录</span></h2>{{ partial "entry-list.html" (dict "pages" .Pages.ByDate.Reverse "descriptions" false) }}</section>
+{{ else }}<p class="empty-state">时间的第一页，尚待落笔。</p>{{ end }}
+{{ end }}

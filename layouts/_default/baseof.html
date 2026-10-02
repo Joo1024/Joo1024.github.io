@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body data-home="{{ .Site.Home.RelPermalink }}" data-legacy-hello="{{ "notes/hello-world/" | relURL }}">
+  <a class="skip-link" href="#main">跳至内容</a>
+  <div class="site-shell">
+    {{ partial "header.html" . }}
+    <main id="main" tabindex="-1">{{ block "main" . }}{{ end }}</main>
+    {{ partial "footer.html" . }}
+  </div>
+</body>
+</html>

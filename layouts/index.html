@@ -1,0 +1,28 @@
+{{ define "main" }}
+<section class="home-intro" aria-labelledby="home-heading">
+  <p class="eyebrow">一处居所 · 一份长期记录</p>
+  <h1 id="home-heading">Sanctum</h1>
+  <p class="home-subtitle">{{ .Site.Params.subtitle }}</p>
+  <p class="home-description">记录思考与练习，书页与行旅。<br>让尚未完成的自己，也有一处可以停留。</p>
+</section>
+<nav class="home-sections" aria-label="九个栏目">
+  {{ range .Site.Data.sections }}
+  <a href="{{ printf "%s/" .slug | relURL }}">
+    <span class="section-name">{{ .name }} <span>{{ .chinese }}</span></span>
+    <span class="section-description">{{ .description }}</span>
+  </a>
+  {{ end }}
+</nav>
+{{ $entries := partial "entries.html" . }}
+<section class="recent-section" aria-labelledby="recent-heading">
+  <div class="section-heading"><h2 id="recent-heading">最近落笔 <span>Recent entries</span></h2><a href="{{ "archive/" | relURL }}">所有文字 <span aria-hidden="true">↗</span></a></div>
+  {{ partial "entry-list.html" (dict "pages" (first 4 $entries.ByDate.Reverse) "descriptions" false) }}
+</section>
+{{ $withNotes := where $entries "Params.later_notes" "!=" nil }}
+{{ with first 1 $withNotes.ByLastmod.Reverse }}
+<aside class="home-later" aria-label="旧文的新想法">
+  <span class="eyebrow">旧文 · 新的想法</span>
+  {{ range . }}<a href="{{ .RelPermalink }}#later-notes">{{ .Title }} <span aria-hidden="true">↗</span></a><span class="quiet">{{ .Lastmod.Format "2006.01.02" }} 追加后记</span>{{ end }}
+</aside>
+{{ end }}
+{{ end }}
