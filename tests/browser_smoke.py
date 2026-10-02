@@ -53,7 +53,7 @@ def run(base, chromium, screenshots):
         page.emulate_media(color_scheme='light')
         print('PASS theme cycle, persistence, system dark preference')
 
-        page.goto(base + '/reflection/on-keeping-a-place/')
+        page.goto(base + '/posts/on-keeping-a-place/')
         assert page.locator('h1').inner_text() == '给未完成的自己，留一处地方'
         assert '发布于 2025.11.16' in page.locator('.article-meta').inner_text()
         assert '更新于 2026.09.20' in page.locator('.article-meta').inner_text()
@@ -64,18 +64,18 @@ def run(base, chromium, screenshots):
         page.locator('.footnote-ref').click()
         assert page.locator('.footnotes').count() == 1
         page.locator('.post-navigation a').click()
-        assert page.url.endswith('/yearly/2025/')
+        assert page.url.endswith('/posts/2025/')
         page.locator('.article-taxonomy a[href*="/tags/"]', has_text='生活').click()
         assert page.locator('.entry-list a', has_text='怎样算是好好度过了一天').count() == 1
-        page.goto(base + '/practice/small-repetitions/')
+        page.goto(base + '/posts/small-repetitions/')
         assert page.locator('.highlight pre').count() == 1
         assert page.locator('blockquote').count() == 1
         print('PASS preserved article dates, later notes, TOC, footnotes, chronological navigation, Chinese tag, code')
 
         for width in (320, 375, 768, 1440):
             page.set_viewport_size({'width': width, 'height': 900})
-            for route in ('/', '/now/', '/path/', '/reflection/on-keeping-a-place/',
-                          '/practice/small-repetitions/', '/journey/before-the-ridge/',
+            for route in ('/', '/now/', '/path/', '/posts/on-keeping-a-place/',
+                          '/posts/small-repetitions/', '/posts/before-the-ridge/',
                           '/archive/', '/tags/', '/forms/', '/domains/', '/paths/', '/updates/'):
                 response = page.goto(base + route)
                 assert response.status == 200, route
@@ -83,19 +83,18 @@ def run(base, chromium, screenshots):
             if width == 375 and screenshots:
                 page.goto(base + '/')
                 page.screenshot(path=str(screenshots / 'home-mobile.png'), full_page=True)
-                page.goto(base + '/reflection/on-keeping-a-place/')
+                page.goto(base + '/posts/on-keeping-a-place/')
                 page.screenshot(path=str(screenshots / 'article-mobile.png'), full_page=True)
         print('PASS 48 responsive route/viewport checks (320–1440px)')
 
-        page.goto(base + '/?p=posts/hello.md')
-        page.wait_for_url('**/notes/hello-world/')
+        page.goto(base + '/posts/hello-world/')
         assert page.locator('.prose code').inner_text().strip() == 'console.log("hello");'
-        print('PASS legacy Hello World direct link')
+        print('PASS Hello World at its canonical post URL')
         context.close()
 
         offline = browser.new_context(java_script_enabled=False, color_scheme='dark')
         nojs = offline.new_page()
-        nojs.goto(base + '/reflection/on-keeping-a-place/')
+        nojs.goto(base + '/posts/on-keeping-a-place/')
         assert nojs.locator('#later-notes').is_visible()
         assert nojs.locator('#theme-toggle').is_hidden()
         nojs.locator('.article-toc summary').click()

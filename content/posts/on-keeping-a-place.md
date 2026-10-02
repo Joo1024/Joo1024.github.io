@@ -11,7 +11,6 @@ later_notes:
       重新读到这篇文字时，发现当时把“留下来”看得太重了。有些东西需要保存，有些东西也可以自然消散。
 
       我仍然想保留一个长期写作的地方，但不再要求每一段经历都成为记录。**档案可以有空白，生活不需要为档案服务。** 原来的判断留在上面，让这次变化也有来处。
-url: /reflection/on-keeping-a-place/
 form: reflection
 domains: [mind, life]
 paths: [明心, 自在]

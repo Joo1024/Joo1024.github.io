@@ -19,12 +19,6 @@
   }
   apply();
   document.addEventListener('DOMContentLoaded', () => {
-    // Preserve the original blog's only existing query-string article URL.
-    if (location.pathname === document.body.dataset.home &&
-        new URLSearchParams(location.search).get('p') === 'posts/hello.md') {
-      location.replace(document.body.dataset.legacyHello);
-      return;
-    }
     const button = document.getElementById('theme-toggle');
     if (!button) return;
     button.hidden = false;

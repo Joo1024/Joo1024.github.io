@@ -33,7 +33,6 @@ class ContentTest(unittest.TestCase):
             section.mkdir()
             (section / 'entry.md').write_text('''---
 title: Fixture
-url: /reflection/entry/
 date: 2025-01-01
 lastmod: 2026-01-03
 later_notes:
@@ -61,10 +60,10 @@ Original body.[^1]
 
 [Other](../other/)
 ''')
-            (section / 'other.md').write_text('---\ntitle: Other\nurl: /reflection/other/\ndate: 2025-01-02\n---\nOther article.\n')
+            (section / 'other.md').write_text('---\ntitle: Other\ndate: 2025-01-02\n---\nOther article.\n')
             result, output = build_site(root)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            article = Document((output / 'reflection/entry/index.html').read_text())
+            article = Document((output / 'posts/entry/index.html').read_text())
             self.assertFalse(article.duplicate_ids, 'Body and later notes must have unique heading/footnote IDs')
             refs = [link for link in article.links if link.startswith('#') and 'fn:' in link]
             self.assertEqual(len(refs), 3)
@@ -75,7 +74,7 @@ Original body.[^1]
             entry = next(item for item in rss.findall('./channel/item') if item.findtext('title') == 'Fixture')
             feed = Document(entry.findtext('description'))
             self.assertIn('https://example.com/sanctum/images/ridge.svg', feed.links)
-            self.assertIn('https://example.com/sanctum/reflection/other/', feed.links)
+            self.assertIn('https://example.com/sanctum/posts/other/', feed.links)
             for link in feed.links:
                 self.assertTrue(link.startswith('https://example.com/sanctum/'), link)
             self.assertIn('2025', entry.findtext('pubDate'), 'Later notes must retain original RSS publication date')

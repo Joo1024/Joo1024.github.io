@@ -6,7 +6,6 @@ description: 空白不是等待被填满的地方。
 tags: [生活, 时间]
 sample: true
 toc: false
-url: /notes/leave-some-margin/
 form: note
 domains: [life]
 paths: [自在]

@@ -5,7 +5,6 @@ lastmod: 2026-09-19
 description: 一段短路程，一幅风景，以及不急于抵达的时间。
 tags: [自然, 行走, 行旅]
 sample: true
-url: /journey/before-the-ridge/
 form: reflection
 domains: [life]
 paths: [自在]

@@ -1,4 +1,4 @@
-"""Exercise flat Markdown, native multidimensional indices and old feed URLs."""
+"""Exercise flat Markdown, native multidimensional indices and post URLs."""
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.parse import unquote, urlsplit
@@ -121,9 +121,9 @@ class MetadataTest(unittest.TestCase):
 
     def test_obsolete_column_pages_and_feeds_are_not_generated(self):
         with TemporaryDirectory(prefix='sanctum-no-legacy-') as tmp:
-            result, output = self.build(Path(tmp), 'form: practice\nurl: /practice/entry/\n')
+            result, output = self.build(Path(tmp), 'form: practice\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertTrue((output / 'practice/entry/index.html').is_file())
+            self.assertTrue((output / 'posts/entry/index.html').is_file())
             old_routes = ('reflection', 'practice', 'making', 'notes', 'reading', 'journey',
                           'yearly', 'categories', 'categories/practice', 'types', 'types/practice')
             for route in old_routes:
@@ -174,14 +174,15 @@ class MetadataTest(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn('Missing original ' + field, result.stdout + result.stderr)
 
-    def test_original_article_url_and_feed_guid_remain_valid(self):
-        with TemporaryDirectory(prefix='sanctum-original-url-') as tmp:
-            result, output = self.build(Path(tmp), 'url: /practice/entry/\nform: practice\n')
+    def test_post_filename_defines_url_and_feed_guid(self):
+        with TemporaryDirectory(prefix='sanctum-post-url-') as tmp:
+            result, output = self.build(Path(tmp), 'form: practice\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertTrue((output / 'practice/entry/index.html').is_file())
+            self.assertTrue((output / 'posts/entry/index.html').is_file())
             for path in ('index.xml', 'posts/index.xml', 'forms/practice/index.xml'):
                 rss = ET.fromstring((output / path).read_text())
-                self.assertEqual(rss.findtext('./channel/item/guid'), BASE + 'practice/entry/', path)
+                self.assertEqual(rss.findtext('./channel/item/link'), BASE + 'posts/entry/', path)
+                self.assertEqual(rss.findtext('./channel/item/guid'), BASE + 'posts/entry/', path)
                 self.assertIn('2025', rss.findtext('./channel/item/pubDate'), path)
 
     def test_empty_site_has_valid_empty_indices_and_feeds(self):

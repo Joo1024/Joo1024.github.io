@@ -88,13 +88,13 @@ def check(root, base, examples=False):
     archive = read('archive/index.html')
     if examples:
         require('year-2025' in archive and 'year-2026' in archive, 'Archive must group original years')
-        article = read('reflection/on-keeping-a-place/index.html')
+        article = read('posts/on-keeping-a-place/index.html')
         for marker in ('TableOfContents', 'footnotes', 'later-notes', 'datePublished', 'dateModified', 'post-navigation', 'reflection', '2025-11-16', '2026-09-20'):
             require(marker in article, f'Article must provide {marker}')
         require('2026-09-20' in read('updates/index.html'), 'Updates must show last modification date')
-        practice = read('practice/small-repetitions/index.html')
+        practice = read('posts/small-repetitions/index.html')
         require('highlight' in practice and '<pre' in practice and '<blockquote' in practice, 'Markdown code and quote must render')
-        journey = read('journey/before-the-ridge/index.html')
+        journey = read('posts/before-the-ridge/index.html')
         require(any(i.get('loading') == 'lazy' for i in Document(journey).images), 'Journey images must be lazy loaded')
     require('canonical' in home and bool(home_document.meta.get('description')), 'SEO metadata must be present')
     rss = read('index.xml')

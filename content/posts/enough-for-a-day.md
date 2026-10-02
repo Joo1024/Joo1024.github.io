@@ -5,7 +5,6 @@ lastmod: 2026-08-18
 description: 从完成了多少，转向是否认真地在场。
 tags: [生活, 时间]
 sample: true
-url: /reflection/enough-for-a-day/
 form: reflection
 domains: [life, mind]
 paths: [自在]

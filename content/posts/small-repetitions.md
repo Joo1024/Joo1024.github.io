@@ -6,7 +6,6 @@ description: 技术学习和身体训练，都从一次可以再做的动作开�
 tags: [练习, 技术, 方法]
 status: ongoing
 sample: true
-url: /practice/small-repetitions/
 form: practice
 domains: [body, craft]
 paths: [精进]

@@ -5,7 +5,6 @@ lastmod: 2026-09-03
 description: 读《瓦尔登湖》时，留下的问题比留下的答案更多。
 tags: [阅读, 生活, 自由]
 sample: true
-url: /reading/a-room-in-a-book/
 form: reflection
 domains: [mind, life]
 paths: [明心]

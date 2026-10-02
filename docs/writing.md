@@ -17,7 +17,7 @@ date: 2026-10-02
 从一个真实的念头开始。
 ```
 
-只要求标题和原始发布日期。其余字段按需要填写，省略时文章仍进入首页、存档、最近更新和全站 RSS。文件名决定默认地址 `/posts/a-question/`；标题、形式与标签变化不会改变 URL。文件名可以用简短英文或中文。
+只要求标题和原始发布日期。其余字段按需要填写，文章自动进入文章索引、存档、最近更新和全站 RSS，首页展示最近几篇。文件名决定地址 `/posts/a-question/`；标题、形式与标签变化不会改变 URL。文件名可以用简短英文或中文。
 
 也可运行 `.tools/bin/hugo new content posts/a-question.md`。默认模板创建 `draft: true`；公开前删除此行或改为 `false`。预览草稿用 `.tools/bin/hugo server -D`，生产构建不发布草稿。
 
@@ -81,8 +81,6 @@ taxonomy 配置右侧是 Hugo 读取的 metadata 字段名；写成 `form = 'for
 | `toc` | 默认展示可折叠目录；短文可设 `false` |
 | `draft` | `true` 时不发布 |
 | `sample` | 只用于示例文章；自己的记录移除 |
-| `url` | 迁移文章的原发布地址，如 `/reflection/on-keeping-a-place/`；新文章通常省略 |
-| `aliases` | 改公开地址时保留旧链接，如 `[/old-path/]` |
 
 不用填写 `categories`。文章不再按目录分类，这个旧字段会明确报错，提示移除。
 
@@ -90,7 +88,7 @@ taxonomy 配置右侧是 Hugo 读取的 metadata 字段名；写成 `form = 'for
 
 ## 三个固定单页
 
-- `content/about.md`：关于此地与写作原则。
+- `content/about.md`：关于自己与 Sanctum。
 - `content/now.md`：近期投入与近况，有变化时再更新。
 - `content/path.md`：简短的长期方向，允许方向改变或暂时放下。
 
@@ -144,7 +142,7 @@ print("small steps")
 [一篇旧文]({{< relref "posts/on-keeping-a-place.md" >}})
 ```
 
-它会解析文章的公开地址，包括迁移时保留的旧 URL。普通 Markdown 相对链接也可使用；应以公开 URL 计算相对位置，而不是磁盘目录。HTML 默认不直接执行。
+它会解析为文章的 `/posts/文件名/` 地址。普通 Markdown 相对链接也可使用；应以公开 URL 计算相对位置，而不是磁盘目录。HTML 默认不直接执行。
 
 ## 一次发布
 
@@ -163,10 +161,10 @@ git push origin HEAD:main
 
 推送到 main 后 GitHub Actions 自动构建部署。新文章、新词条、归档和订阅自动更新。示例可逐步删除或替换，无需修改 CI；开发验收 `--examples` 仅在初始示例仍保留时使用。
 
-## 迁移与订阅
+## 地址与订阅
 
-既有九篇文章已使用 `form`，清除了 note/reflection 等旧 status 值，并通过 `url` 保留原发布地址、RSS guid、日期和后记。此后不要因为整理元数据而更改这个字段。
+文章公开地址统一为 `/posts/文件名/`，不填写 `url` 或 `aliases`。重命名文件会改变公开地址，修改标题、形式与标签不会。
 
-旧栏目总页、旧分类索引、旧 `/types/` 索引与它们的 RSS 已移除，不再生成兼容跳转页。文章页仍使用 metadata 中的 `url`；这些原地址与旧栏目总页是独立的。
+文章链接、RSS 条目与 sitemap 使用同一个公开地址。RSS 的 guid 也使用该地址；发布日期由原始 `date` 决定，正文与后记更新不会改变它。
 
-全站订阅始终为 `/index.xml`。`/posts/index.xml`、四个维度及其词条都有独立订阅，阅读器中使用页面提供的 RSS 地址即可。原站 `?p=posts/hello.md` 也继续指向保留的 Hello World。
+全站订阅为 `/index.xml`。`/posts/index.xml`、四个维度及其词条都有独立订阅，阅读器中使用页面提供的 RSS 地址即可。
