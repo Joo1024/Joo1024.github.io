@@ -1,8 +1,8 @@
 {{ define "main" }}
 <header class="page-heading"><p class="eyebrow">Revisited / 重访</p><h1>最近更新 <span>Updates</span></h1><p class="page-description">也许是新的一页，也许是旧文里后来添上的一句话。此处按最后更新时间排列。</p></header>
-{{ $entries := partial "entries.html" . }}
+{{ $posts := partial "posts.html" . }}
 <h2 class="list-label">文章</h2>
-{{ partial "entry-list.html" (dict "pages" $entries.ByLastmod.Reverse "updated" true "descriptions" true) }}
+{{ partial "entry-list.html" (dict "pages" $posts.ByLastmod.Reverse "updated" true "descriptions" true) }}
 <h2 class="list-label">持续更新的页面</h2>
 <ul class="living-updates">{{ range where .Site.Data.sections "kind" "page" }}{{ with site.GetPage .slug }}<li><time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2006.01.02" }}</time><a href="{{ .RelPermalink }}">{{ .Params.chinese }} · {{ .Title }}</a></li>{{ end }}{{ end }}</ul>
 {{ end }}

@@ -2,10 +2,10 @@
 {{ with .Params.legacy }}{{ $target = partial "legacy-target.html" $ }}{{ end }}
 {{ $pages := $target.RegularPages }}
 {{ if or .IsHome .Params.legacy.all }}
-  {{ $pages = partial "entries.html" . }}
+  {{ $pages = partial "posts.html" . }}
 {{ else if eq $target.Kind "taxonomy" }}
   {{ $pages = slice }}
-  {{ range partial "entries.html" . }}
+  {{ range partial "posts.html" . }}
     {{ if .GetTerms $target.Data.Plural }}{{ $pages = $pages | append . }}{{ end }}
   {{ end }}
 {{ end }}

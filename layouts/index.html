@@ -13,12 +13,12 @@
   </a>
   {{ end }}
 </nav>
-{{ $entries := partial "entries.html" . }}
+{{ $posts := partial "posts.html" . }}
 <section class="recent-section" aria-labelledby="recent-heading">
-  <div class="section-heading"><h2 id="recent-heading">最近落笔 <span>Recent entries</span></h2><a href="{{ "archive/" | relURL }}">所有文字 <span aria-hidden="true">↗</span></a></div>
-  {{ partial "entry-list.html" (dict "pages" (first 4 $entries.ByDate.Reverse) "descriptions" false) }}
+  <div class="section-heading"><h2 id="recent-heading">最近落笔 <span>Recent posts</span></h2><a href="{{ "archive/" | relURL }}">所有文字 <span aria-hidden="true">↗</span></a></div>
+  {{ partial "entry-list.html" (dict "pages" (first 4 $posts.ByDate.Reverse) "descriptions" false) }}
 </section>
-{{ range $entries.ByLastmod.Reverse }}
+{{ range $posts.ByLastmod.Reverse }}
 {{ if .Params.later_notes }}
 <aside class="home-later" aria-label="旧文的新想法">
   <span class="eyebrow">旧文 · 新的想法</span>
