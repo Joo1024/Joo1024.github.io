@@ -71,7 +71,7 @@ class NavigationTest(unittest.TestCase):
             'now': ('cultivation', 'now'), 'path': ('cultivation', 'path'),
             'realms': ('cultivation', 'realms'), 'roots': ('cultivation', 'roots'),
             'posts': ('posts', 'posts'), 'posts/entry6': ('posts', 'posts'),
-            'archive': ('posts', 'archive'), 'updates': ('posts', 'updates'),
+            'archive': ('posts', 'archive'), 'updates': ('posts', None),
             'tags': ('posts', 'tags'), 'forms/reflection': ('posts', 'tags'),
             'domains/mind': ('posts', 'tags'), 'paths/明心': ('posts', 'tags'),
             'tags/练习': ('posts', 'tags'), 'about': ('about', None),
@@ -85,7 +85,7 @@ class NavigationTest(unittest.TestCase):
                 active = [a['href'] for a in nav['utility-nav'] if a.get('aria-current')]
                 self.assertEqual(active, [f'/sanctum/{primary}/'] if primary else [])
                 if primary == 'posts':
-                    expected = ['posts', 'archive', 'tags', 'updates']
+                    expected = ['posts', 'archive', 'tags']
                 else:
                     self.assertNotIn('section-nav', nav)
                     continue

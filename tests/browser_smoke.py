@@ -110,7 +110,7 @@ def run(base, chromium, screenshots):
                     assert page.locator('.section-nav').count() == 0
                 else:
                     assert current.count() == 1 and current.get_attribute('href').endswith('/posts/'), route
-                    assert page.locator('.section-nav a').all_text_contents() == ['全部文字', '存档', '分类', '最近更新']
+                    assert page.locator('.section-nav a').all_text_contents() == ['全部文字', '存档', '分类']
             shared_styles = []
             for route in ('/cultivation/', '/posts/'):
                 page.goto(base + route)

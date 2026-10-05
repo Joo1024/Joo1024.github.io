@@ -17,6 +17,8 @@
 {{ else if or (partial "is-article.html" .) (eq .Section "posts") }}
   {{ $primary = "posts" }}
   {{ $secondary = "posts" }}
+{{ else if eq .RelPermalink ("updates/" | relURL) }}
+  {{ $primary = "posts" }}
 {{ else }}
   {{ range .Site.Data.post_navigation }}
     {{ if eq $page.RelPermalink (printf "%s/" .slug | relURL) }}
