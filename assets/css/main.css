@@ -101,7 +101,7 @@ main { min-height: 55vh; }
 .article-toc > nav > ul { padding-left: 0; }
 .article-toc li { margin: 6px 0; }
 .toc-later { display: block; margin-top: 10px; }
-.prose { font-size: 17px; line-height: 1.8; overflow-wrap: anywhere; }
+.prose { font-size: 16px; line-height: 1.8; overflow-wrap: anywhere; }
 .prose p { margin: 0 0 1.4em; }
 .prose h2 { font-size: 1.22em; line-height: 1.5; font-weight: 600; margin: 2.2em 0 .8em; }
 .prose h3 { font-size: 1.1em; font-weight: 600; line-height: 1.5; margin: 1.8em 0 .7em; }
@@ -171,7 +171,7 @@ main { min-height: 55vh; }
   .entry-title { font-size: 19px; }
   .section-nav { gap: 12px 20px; }
   .page-heading, .article-heading { padding-top: 46px; }
-  .prose { font-size: 16px; }
+  .prose { font-size: 15px; }
   .site-footer { margin-top: 66px; }
   .site-footer nav { gap: 17px; }
   .term-list { grid-template-columns: 1fr; }
