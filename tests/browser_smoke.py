@@ -104,7 +104,7 @@ def run(base, chromium, screenshots):
                     assert current.count() == 0
                 elif route in ('/cultivation/', '/now/', '/path/', '/realms/', '/roots/'):
                     assert current.count() == 1 and current.get_attribute('href').endswith('/cultivation/'), route
-                    assert page.locator('.section-nav a').all_text_contents() == ['今朝', '道途', '境界', '灵根']
+                    assert page.locator('.section-nav').count() == 0
                 elif route == '/about/':
                     assert current.count() == 1 and current.get_attribute('href').endswith('/about/')
                     assert page.locator('.section-nav').count() == 0

@@ -9,15 +9,9 @@
     {{ end }}
   </nav>
 </header>
-{{ $links := slice }}
-{{ if eq $context.primary "cultivation" }}
-  {{ $links = where .Site.Data.sections "kind" "page" }}
-{{ else if eq $context.primary "posts" }}
-  {{ $links = .Site.Data.post_navigation }}
-{{ end }}
-{{ with $links }}
-<nav class="section-nav" aria-label="{{ if eq $context.primary "cultivation" }}修行导航{{ else }}文字导航{{ end }}">
-  {{ range . }}
+{{ if eq $context.primary "posts" }}
+<nav class="section-nav" aria-label="文字导航">
+  {{ range .Site.Data.post_navigation }}
   {{ $url := printf "%s/" .slug | relURL }}
   <a href="{{ $url }}" {{ if eq $page.RelPermalink $url }}aria-current="page"{{ else if eq $context.secondary .slug }}aria-current="location"{{ end }}>{{ .chinese }}</a>
   {{ end }}

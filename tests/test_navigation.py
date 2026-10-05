@@ -84,9 +84,7 @@ class NavigationTest(unittest.TestCase):
                                  ['/sanctum/cultivation/', '/sanctum/posts/', '/sanctum/about/'])
                 active = [a['href'] for a in nav['utility-nav'] if a.get('aria-current')]
                 self.assertEqual(active, [f'/sanctum/{primary}/'] if primary else [])
-                if primary == 'cultivation':
-                    expected = ['now', 'path', 'realms', 'roots']
-                elif primary == 'posts':
+                if primary == 'posts':
                     expected = ['posts', 'archive', 'tags', 'updates']
                 else:
                     self.assertNotIn('section-nav', nav)
