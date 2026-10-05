@@ -40,7 +40,7 @@ class NavigationTest(unittest.TestCase):
         cls.tmp = TemporaryDirectory(prefix='sanctum-navigation-')
         cls.root = Path(cls.tmp.name)
         content = create_content(cls.root)
-        for name in ('now', 'path', 'about', 'cultivation', 'roots', 'realms'):
+        for name in ('now', 'path', 'about', 'roots', 'realms'):
             source = ROOT / 'content' / (name + '.md')
             if source.exists():
                 shutil.copyfile(source, content / source.name)
@@ -147,6 +147,21 @@ class NavigationTest(unittest.TestCase):
         with redirect_stderr(errors), redirect_stdout(StringIO()):
             status = check(self.output, '/sanctum/')
         self.assertEqual(status, 0, errors.getvalue())
+
+    def test_cultivation_overview_is_generated_without_an_authored_page(self):
+        with TemporaryDirectory(prefix='sanctum-auto-overview-') as tmp:
+            root = Path(tmp)
+            content = create_content(root)
+            (content / 'now.md').write_text('---\ntitle: Now\nlastmod: 2025-02-03\n---\nA current practice.\n')
+            result, output = build_site(root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            overview = output / 'cultivation/index.html'
+            self.assertTrue(overview.is_file(), 'The overview must exist without cultivation.md')
+            html = overview.read_text()
+            self.assertIn('/sanctum/now/', Document(html).links)
+            self.assertIn('2025.02.03', html)
+            self.assertFalse((content / 'cultivation.md').exists())
+            self.assertFalse(ET.parse(output / 'index.xml').getroot().findall('./channel/item'))
 
 
 if __name__ == '__main__':

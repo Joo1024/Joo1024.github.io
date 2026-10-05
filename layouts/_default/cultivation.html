@@ -3,7 +3,7 @@
   <p class="eyebrow">Sanctum / Cultivation</p>
   <h1>修行 <span lang="en">Cultivation</span></h1>
 </header>
-<div class="prose cultivation-intro">{{ .Content }}</div>
+{{ with .Description }}<div class="prose cultivation-intro"><p>{{ . }}</p></div>{{ end }}
 <ul class="cultivation-list">
   {{ range where .Site.Data.sections "kind" "page" }}
     {{ $entry := . }}

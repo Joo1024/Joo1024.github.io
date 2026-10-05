@@ -1,6 +1,6 @@
 {{/* Validate source content regardless of the selected page layout. */}}
 {{ $isArticle := partial "is-article.html" . }}
-{{ $fixedFiles := slice "about.md" "cultivation.md" }}
+{{ $fixedFiles := slice "about.md" }}
 {{ range site.Data.sections }}
   {{ if eq .kind "page" }}{{ $fixedFiles = $fixedFiles | append (printf "%s.md" .slug) }}{{ end }}
 {{ end }}
