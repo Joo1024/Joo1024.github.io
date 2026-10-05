@@ -2,14 +2,14 @@
   kind: page
   name: Now
   chinese: 今朝
-  description: 此时此地，正在做的事。
+  description:
 - slug: path
   kind: page
   name: Path
   chinese: 道途
-  description: 几条愿意长久走下去的路。
+  description:
 - slug: posts
   kind: articles
   name: Posts
   chinese: 文字
-  description: 时间是经，标签是纬。
+  description:
