@@ -40,7 +40,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .wordmark { font-size: 27px; font-weight: 500; letter-spacing: -.6px; }
 .wordmark:hover { text-decoration: none; }
 .wordmark-dot { color: var(--brand); }
-.header-tools { display: flex; align-items: center; gap: 30px; }
 .utility-nav { display: flex; align-items: center; gap: 22px; color: var(--muted); font-size: 14px; }
 .theme-toggle { border: 0; padding: 8px 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 13px; }
 .theme-toggle:hover { color: var(--link); }
@@ -74,7 +73,7 @@ main { min-height: 55vh; }
 .home-later .quiet { font-size: 12px; }
 .site-footer { margin-top: 92px; border-top: 1px solid var(--rule); padding: 28px 0 42px; display: flex; flex-wrap: wrap; gap: 15px 25px; align-items: baseline; color: var(--muted); font-size: 13px; }
 .site-footer p { margin: 0; flex: 1; min-width: 180px; }
-.site-footer nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.site-footer nav { display: flex; gap: 20px; flex-wrap: nowrap; align-items: baseline; justify-content: flex-end; margin-left: auto; }
 .footer-name { display: block; flex-basis: 100%; font-size: 12px; color: var(--faint); }
 .page-heading, .article-heading { padding: 66px 0 33px; }
 .page-heading h1, .article-heading h1 { font-size: clamp(30px, 4.5vw, 38px); line-height: 1.5; font-weight: 500; letter-spacing: -.02em; margin: 0 0 18px; overflow-wrap: anywhere; text-wrap: balance; }
@@ -167,10 +166,7 @@ main { min-height: 55vh; }
 @media (max-width: 700px) {
   :root { --page-gutter: 25px; }
   .site-header { min-height: 89px; flex-wrap: wrap; padding: 22px 0; gap: 16px; }
-  .wordmark { order: 1; }
-  .header-tools { display: contents; }
-  .theme-toggle { order: 2; margin-left: auto; }
-  .utility-nav { order: 3; flex-basis: 100%; gap: 22px; font-size: 13px; }
+  .utility-nav { gap: 22px; font-size: 13px; }
   .home-intro { padding: 54px 0 44px; }
   .home-subtitle { font-size: 16px; }
   .home-now-summary { font-size: 15px; }

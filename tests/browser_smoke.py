@@ -37,6 +37,8 @@ def run(base, chromium, screenshots):
         assert page.locator('.home-sections').count() == 0
         assert page.locator('.recent-section .entry-title').count() == min(5, article_count)
         assert page.locator('#theme-toggle').inner_text() == '配色 · 系统'
+        assert page.locator('.site-header #theme-toggle').count() == 0
+        assert page.locator('.site-footer nav #theme-toggle').count() == 1
         if screenshots:
             page.screenshot(path=str(screenshots / 'home-light.png'), full_page=True)
         page.locator('#theme-toggle').click()
@@ -94,6 +96,9 @@ def run(base, chromium, screenshots):
                 response = page.goto(base + route)
                 assert response.status == 200, route
                 assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), (width, route)
+                rss_box = page.locator('.site-footer nav a').first.bounding_box()
+                theme_box = page.locator('#theme-toggle').bounding_box()
+                assert abs(rss_box['y'] + rss_box['height'] / 2 - theme_box['y'] - theme_box['height'] / 2) < 2, (width, route, 'Footer controls must stay in one row')
                 current = page.locator('.utility-nav a[aria-current]')
                 if route == '/':
                     assert current.count() == 0
