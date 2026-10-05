@@ -103,9 +103,9 @@ main { min-height: 55vh; }
 .toc-later { display: block; margin-top: 10px; }
 .prose { font-size: 18px; line-height: 1.8; overflow-wrap: anywhere; }
 .prose p { margin: 0 0 1.4em; }
-.prose h2 { font-size: 25px; line-height: 1.5; font-weight: 600; margin: 2.2em 0 .8em; }
-.prose h3 { font-size: 21px; font-weight: 600; line-height: 1.5; margin: 1.8em 0 .7em; }
-.prose h4 { font-size: 18px; font-weight: 600; }
+.prose h2 { font-size: 1.22em; line-height: 1.5; font-weight: 600; margin: 2.2em 0 .8em; }
+.prose h3 { font-size: 1.1em; font-weight: 600; line-height: 1.5; margin: 1.8em 0 .7em; }
+.prose h4 { font-size: 1em; font-weight: 600; }
 .prose a { color: var(--link); text-decoration: underline; text-decoration-thickness: 1px; }
 .prose a:hover { text-decoration-thickness: 2px; }
 .prose ul, .prose ol { padding-left: 1.5em; margin-bottom: 1.6em; }
@@ -172,7 +172,6 @@ main { min-height: 55vh; }
   .section-nav { gap: 12px 20px; }
   .page-heading, .article-heading { padding-top: 46px; }
   .prose { font-size: 17px; }
-  .prose h2 { font-size: 23px; }
   .site-footer { margin-top: 66px; }
   .site-footer nav { gap: 17px; }
   .term-list { grid-template-columns: 1fr; }
