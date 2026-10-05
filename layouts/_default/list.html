@@ -7,5 +7,5 @@
 </header>
 {{ with .Content }}<div class="prose section-intro">{{ . }}</div>{{ end }}
 {{ partial "entry-list.html" (dict "pages" .RegularPages.ByDate.Reverse "descriptions" true) }}
-{{ if eq .Kind "term" }}<p class="back-link"><a href="{{ .Parent.RelPermalink }}">← 返回{{ $dimension.name }}索引</a> · <a href="{{ "tags/" | relURL }}">全部标签</a></p>{{ end }}
+{{ if eq .Kind "term" }}<p class="back-link"><a href="{{ .Parent.RelPermalink }}">← 返回{{ $dimension.name }}索引</a>{{ if ne .Data.Plural "tags" }} · <a href="{{ "tags/" | relURL }}">全部分类</a>{{ end }}</p>{{ end }}
 {{ end }}

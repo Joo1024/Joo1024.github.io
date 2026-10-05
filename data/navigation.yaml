@@ -1,8 +1,6 @@
-- path: updates/
-  name: 最近更新
-- path: archive/
-  name: 存档
-- path: tags/
-  name: 标签
+- path: cultivation/
+  name: 修行
+- path: posts/
+  name: 文字
 - path: about/
   name: 关于

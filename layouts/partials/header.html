@@ -1,22 +1,28 @@
+{{ $context := partial "navigation-context.html" . }}
+{{ $page := . }}
 <header class="site-header">
   <a class="wordmark" href="{{ .Site.Home.RelPermalink }}" {{ if .IsHome }}aria-current="page"{{ end }}>Sanctum<span class="wordmark-dot" aria-hidden="true">.</span></a>
   <div class="header-tools">
     <nav class="utility-nav" aria-label="全站导航">
-      {{ $page := . }}
       {{ range .Site.Data.navigation }}
       {{ $url := .path | relURL }}
-      <a href="{{ $url }}" {{ if eq $page.RelPermalink $url }}aria-current="page"{{ end }}>{{ .name }}</a>
+      <a href="{{ $url }}" {{ if eq $page.RelPermalink $url }}aria-current="page"{{ else if eq .path (printf "%s/" $context.primary) }}aria-current="location"{{ end }}>{{ .name }}</a>
       {{ end }}
     </nav>
     <button id="theme-toggle" class="theme-toggle" type="button" hidden aria-label="切换配色，当前跟随系统">配色 · 系统</button>
   </div>
 </header>
-{{ if not .IsHome }}
-<nav class="section-nav" aria-label="栏目">
-  {{ $page := . }}
-  {{ range .Site.Data.sections }}
+{{ $links := slice }}
+{{ if eq $context.primary "cultivation" }}
+  {{ $links = where .Site.Data.sections "kind" "page" }}
+{{ else if eq $context.primary "posts" }}
+  {{ $links = .Site.Data.post_navigation }}
+{{ end }}
+{{ with $links }}
+<nav class="section-nav" aria-label="{{ if eq $context.primary "cultivation" }}修行导航{{ else }}文字导航{{ end }}">
+  {{ range . }}
   {{ $url := printf "%s/" .slug | relURL }}
-  <a href="{{ $url }}" {{ if or (eq $page.Section .slug) (eq $page.RelPermalink $url) }}aria-current="page"{{ end }}>{{ .chinese }}</a>
+  <a href="{{ $url }}" {{ if eq $page.RelPermalink $url }}aria-current="page"{{ else if eq $context.secondary .slug }}aria-current="location"{{ end }}>{{ .chinese }}</a>
   {{ end }}
 </nav>
 {{ end }}

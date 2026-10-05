@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Optional first-edition browser tests (requires Playwright + Chromium).
+"""Optional production browser tests (requires Playwright + Chromium).
 
 Build and serve public/ first, then:
 python3 tests/browser_smoke.py --url http://127.0.0.1:8001 --chromium /usr/bin/chromium
 Pass --screenshots /tmp/sanctum-shots to save reference images.
-This developer check exercises the initial example content; CI uses the
-content-independent standard-library check_site.py instead.
+This developer check exercises the current architecture and responsive layouts;
+CI uses the content-independent standard-library check_site.py.
 """
 import argparse
 from pathlib import Path
@@ -27,10 +27,15 @@ def run(base, chromium, screenshots):
         page = context.new_page()
         page.on('request', lambda request: external.append(request.url)
                 if urlsplit(request.url).netloc != urlsplit(base).netloc else None)
+        page.goto(base + '/posts/', wait_until='networkidle')
+        article_count = page.locator('.entry-list .entry-title').count()
         page.goto(base + '/', wait_until='networkidle')
         assert page.title() == 'Sanctum'
-        assert page.locator('.home-sections > a').count() == 3
-        assert page.locator('.recent-section .entry-list > li').count() == 4
+        assert page.locator('.utility-nav a').all_text_contents() == ['修行', '文字', '关于']
+        assert page.locator('.home-now-summary').inner_text()
+        assert page.locator('.home-links a').count() == 2
+        assert page.locator('.home-sections').count() == 0
+        assert page.locator('.recent-section .entry-title').count() == min(5, article_count)
         assert page.locator('#theme-toggle').inner_text() == '配色 · 系统'
         if screenshots:
             page.screenshot(path=str(screenshots / 'home-light.png'), full_page=True)
@@ -53,39 +58,59 @@ def run(base, chromium, screenshots):
         page.emulate_media(color_scheme='light')
         print('PASS theme cycle, persistence, system dark preference')
 
-        page.goto(base + '/posts/on-keeping-a-place/')
-        assert page.locator('h1').inner_text() == '给未完成的自己，留一处地方'
-        assert '发布于 2025.11.16' in page.locator('.article-meta').inner_text()
-        assert '更新于 2026.09.20' in page.locator('.article-meta').inner_text()
-        assert page.locator('#later-notes').count() == 1
+        page.goto(base + '/cultivation/')
+        assert page.locator('.cultivation-list a').count() == 4
+        assert '功法' in page.locator('.cultivation-list').inner_text()
+        assert '修为' in page.locator('.cultivation-list').inner_text()
+        assert page.locator('.cultivation-list time').count() == 4
+        page.goto(base + '/path/')
+        assert '功法' in page.locator('.article-heading .eyebrow').inner_text()
+        page.goto(base + '/roots/')
+        assert '此页尚待梳理' in page.locator('.prose').inner_text()
+        assert page.locator('.theory-links a').count() == 1
+        page.goto(base + '/realms/')
+        assert '修为' in page.locator('.article-heading .eyebrow').inner_text()
+        assert '当前修为尚待整理' in page.locator('.prose').inner_text()
+        page.goto(base + '/archive/')
+        assert page.locator('.archive-nav').count() == 0
+        assert page.locator('.year-nav a').count() > 0
+        page.goto(base + '/tags/')
+        assert page.locator('.page-heading h1').inner_text().startswith('分类')
+        page.goto(base + '/posts/cultivation-realms/')
+        assert page.locator('.prose table').count() == 6
         page.locator('.article-toc > summary').click()
         page.locator('#TableOfContents a').first.click()
         assert urlsplit(page.url).fragment
-        page.locator('.footnote-ref').click()
-        assert page.locator('.footnotes').count() == 1
-        page.locator('.post-navigation a').click()
-        assert page.url.endswith('/posts/2025/')
-        page.locator('.article-taxonomy a[href*="/tags/"]', has_text='生活').click()
-        assert page.locator('.entry-list a', has_text='怎样算是好好度过了一天').count() == 1
-        page.goto(base + '/posts/small-repetitions/')
-        assert page.locator('.highlight pre').count() == 1
-        assert page.locator('blockquote').count() == 1
-        print('PASS preserved article dates, later notes, TOC, footnotes, chronological navigation, Chinese tag, code')
+        print('PASS cultivation overview, roles, templates, archive, classification, article tables and TOC')
 
+        routes = ('/', '/cultivation/', '/now/', '/path/', '/realms/', '/roots/',
+                  '/about/', '/posts/', '/posts/cultivation-realms/',
+                  '/posts/cultivation-roots-and-methods/', '/archive/', '/tags/',
+                  '/forms/', '/forms/reflection/', '/domains/', '/domains/mind/',
+                  '/paths/', '/paths/明心/', '/updates/')
         for width in (320, 375, 768, 1440):
             page.set_viewport_size({'width': width, 'height': 900})
-            for route in ('/', '/now/', '/path/', '/posts/on-keeping-a-place/',
-                          '/posts/small-repetitions/', '/posts/before-the-ridge/',
-                          '/archive/', '/tags/', '/forms/', '/domains/', '/paths/', '/updates/'):
+            for route in routes:
                 response = page.goto(base + route)
                 assert response.status == 200, route
                 assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), (width, route)
+                current = page.locator('.utility-nav a[aria-current]')
+                if route == '/':
+                    assert current.count() == 0
+                elif route in ('/cultivation/', '/now/', '/path/', '/realms/', '/roots/'):
+                    assert current.count() == 1 and current.get_attribute('href').endswith('/cultivation/'), route
+                    assert page.locator('.section-nav a').all_text_contents() == ['今朝', '道途', '境界', '灵根']
+                elif route == '/about/':
+                    assert current.count() == 1 and current.get_attribute('href').endswith('/about/')
+                    assert page.locator('.section-nav').count() == 0
+                else:
+                    assert current.count() == 1 and current.get_attribute('href').endswith('/posts/'), route
+                    assert page.locator('.section-nav a').all_text_contents() == ['全部文字', '存档', '分类', '最近更新']
             if width == 375 and screenshots:
-                page.goto(base + '/')
-                page.screenshot(path=str(screenshots / 'home-mobile.png'), full_page=True)
-                page.goto(base + '/posts/on-keeping-a-place/')
-                page.screenshot(path=str(screenshots / 'article-mobile.png'), full_page=True)
-        print('PASS 48 responsive route/viewport checks (320–1440px)')
+                for name, route in (('home-mobile', '/'), ('cultivation-mobile', '/cultivation/'), ('article-mobile', '/posts/cultivation-realms/')):
+                    page.goto(base + route)
+                    page.screenshot(path=str(screenshots / (name + '.png')), full_page=True)
+        print(f'PASS {len(routes) * 4} responsive route/viewport checks (320–1440px), region highlighting and contextual navigation')
 
         page.goto(base + '/posts/hello-world/')
         assert page.locator('.prose code').inner_text().strip() == 'console.log("hello");'
@@ -94,12 +119,12 @@ def run(base, chromium, screenshots):
 
         offline = browser.new_context(java_script_enabled=False, color_scheme='dark')
         nojs = offline.new_page()
-        nojs.goto(base + '/posts/on-keeping-a-place/')
-        assert nojs.locator('#later-notes').is_visible()
+        nojs.goto(base + '/posts/cultivation-realms/')
+        assert nojs.locator('.prose table').count() == 6
         assert nojs.locator('#theme-toggle').is_hidden()
         nojs.locator('.article-toc summary').click()
         assert nojs.locator('#TableOfContents').is_visible()
-        assert nojs.locator('.post-navigation a').count() == 1
+        assert nojs.locator('.post-navigation a').count() > 0
         print('PASS no-JS reading, TOC and navigation')
         offline.close()
 

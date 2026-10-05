@@ -3,20 +3,24 @@
   <p class="eyebrow">一处居所 · 一份长期记录</p>
   <h1 id="home-heading">Sanctum</h1>
   <p class="home-subtitle">{{ .Site.Params.subtitle }}</p>
-  <p class="home-description">记录思考与练习，书页与行旅。<br>让尚未完成的自己，也有一处可以停留。</p>
 </section>
-<nav class="home-sections" aria-label="栏目入口">
-  {{ range .Site.Data.sections }}
-  <a href="{{ printf "%s/" .slug | relURL }}">
-    <span class="section-name">{{ .chinese }} <span lang="en">{{ .name }}</span></span>
-    <span class="section-description">{{ .description }}</span>
-  </a>
+{{ with site.GetPage "now" }}
+<section class="home-now" aria-labelledby="now-heading">
+  <div class="section-heading"><h2 id="now-heading">今朝 <span lang="en">Now</span></h2></div>
+  {{ $summary := .Summary | plainify | htmlUnescape | strings.TrimSpace }}
+  {{ $paragraphs := slice }}
+  {{ range findRE "(?s)<p(?:\\s[^>]*)?>.*?</p>" .Content 3 }}
+    {{ $paragraphs = $paragraphs | append (. | plainify | htmlUnescape | strings.TrimSpace) }}
   {{ end }}
-</nav>
+  {{ with $paragraphs }}{{ $summary = delimit . " " }}{{ end }}
+  {{ with $summary }}<p class="home-now-summary">{{ . | truncate 140 }}</p>{{ end }}
+  <a class="home-now-link" href="{{ .RelPermalink }}">查看近况 <span aria-hidden="true">→</span></a>
+</section>
+{{ end }}
 {{ $posts := partial "posts.html" . }}
 <section class="recent-section" aria-labelledby="recent-heading">
-  <div class="section-heading"><h2 id="recent-heading">最近落笔 <span>Recent posts</span></h2><a href="{{ "archive/" | relURL }}">所有文字 <span aria-hidden="true">↗</span></a></div>
-  {{ partial "entry-list.html" (dict "pages" (first 4 $posts.ByDate.Reverse) "descriptions" false) }}
+  <div class="section-heading"><h2 id="recent-heading">最近落笔 <span>Recent posts</span></h2></div>
+  {{ partial "entry-list.html" (dict "pages" (first 5 $posts.ByDate.Reverse) "descriptions" false) }}
 </section>
 {{ range $posts.ByLastmod.Reverse }}
 {{ if .Params.later_notes }}
@@ -27,4 +31,8 @@
 {{ break }}
 {{ end }}
 {{ end }}
+<nav class="home-links" aria-label="继续浏览">
+  {{ with site.GetPage "cultivation" }}<a href="{{ .RelPermalink }}">修行总览 <span aria-hidden="true">→</span></a>{{ end }}
+  <a href="{{ "posts/" | relURL }}">全部文字 <span aria-hidden="true">→</span></a>
+</nav>
 {{ end }}

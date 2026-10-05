@@ -1,7 +1,6 @@
 {{ define "main" }}
 {{ $posts := partial "posts.html" . }}
 <header class="page-heading"><p class="eyebrow">Time / 时间</p><h1>存档 <span>Archive</span></h1><p class="page-description">文字留在写下它们的年份里。后来改变的想法，留在后记里。</p></header>
-<nav class="archive-nav" aria-label="存档索引"><a href="{{ "forms/" | relURL }}">按形式</a><a href="{{ "domains/" | relURL }}">按领域</a><a href="{{ "paths/" | relURL }}">按方向</a><a href="{{ "tags/" | relURL }}">按主题</a><a href="{{ "updates/" | relURL }}">最近更新</a></nav>
 <nav class="year-nav" aria-label="选择年份">{{ range $posts.GroupByDate "2006" }}<a href="#year-{{ .Key }}">{{ .Key }}</a>{{ end }}</nav>
 {{ range $posts.GroupByDate "2006" }}
 <section class="year-group" id="year-{{ .Key }}"><h2>{{ .Key }}<span>{{ len .Pages }} 篇记录</span></h2>{{ partial "entry-list.html" (dict "pages" .Pages.ByDate.Reverse "descriptions" false) }}</section>

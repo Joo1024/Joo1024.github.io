@@ -230,7 +230,7 @@ class MetadataTest(unittest.TestCase):
                 html = (output / path).read_text()
                 header = Document(html.split('<header class="site-header">', 1)[1].split('</header>', 1)[0])
                 footer = Document(html.split('<footer class="site-footer">', 1)[1].split('</footer>', 1)[0])
-                for route in ('updates/', 'archive/', 'tags/', 'about/'):
+                for route in ('cultivation/', 'posts/', 'about/'):
                     self.assertIn('/sanctum/' + route, header.links)
                     self.assertNotIn('/sanctum/' + route, footer.links)
 

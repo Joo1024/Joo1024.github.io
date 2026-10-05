@@ -1,0 +1,29 @@
+{{ $primary := "" }}
+{{ $secondary := "" }}
+{{ $page := . }}
+{{ if eq .RelPermalink ("cultivation/" | relURL) }}
+  {{ $primary = "cultivation" }}
+{{ else }}
+  {{ range where .Site.Data.sections "kind" "page" }}
+    {{ if eq $page.RelPermalink (printf "%s/" .slug | relURL) }}
+      {{ $primary = "cultivation" }}
+      {{ $secondary = .slug }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ if or (eq .Kind "taxonomy") (eq .Kind "term") }}
+  {{ $primary = "posts" }}
+  {{ $secondary = "tags" }}
+{{ else if or (partial "is-article.html" .) (eq .Section "posts") }}
+  {{ $primary = "posts" }}
+  {{ $secondary = "posts" }}
+{{ else }}
+  {{ range .Site.Data.post_navigation }}
+    {{ if eq $page.RelPermalink (printf "%s/" .slug | relURL) }}
+      {{ $primary = "posts" }}
+      {{ $secondary = .slug }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ if eq .RelPermalink ("about/" | relURL) }}{{ $primary = "about" }}{{ end }}
+{{ return (dict "primary" $primary "secondary" $secondary) }}
