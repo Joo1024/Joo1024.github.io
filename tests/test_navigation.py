@@ -115,11 +115,15 @@ class NavigationTest(unittest.TestCase):
         self.assertIn('A second current practice.', summary)
         self.assertNotIn('SECTION_HEADING_NOT_SUMMARY', summary)
 
-    def test_overview_describes_methods_and_attainment_with_actual_page_dates(self):
+    def test_overview_uses_page_titles_and_actual_dates_without_extra_notes(self):
         html = self.html('cultivation')
         main = html.split('<main', 1)[1].split('</main>', 1)[0]
-        self.assertIn('功法', main)
-        self.assertIn('修为', main)
+        self.assertIn('class="entry-list"', main)
+        self.assertNotIn('cultivation-list', main)
+        self.assertNotIn('entry-description', main)
+        self.assertNotIn('entry-meta', main)
+        self.assertNotIn('功法', main)
+        self.assertNotIn('修为', main)
         self.assertIn('2025.04.02', main)
         for name in ('now', 'path', 'realms', 'roots'):
             self.assertIn(f'/sanctum/{name}/', Document(main).links)

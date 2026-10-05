@@ -1,11 +1,18 @@
 {{ define "main" }}
-{{ $dimension := partial "dimension.html" .Data.Plural }}
+{{ $dimension := dict }}
+{{ if eq .Kind "term" }}{{ $dimension = partial "dimension.html" .Data.Plural }}{{ end }}
 <header class="page-heading">
   <p class="eyebrow">{{ if eq .Kind "term" }}{{ $dimension.name }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
   <h1>{{ if eq .Kind "term" }}{{ partial "term-label.html" (dict "key" .Data.Plural "term" .Data.Term) }}{{ else if .Params.chinese }}{{ .Params.chinese }} <span lang="en">{{ .Title }}</span>{{ else }}{{ .Title }}{{ end }}</h1>
   {{ with .Description }}<p class="page-description">{{ . }}</p>{{ end }}
 </header>
 {{ with .Content }}<div class="prose section-intro">{{ . }}</div>{{ end }}
-{{ partial "entry-list.html" (dict "pages" .RegularPages.ByDate.Reverse "descriptions" true) }}
+{{ $entries := dict "pages" .RegularPages.ByDate.Reverse "descriptions" true }}
+{{ with .Params.entries }}
+  {{ $pages := slice }}
+  {{ range . }}{{ with site.GetPage . }}{{ $pages = $pages | append . }}{{ end }}{{ end }}
+  {{ $entries = dict "pages" $pages "updated" true "localized_titles" true "metadata" false }}
+{{ end }}
+{{ partial "entry-list.html" $entries }}
 {{ if eq .Kind "term" }}<p class="back-link"><a href="{{ .Parent.RelPermalink }}">← 返回{{ $dimension.name }}索引</a>{{ if ne .Data.Plural "tags" }} · <a href="{{ "tags/" | relURL }}">全部分类</a>{{ end }}</p>{{ end }}
 {{ end }}

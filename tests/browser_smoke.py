@@ -61,10 +61,9 @@ def run(base, chromium, screenshots):
         print('PASS theme cycle, persistence, system dark preference')
 
         page.goto(base + '/cultivation/')
-        assert page.locator('.cultivation-list a').count() == 4
-        assert '功法' in page.locator('.cultivation-list').inner_text()
-        assert '修为' in page.locator('.cultivation-list').inner_text()
-        assert page.locator('.cultivation-list time').count() == 4
+        assert page.locator('.entry-list .entry-title').all_text_contents() == ['今朝', '道途', '境界', '灵根']
+        assert page.locator('.entry-list time').count() == 4
+        assert page.locator('.entry-list .entry-description, .entry-list .entry-meta').count() == 0
         assert page.locator('.cultivation-intro, .theory-links').count() == 0
         page.goto(base + '/path/')
         assert '功法' in page.locator('.article-heading .eyebrow').inner_text()
@@ -106,24 +105,23 @@ def run(base, chromium, screenshots):
                 elif route in ('/cultivation/', '/now/', '/path/', '/realms/', '/roots/'):
                     assert current.count() == 1 and current.get_attribute('href').endswith('/cultivation/'), route
                     assert page.locator('.section-nav a').all_text_contents() == ['今朝', '道途', '境界', '灵根']
-                    if route == '/cultivation/':
-                        rows = page.locator('.cultivation-list li')
-                        previous = None
-                        for row in rows.all():
-                            box = row.bounding_box()
-                            date = row.locator('time').bounding_box()
-                            title = row.locator('h2').bounding_box()
-                            assert box['height'] <= 100, (width, 'Cultivation rows should be compact')
-                            assert date['x'] >= title['x'] + title['width'], (width, 'Update date should be on the right')
-                            if previous:
-                                assert box['y'] >= previous['y'] + previous['height'] - 1, (width, 'Cultivation should use a single column')
-                            previous = box
                 elif route == '/about/':
                     assert current.count() == 1 and current.get_attribute('href').endswith('/about/')
                     assert page.locator('.section-nav').count() == 0
                 else:
                     assert current.count() == 1 and current.get_attribute('href').endswith('/posts/'), route
                     assert page.locator('.section-nav a').all_text_contents() == ['全部文字', '存档', '分类', '最近更新']
+            shared_styles = []
+            for route in ('/cultivation/', '/posts/'):
+                page.goto(base + route)
+                shared_styles.append(page.evaluate('''() => {
+                    const style = selector => {
+                        const s = getComputedStyle(document.querySelector(selector));
+                        return [s.fontSize, s.fontWeight, s.lineHeight, s.padding, s.margin, s.display, s.gridTemplateColumns];
+                    };
+                    return ['.page-heading', '.entry-list', '.entry-list > li', '.entry-title', '.entry-list time'].map(style);
+                }'''))
+            assert shared_styles[0] == shared_styles[1], (width, 'Cultivation and Posts must use the same heading and list styles')
             if width == 375 and screenshots:
                 for name, route in (('home-mobile', '/'), ('cultivation-mobile', '/cultivation/'), ('article-mobile', '/posts/cultivation-realms/')):
                     page.goto(base + route)
