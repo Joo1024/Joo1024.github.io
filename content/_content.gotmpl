@@ -10,6 +10,6 @@
     {{ $.AddPage (dict "kind" "section" "path" .slug "title" .name "description" .description "params" (dict "chinese" .chinese)) }}
   {{ end }}
 {{ end }}
-{{ .AddPage (dict "kind" "page" "path" "cultivation" "title" "Cultivation" "layout" "cultivation" "description" "从自身禀赋出发，选择愿意长久走下去的方向，在实践中认识所得，也记录此刻正在做的事。" "params" (dict "chinese" "修行" "theory_posts" (slice "posts/cultivation-roots-and-methods" "posts/cultivation-realms"))) }}
+{{ .AddPage (dict "kind" "page" "path" "cultivation" "title" "Cultivation" "layout" "cultivation" "description" "今朝、道途、境界与灵根：最近的实践、长期方向与功法、当前修为及自身禀赋。" "params" (dict "chinese" "修行")) }}
 {{ .AddPage (dict "kind" "page" "path" "archive" "title" "Archive" "layout" "archive" "description" "沿着年份与标签，回看全部文字。") }}
 {{ .AddPage (dict "kind" "page" "path" "updates" "title" "Updates" "layout" "updates" "description" "新的记录与旧文后记，按最后更新时间排列。") }}

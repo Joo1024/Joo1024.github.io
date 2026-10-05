@@ -65,6 +65,7 @@ def run(base, chromium, screenshots):
         assert '功法' in page.locator('.cultivation-list').inner_text()
         assert '修为' in page.locator('.cultivation-list').inner_text()
         assert page.locator('.cultivation-list time').count() == 4
+        assert page.locator('.cultivation-intro, .theory-links').count() == 0
         page.goto(base + '/path/')
         assert '功法' in page.locator('.article-heading .eyebrow').inner_text()
         page.goto(base + '/roots/')
@@ -105,6 +106,18 @@ def run(base, chromium, screenshots):
                 elif route in ('/cultivation/', '/now/', '/path/', '/realms/', '/roots/'):
                     assert current.count() == 1 and current.get_attribute('href').endswith('/cultivation/'), route
                     assert page.locator('.section-nav a').all_text_contents() == ['今朝', '道途', '境界', '灵根']
+                    if route == '/cultivation/':
+                        rows = page.locator('.cultivation-list li')
+                        previous = None
+                        for row in rows.all():
+                            box = row.bounding_box()
+                            date = row.locator('time').bounding_box()
+                            title = row.locator('h2').bounding_box()
+                            assert box['height'] <= 100, (width, 'Cultivation rows should be compact')
+                            assert date['x'] >= title['x'] + title['width'], (width, 'Update date should be on the right')
+                            if previous:
+                                assert box['y'] >= previous['y'] + previous['height'] - 1, (width, 'Cultivation should use a single column')
+                            previous = box
                 elif route == '/about/':
                     assert current.count() == 1 and current.get_attribute('href').endswith('/about/')
                     assert page.locator('.section-nav').count() == 0
