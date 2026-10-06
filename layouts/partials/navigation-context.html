@@ -5,7 +5,7 @@
   {{ $primary = "cultivation" }}
 {{ else }}
   {{ range .Site.Data.sections }}
-    {{ if eq $page.RelPermalink (printf "%s/" .slug | relURL) }}
+    {{ if eq $page.RelPermalink (printf "%s/" . | relURL) }}
       {{ $primary = "cultivation" }}
     {{ end }}
   {{ end }}

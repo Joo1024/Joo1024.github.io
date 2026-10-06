@@ -66,13 +66,13 @@ def run(base, chromium, screenshots):
         assert page.locator('.entry-list .entry-description, .entry-list .entry-meta').count() == 0
         assert page.locator('.cultivation-intro, .theory-links').count() == 0
         page.goto(base + '/path/')
-        assert '功法' in page.locator('.article-heading .eyebrow').inner_text()
+        assert page.locator('.article-heading .eyebrow').inner_text() == 'Sanctum / Path'
         page.goto(base + '/roots/')
         assert '双主灵根' in page.locator('.prose').inner_text()
         assert page.locator('.prose h2').all_text_contents() == ['灵根和功法', '文言总结']
         assert page.locator('.theory-links').count() == 0
         page.goto(base + '/realms/')
-        assert '修为' in page.locator('.article-heading .eyebrow').inner_text()
+        assert page.locator('.article-heading .eyebrow').inner_text() == 'Sanctum / Realms'
         assert '当前修为尚待整理' in page.locator('.prose').inner_text()
         assert page.locator('.theory-links').count() == 0
         page.goto(base + '/posts/cultivation-roots-and-methods/')
@@ -89,7 +89,7 @@ def run(base, chromium, screenshots):
         page.locator('.article-toc > summary').click()
         page.locator('#TableOfContents a').first.click()
         assert urlsplit(page.url).fragment
-        print('PASS cultivation overview, roles, templates, archive, classification, article tables and TOC')
+        print('PASS cultivation overview, page headings, archive, classification, article tables and TOC')
 
         routes = ('/', '/cultivation/', '/now/', '/path/', '/realms/', '/roots/',
                   '/about/', '/posts/', '/posts/cultivation-realms/',
@@ -111,6 +111,9 @@ def run(base, chromium, screenshots):
                 elif route in ('/cultivation/', '/now/', '/path/', '/realms/', '/roots/'):
                     assert current.count() == 1 and current.get_attribute('href').endswith('/cultivation/'), route
                     assert page.locator('.section-nav').count() == 0
+                    if route != '/cultivation/':
+                        expected_title = {'/now/': 'Now', '/path/': 'Path', '/realms/': 'Realms', '/roots/': 'Roots'}[route]
+                        assert page.locator('.article-heading .eyebrow').inner_text() == 'Sanctum / ' + expected_title
                 elif route == '/about/':
                     assert current.count() == 1 and current.get_attribute('href').endswith('/about/')
                     assert page.locator('.section-nav').count() == 0

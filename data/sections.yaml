@@ -1,9 +1,5 @@
 # Four cultivation pages, in browsing order. Titles come from Markdown.
-- slug: now
-  role: 最近的投入与实践
-- slug: path
-  role: 长期方向与功法
-- slug: realms
-  role: 当前修为与能力沉淀
-- slug: roots
-  role: 自身禀赋与自然倾向
+- now
+- path
+- realms
+- roots

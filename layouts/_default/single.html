@@ -1,13 +1,8 @@
 {{ define "main" }}
 {{ $isArticle := partial "is-article.html" . }}
-{{ $role := "" }}
-{{ $page := . }}
-{{ range .Site.Data.sections }}
-  {{ if eq $page.RelPermalink (printf "%s/" .slug | relURL) }}{{ $role = .role }}{{ end }}
-{{ end }}
 <article class="reading-page">
   <header class="article-heading">
-    <p class="eyebrow">{{ if $isArticle }}{{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ .Params.chinese }} · {{ .Title }}</a>{{ end }}{{ else if $role }}<a href="{{ "cultivation/" | relURL }}">修行</a> / {{ $role }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
+    <p class="eyebrow">{{ if $isArticle }}{{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ .Params.chinese }} · {{ .Title }}</a>{{ end }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
     <h1>{{ if .Params.chinese }}{{ .Params.chinese }} <span lang="en">{{ .Title }}</span>{{ else }}{{ .Title }}{{ end }}</h1>
     {{ with .Description }}<p class="article-description">{{ . }}</p>{{ end }}
     <div class="article-meta">
