@@ -1,25 +1,9 @@
+# Four cultivation pages, in browsing order. Titles come from Markdown.
 - slug: now
-  kind: page
-  name: Now
-  chinese: 今朝
-  description: 最近的投入与实践
+  role: 最近的投入与实践
 - slug: path
-  kind: page
-  name: Path
-  chinese: 道途
-  description: 长期方向与功法
+  role: 长期方向与功法
 - slug: realms
-  kind: page
-  name: Realms
-  chinese: 境界
-  description: 当前修为与能力沉淀
+  role: 当前修为与能力沉淀
 - slug: roots
-  kind: page
-  name: Roots
-  chinese: 灵根
-  description: 自身禀赋与自然倾向
-- slug: posts
-  kind: articles
-  name: Posts
-  chinese: 文字
-  description:
+  role: 自身禀赋与自然倾向

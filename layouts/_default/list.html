@@ -11,7 +11,7 @@
 {{ with .Params.entries }}
   {{ $pages := slice }}
   {{ range . }}{{ with site.GetPage . }}{{ $pages = $pages | append . }}{{ end }}{{ end }}
-  {{ $entries = dict "pages" $pages "updated" true "localized_titles" true "metadata" false }}
+  {{ $entries = dict "pages" $pages }}
 {{ end }}
 {{ partial "entry-list.html" $entries }}
 {{ if eq .Kind "term" }}<p class="back-link"><a href="{{ .Parent.RelPermalink }}">← 返回{{ $dimension.name }}索引</a>{{ if ne .Data.Plural "tags" }} · <a href="{{ "tags/" | relURL }}">全部分类</a>{{ end }}</p>{{ end }}

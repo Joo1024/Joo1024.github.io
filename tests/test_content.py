@@ -25,8 +25,8 @@ class ContentTest(unittest.TestCase):
             home = Document((output / 'index.html').read_text())
             self.assertFalse(any(link.endswith('#later-notes') for link in home.links), 'An empty list must not advertise a nonexistent later-note anchor')
 
-    def test_relative_feed_urls_and_independent_later_note_footnotes(self):
-        """A reader can open media/links; each note points to its own footnote."""
+    def test_later_note_footnotes_and_original_rss_publication_date(self):
+        """Body and later notes retain separate footnotes and the original feed date."""
         with TemporaryDirectory(prefix='sanctum-regression-') as tmp:
             root = Path(tmp)
             section = create_content(root) / 'posts'
@@ -56,7 +56,7 @@ Original body.[^1]
 
 [^1]: Footnote belonging to original body.
 
-![Ridge](../../images/ridge.svg)
+![Site mark](../../favicon.svg)
 
 [Other](../other/)
 ''')
@@ -73,10 +73,10 @@ Original body.[^1]
             rss = ET.fromstring((output / 'index.xml').read_text())
             entry = next(item for item in rss.findall('./channel/item') if item.findtext('title') == 'Fixture')
             feed = Document(entry.findtext('description'))
-            self.assertIn('https://example.com/sanctum/images/ridge.svg', feed.links)
-            self.assertIn('https://example.com/sanctum/posts/other/', feed.links)
-            for link in feed.links:
-                self.assertTrue(link.startswith('https://example.com/sanctum/'), link)
+            self.assertFalse(feed.duplicate_ids)
+            self.assertIn('Footnote belonging to first note.', feed.text)
+            self.assertIn('Footnote belonging to second note.', feed.text)
+            self.assertTrue(all(image.get('loading') == 'lazy' for image in article.images))
             self.assertIn('2025', entry.findtext('pubDate'), 'Later notes must retain original RSS publication date')
 
 

@@ -71,7 +71,7 @@ class NavigationTest(unittest.TestCase):
             'now': ('cultivation', 'now'), 'path': ('cultivation', 'path'),
             'realms': ('cultivation', 'realms'), 'roots': ('cultivation', 'roots'),
             'posts': ('posts', 'posts'), 'posts/entry6': ('posts', 'posts'),
-            'archive': ('posts', 'archive'), 'updates': ('posts', None),
+            'archive': ('posts', 'archive'),
             'tags': ('posts', 'tags'), 'forms/reflection': ('posts', 'tags'),
             'domains/mind': ('posts', 'tags'), 'paths/明心': ('posts', 'tags'),
             'tags/练习': ('posts', 'tags'), 'about': ('about', None),
@@ -133,11 +133,9 @@ class NavigationTest(unittest.TestCase):
         for n in range(1, 7):
             self.assertIn(f'/sanctum/posts/entry{n}/', Document(html).links)
 
-    def test_fixed_pages_are_in_updates_and_sitemap_but_not_article_feeds(self):
-        updates = Document(self.html('updates')).links
+    def test_fixed_pages_are_in_sitemap_but_not_article_feeds(self):
         sitemap = (self.output / 'sitemap.xml').read_text()
         for name in ('now', 'path', 'realms', 'roots'):
-            self.assertIn(f'/sanctum/{name}/', updates)
             self.assertIn(BASE + name + '/', sitemap)
         for route in ('index.xml', 'posts/index.xml', 'forms/reflection/index.xml'):
             items = ET.parse(self.output / route).getroot().findall('./channel/item')

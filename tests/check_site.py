@@ -58,7 +58,7 @@ class Document(HTMLParser):
             self.json_script = False
 
 
-def check(root, base, examples=False):
+def check(root, base):
     problems = []
     def require(condition, message):
         if not condition:
@@ -83,25 +83,13 @@ def check(root, base, examples=False):
         require(route.startswith(base), f'Browsing link escapes base path: {link}')
         if route.startswith(base):
             read(route[len(base):].rstrip('/') + '/index.html')
-    for route in ('archive/index.html', 'updates/index.html', 'tags/index.html', 'forms/index.html', '404.html'):
+    for route in ('archive/index.html', 'tags/index.html', 'forms/index.html', '404.html'):
         read(route)
     archive = read('archive/index.html')
-    if examples:
-        require('year-2025' in archive and 'year-2026' in archive, 'Archive must group original years')
-        article = read('posts/on-keeping-a-place/index.html')
-        for marker in ('TableOfContents', 'footnotes', 'later-notes', 'datePublished', 'dateModified', 'post-navigation', 'reflection', '2025-11-16', '2026-09-20'):
-            require(marker in article, f'Article must provide {marker}')
-        require('2026-09-20' in read('updates/index.html'), 'Updates must show last modification date')
-        practice = read('posts/small-repetitions/index.html')
-        require('highlight' in practice and '<pre' in practice and '<blockquote' in practice, 'Markdown code and quote must render')
-        journey = read('posts/before-the-ridge/index.html')
-        require(any(i.get('loading') == 'lazy' for i in Document(journey).images), 'Journey images must be lazy loaded')
     require('canonical' in home and bool(home_document.meta.get('description')), 'SEO metadata must be present')
     rss = read('index.xml')
     rss_xml = parse_xml('index.xml', rss)
     parse_xml('sitemap.xml', read('sitemap.xml'))
-    if examples:
-        require('后记' in rss and 'on-keeping-a-place' in rss, 'RSS must include article content and later notes')
     documents = {p: Document(p.read_text()) for p in root.rglob('*.html')}
     articles = [s for d in documents.values() for s in d.schemas if s.get('@type') == 'BlogPosting']
     if rss_xml is not None:
@@ -140,7 +128,7 @@ def check(root, base, examples=False):
     if problems:
         print('\n'.join(f'FAIL {p}' for p in problems), file=sys.stderr)
         return 1
-    print(f'PASS {len(documents)} HTML pages, {len(articles)} articles, {len(browse_links)} home browsing links; local links/anchors, dates/archive, RSS, sitemap, lazy images, SEO' + ('; example Markdown/TOC/footnotes/later notes' if examples else ''))
+    print(f'PASS {len(documents)} HTML pages, {len(articles)} articles, {len(browse_links)} home browsing links; local links/anchors, dates/archive, RSS, sitemap, lazy images, SEO')
     return 0
 
 
@@ -148,6 +136,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('root', nargs='?', default='public')
     parser.add_argument('--base-path', default='/')
-    parser.add_argument('--examples', action='store_true', help='Also validate the removable example articles')
     args = parser.parse_args()
-    sys.exit(check(Path(args.root).resolve(), args.base_path, args.examples))
+    sys.exit(check(Path(args.root).resolve(), args.base_path))

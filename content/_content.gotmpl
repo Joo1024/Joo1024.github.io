@@ -1,17 +1,11 @@
-{{/* Generate Cultivation, Posts, Archive and Updates; navigation labels live in data/. */}}
+{{/* Generate the shared page list, chronological posts and archive. */}}
 {{ $seen := slice }}
 {{ $cultivation := slice }}
 {{ range site.Data.sections }}
-  {{ if not (in (slice "page" "articles") .kind) }}
-    {{ errorf "Section %s kind must be page or articles in data/sections.yaml" .slug }}
-  {{ end }}
-  {{ if in $seen .slug }}{{ errorf "Duplicate section %s in data/sections.yaml" .slug }}{{ end }}
+  {{ if in $seen .slug }}{{ errorf "Duplicate page %s in data/sections.yaml" .slug }}{{ end }}
   {{ $seen = $seen | append .slug }}
-  {{ if eq .kind "page" }}{{ $cultivation = $cultivation | append .slug }}{{ end }}
-  {{ if eq .kind "articles" }}
-    {{ $.AddPage (dict "kind" "section" "path" .slug "title" .name "description" .description "params" (dict "chinese" .chinese)) }}
-  {{ end }}
+  {{ $cultivation = $cultivation | append .slug }}
 {{ end }}
+{{ .AddPage (dict "kind" "section" "path" "posts" "title" "Posts" "params" (dict "chinese" "文字")) }}
 {{ .AddPage (dict "kind" "page" "path" "cultivation" "title" "Cultivation" "layout" "list" "params" (dict "chinese" "修行" "entries" $cultivation)) }}
 {{ .AddPage (dict "kind" "page" "path" "archive" "title" "Archive" "layout" "archive" "description" "沿着年份与标签，回看全部文字。") }}
-{{ .AddPage (dict "kind" "page" "path" "updates" "title" "Updates" "layout" "updates" "description" "新的记录与旧文后记，按最后更新时间排列。") }}

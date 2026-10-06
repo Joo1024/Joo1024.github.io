@@ -1,1 +1,1 @@
-{{ return (and .IsPage (in (partial "article-sections.html" .) .Section)) }}
+{{ return (and .IsPage (eq .Section "posts")) }}

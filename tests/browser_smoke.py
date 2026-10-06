@@ -89,7 +89,7 @@ def run(base, chromium, screenshots):
                   '/about/', '/posts/', '/posts/cultivation-realms/',
                   '/posts/cultivation-roots-and-methods/', '/archive/', '/tags/',
                   '/forms/', '/forms/reflection/', '/domains/', '/domains/mind/',
-                  '/paths/', '/paths/明心/', '/updates/')
+                  '/paths/', '/paths/明心/')
         for width in (320, 375, 768, 1440):
             page.set_viewport_size({'width': width, 'height': 900})
             for route in routes:

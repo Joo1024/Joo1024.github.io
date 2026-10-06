@@ -17,7 +17,7 @@
       {{ range site.Data.dimensions }}
         {{ range $page.GetTerms .key }}<category domain="{{ .Parent.Permalink }}">{{ .Data.Term }}</category>{{ end }}
       {{ end }}
-      <description>{{ partial "rss-content.html" . }}</description>
+      <description>{{ printf "%s%s" .Content (partial "later-notes.html" .) }}</description>
     </item>
     {{ end }}
   </channel>

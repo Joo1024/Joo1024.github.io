@@ -1,3 +1,0 @@
-{{ $slugs := slice }}
-{{ range where site.Data.sections "kind" "articles" }}{{ $slugs = $slugs | append .slug }}{{ end }}
-{{ return $slugs }}

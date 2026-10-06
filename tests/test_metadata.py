@@ -45,7 +45,7 @@ class MetadataTest(unittest.TestCase):
             hub = Document((output / 'tags/index.html').read_text())
             for anchor in ('dimension-form', 'dimension-domains', 'dimension-paths', 'dimension-tags'):
                 self.assertIn(anchor, hub.ids)
-            for path in ('index.html', 'archive/index.html', 'updates/index.html'):
+            for path in ('index.html', 'archive/index.html'):
                 self.assertIn('Field journal', (output / path).read_text())
             rss = ET.fromstring((output / 'index.xml').read_text())
             self.assertEqual(len(rss.findall('./channel/item')), 1)
@@ -57,7 +57,7 @@ class MetadataTest(unittest.TestCase):
         with TemporaryDirectory(prefix='sanctum-minimum-') as tmp:
             result, output = self.build(Path(tmp))
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            for path in ('index.html', 'archive/index.html', 'updates/index.html', 'index.xml'):
+            for path in ('index.html', 'archive/index.html', 'index.xml'):
                 self.assertIn('Field journal', (output / path).read_text())
             self.assertFalse((output / 'forms/posts/index.html').exists(), 'The folder is not an automatic form')
             hub = Document((output / 'tags/index.html').read_text())
@@ -125,7 +125,7 @@ class MetadataTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertTrue((output / 'posts/entry/index.html').is_file())
             old_routes = ('reflection', 'practice', 'making', 'notes', 'reading', 'journey',
-                          'yearly', 'categories', 'categories/practice', 'types', 'types/practice')
+                          'yearly', 'categories', 'categories/practice', 'types', 'types/practice', 'updates')
             for route in old_routes:
                 for filename in ('index.html', 'index.xml'):
                     self.assertFalse((output / route / filename).exists(), route + '/' + filename)
@@ -189,14 +189,14 @@ class MetadataTest(unittest.TestCase):
         with TemporaryDirectory(prefix='sanctum-empty-') as tmp:
             result, output = self.build(Path(tmp), articles=False)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            for route in ('posts', 'forms', 'domains', 'paths', 'tags', 'archive', 'updates'):
+            for route in ('posts', 'forms', 'domains', 'paths', 'tags', 'archive'):
                 self.assertTrue((output / route / 'index.html').is_file(), route)
             for path in ('index.xml', 'posts/index.xml', 'forms/index.xml', 'domains/index.xml',
                          'paths/index.xml', 'tags/index.xml'):
                 self.assertFalse(ET.fromstring((output / path).read_text()).findall('./channel/item'))
 
-    def test_fixed_pages_survive_deleting_all_sample_articles(self):
-        with TemporaryDirectory(prefix='sanctum-delete-samples-') as tmp:
+    def test_fixed_pages_are_independent_of_articles(self):
+        with TemporaryDirectory(prefix='sanctum-fixed-pages-') as tmp:
             root = Path(tmp)
             _, output = self.build(root, articles=False)
             for name in ('now.md', 'path.md', 'about.md'):

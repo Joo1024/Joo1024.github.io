@@ -1,16 +1,16 @@
 <ol class="entry-list">
   {{ range .pages }}
-  {{ $date := .Date }}
-  {{ if $.updated }}{{ $date = .Lastmod }}{{ end }}
+  {{ $isArticle := partial "is-article.html" . }}
+  {{ $date := .Lastmod }}
+  {{ if $isArticle }}{{ $date = .Date }}{{ end }}
   <li>
     <time datetime="{{ $date.Format "2006-01-02" }}">{{ $date.Format "2006.01.02" }}</time>
     <div class="entry-main">
-      <a class="entry-title" href="{{ .RelPermalink }}">{{ if and $.localized_titles .Params.chinese }}{{ .Params.chinese }}{{ else }}{{ .Title }}{{ end }}</a>
-      {{ if $.descriptions }}<p class="entry-description">{{ .Description }}</p>{{ end }}
-      {{ if ne $.metadata false }}
+      <a class="entry-title" href="{{ .RelPermalink }}">{{ if and (not $isArticle) .Params.chinese }}{{ .Params.chinese }}{{ else }}{{ .Title }}{{ end }}</a>
+      {{ if $.descriptions }}{{ with .Description }}<p class="entry-description">{{ . }}</p>{{ end }}{{ end }}
+      {{ if $isArticle }}
       {{ $meta := slice }}
       {{ with .Params.form }}{{ $meta = $meta | append (partial "term-label.html" (dict "key" "form" "term" .)) }}{{ end }}
-      {{ if .Params.sample }}{{ $meta = $meta | append "示例" }}{{ end }}
       {{ if eq .Params.status "ongoing" }}{{ $meta = $meta | append "持续中" }}{{ end }}
       {{ if eq .Params.status "archived" }}{{ $meta = $meta | append "已归档" }}{{ end }}
       {{ with $meta }}<span class="entry-meta">{{ delimit . " · " }}</span>{{ end }}

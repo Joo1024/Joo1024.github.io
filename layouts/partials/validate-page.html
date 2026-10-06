@@ -2,7 +2,7 @@
 {{ $isArticle := partial "is-article.html" . }}
 {{ $fixedFiles := slice "about.md" }}
 {{ range site.Data.sections }}
-  {{ if eq .kind "page" }}{{ $fixedFiles = $fixedFiles | append (printf "%s.md" .slug) }}{{ end }}
+  {{ $fixedFiles = $fixedFiles | append (printf "%s.md" .slug) }}
 {{ end }}
 {{ with .File }}
   {{/* Content-adapter pages point to _content.gotmpl, not an authored article. */}}
