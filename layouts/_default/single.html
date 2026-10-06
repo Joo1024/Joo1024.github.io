@@ -22,7 +22,6 @@
   <details class="article-toc"><summary>此页目录 <span>Contents</span></summary>{{ .TableOfContents }}{{ if .Params.later_notes }}<a class="toc-later" href="#later-notes">后记 / Later notes</a>{{ end }}</details>
   {{ end }}
   <div class="prose">{{ .Content }}{{ partial "later-notes.html" . }}</div>
-  {{ partial "cultivation-related.html" . }}
   {{ if $isArticle }}
   <nav class="post-navigation" aria-label="按时间相邻的文字">
     <div>{{ with .PrevInSection }}<span>上一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} ←</a>{{ end }}</div>

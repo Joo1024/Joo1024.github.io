@@ -4,7 +4,6 @@ chinese: 境界
 lastmod: 2026-10-05
 status: ongoing
 toc: false
-theory_posts: [posts/cultivation-realms]
 ---
 
 境界，是跨时间、跨场景沉淀下来的修为。

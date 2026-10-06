@@ -79,11 +79,6 @@ main { min-height: 55vh; }
 .page-heading h1 > span, .article-heading h1 > span { color: var(--muted); font-size: 15px; margin-left: 12px; display: inline-block; font-weight: 400; }
 .page-description, .article-description { color: var(--muted); font-size: 14px; line-height: 1.9; max-width: 620px; margin: 0; }
 .page-heading .eyebrow, .article-heading .eyebrow { margin-bottom: 19px; }
-.theory-links { border-top: 1px solid var(--rule); margin-top: 36px; padding-top: 18px; font-size: 14px; }
-.theory-links p { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
-.theory-links ul { margin: 0; padding-left: 1.4em; }
-.theory-links li { margin: 6px 0; }
-.theory-links a { color: var(--link); }
 .article-meta { font-size: 12px; display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); margin-top: 23px; }
 .article-taxonomy { display: grid; gap: 8px; margin-top: 16px; color: var(--muted); font-size: 13px; }
 .metadata-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }

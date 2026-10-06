@@ -68,11 +68,17 @@ def run(base, chromium, screenshots):
         page.goto(base + '/path/')
         assert '功法' in page.locator('.article-heading .eyebrow').inner_text()
         page.goto(base + '/roots/')
-        assert '此页尚待梳理' in page.locator('.prose').inner_text()
-        assert page.locator('.theory-links a').count() == 1
+        assert '双主灵根' in page.locator('.prose').inner_text()
+        assert page.locator('.prose h2').all_text_contents() == ['灵根和功法', '文言总结']
+        assert page.locator('.theory-links').count() == 0
         page.goto(base + '/realms/')
         assert '修为' in page.locator('.article-heading .eyebrow').inner_text()
         assert '当前修为尚待整理' in page.locator('.prose').inner_text()
+        assert page.locator('.theory-links').count() == 0
+        page.goto(base + '/posts/cultivation-roots-and-methods/')
+        assert page.locator('.prose h2').all_text_contents() == ['定义', '灵根谱系', '功法谱系']
+        assert page.locator('.prose table').count() == 2
+        assert '双主灵根' not in page.locator('.prose').inner_text()
         page.goto(base + '/archive/')
         assert page.locator('.archive-nav').count() == 0
         assert page.locator('.year-nav a').count() > 0
