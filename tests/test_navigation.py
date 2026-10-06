@@ -34,6 +34,38 @@ class Navigation(HTMLParser):
             self.group = None
 
 
+class PageHeading(HTMLParser):
+    def __init__(self, html):
+        super().__init__()
+        self.title = self.heading = self.eyebrow = self.shared_title = ''
+        self.in_title = self.in_heading = self.in_english = self.in_eyebrow = False
+        self.feed(html)
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == 'title':
+            self.in_title = True
+        elif tag == 'h1':
+            self.in_heading = True
+        elif tag == 'span' and self.in_heading:
+            self.in_english = True
+        elif tag == 'p' and attrs.get('class') == 'eyebrow':
+            self.in_eyebrow = True
+        elif tag == 'meta' and attrs.get('property') == 'og:title':
+            self.shared_title = attrs['content']
+
+    def handle_endtag(self, tag):
+        if tag == 'title': self.in_title = False
+        elif tag == 'h1': self.in_heading = False
+        elif tag == 'span': self.in_english = False
+        elif tag == 'p': self.in_eyebrow = False
+
+    def handle_data(self, data):
+        if self.in_title: self.title += data
+        if self.in_heading and not self.in_english: self.heading += data
+        if self.in_eyebrow: self.eyebrow += data
+
+
 class NavigationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -93,6 +125,35 @@ class NavigationTest(unittest.TestCase):
                                  [f'/sanctum/{slug}/' for slug in expected])
                 self.assertEqual([a['href'] for a in nav['section-nav'] if a.get('aria-current')],
                                  [f'/sanctum/{secondary}/'] if secondary else [])
+
+    def test_heading_browser_and_share_titles_use_the_same_page_label(self):
+        cases = {
+            'now': ('今朝', 'Now'), 'path': ('道途', 'Path'),
+            'roots': ('灵根', 'Roots'), 'realms': ('境界', 'Realms'),
+            'about': ('关于', 'About'), 'cultivation': ('修行', 'Cultivation'),
+            'posts': ('文字', 'Posts'), 'archive': ('存档', 'Archive'),
+            'tags': ('分类', 'Index'), 'forms': ('形式', 'Forms'),
+            'domains': ('领域', 'Domains'), 'paths': ('方向', 'Paths'),
+            'forms/reflection': ('随笔', 'Forms'), 'domains/mind': ('心智', 'Domains'),
+            'paths/明心': ('明心', 'Paths'), 'tags/练习': ('练习', 'Topics'),
+            'posts/entry6': ('Entry 6', 'Posts'),
+        }
+        for route, (title, section) in cases.items():
+            with self.subTest(route=route):
+                page = PageHeading(self.html(route))
+                self.assertEqual(page.heading.strip(), title)
+                self.assertEqual(page.title, title + ' · Sanctum')
+                self.assertEqual(page.shared_title, title)
+                self.assertEqual(page.eyebrow.strip(), 'Sanctum / ' + section)
+
+    def test_generated_pages_have_no_added_descriptions_and_markdown_keeps_its_intro(self):
+        for route in ('archive', 'tags', 'forms', 'domains', 'paths'):
+            with self.subTest(route=route):
+                main = self.html(route).split('<main', 1)[1].split('</main>', 1)[0]
+                self.assertNotIn('page-description', main)
+                self.assertNotIn('时间是经，标签是纬', main)
+        self.assertIn('世事从门前过，自有一室清静。', self.html('path'))
+        self.assertNotIn('一处居所 · 一份长期记录', self.html(''))
 
     def test_home_reads_now_and_shows_only_the_five_latest_articles(self):
         html = self.html('')

@@ -76,6 +76,8 @@ Original body.[^1]
             self.assertFalse(feed.duplicate_ids)
             self.assertIn('Footnote belonging to first note.', feed.text)
             self.assertIn('Footnote belonging to second note.', feed.text)
+            for document in (article, feed):
+                self.assertNotIn('保留当时的文字，把后来的想法放在这里。', document.text)
             self.assertTrue(all(image.get('loading') == 'lazy' for image in article.images))
             self.assertIn('2025', entry.findtext('pubDate'), 'Later notes must retain original RSS publication date')
 

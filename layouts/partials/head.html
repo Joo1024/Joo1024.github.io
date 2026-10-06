@@ -2,19 +2,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 {{ $isArticle := partial "is-article.html" . }}
-<title>{{ if not .IsHome }}{{ .Title }} · {{ end }}Sanctum</title>
-{{ $description := .Description | default .Site.Params.description }}
+{{ $info := partial "page-info.html" . }}
+<title>{{ if not .IsHome }}{{ $info.title }} · {{ end }}{{ .Site.Title }}</title>
+{{ $description := $info.description | default .Site.Params.description }}
 <meta name="description" content="{{ $description }}">
 <link rel="canonical" href="{{ .Permalink }}">
-<meta property="og:title" content="{{ .Title }}">
+<meta property="og:title" content="{{ $info.title }}">
 <meta property="og:description" content="{{ $description }}">
 <meta property="og:url" content="{{ .Permalink }}">
-<meta property="og:site_name" content="Sanctum">
+<meta property="og:site_name" content="{{ .Site.Title }}">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:type" content="{{ if $isArticle }}article{{ else }}website{{ end }}">
 <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
 {{ range .AlternativeOutputFormats }}{{ if eq .MediaType.Type "application/rss+xml" }}
-<link rel="alternate" type="application/rss+xml" title="{{ $.Title }} · RSS" href="{{ .Permalink }}">
+<link rel="alternate" type="application/rss+xml" title="{{ $info.title }} · RSS" href="{{ .Permalink }}">
 {{ end }}{{ end }}
 {{ $css := resources.Get "css/main.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">

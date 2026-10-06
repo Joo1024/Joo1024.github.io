@@ -6,4 +6,4 @@
 {{ end }}
 {{ .AddPage (dict "kind" "section" "path" "posts" "title" "Posts" "params" (dict "chinese" "文字")) }}
 {{ .AddPage (dict "kind" "page" "path" "cultivation" "title" "Cultivation" "layout" "list" "params" (dict "chinese" "修行" "entries" site.Data.sections)) }}
-{{ .AddPage (dict "kind" "page" "path" "archive" "title" "Archive" "layout" "archive" "description" "沿着年份与标签，回看全部文字。") }}
+{{ .AddPage (dict "kind" "page" "path" "archive" "title" "Archive" "layout" "archive" "params" (dict "chinese" "存档")) }}

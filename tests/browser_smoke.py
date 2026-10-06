@@ -101,6 +101,15 @@ def run(base, chromium, screenshots):
             for route in routes:
                 response = page.goto(base + route)
                 assert response.status == 200, route
+                title = page.locator('h1').evaluate('''heading => {
+                    const copy = heading.cloneNode(true);
+                    copy.querySelectorAll('span').forEach(span => span.remove());
+                    return copy.textContent.trim();
+                }''')
+                assert page.title() == title + ('' if route == '/' else ' · Sanctum'), route
+                assert page.locator('meta[property="og:title"]').get_attribute('content') == title, route
+                if route in ('/archive/', '/tags/', '/forms/', '/domains/', '/paths/'):
+                    assert page.locator('.page-description').count() == 0, route
                 assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), (width, route)
                 rss_box = page.locator('.site-footer nav a').first.bounding_box()
                 theme_box = page.locator('#theme-toggle').bounding_box()

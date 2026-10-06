@@ -1,0 +1,32 @@
+{{ $title := .Title }}
+{{ $english := "" }}
+{{ $section := .Title }}
+{{ $description := "" }}
+{{ if .IsHome }}
+  {{ $title = .Site.Title }}
+{{ else if or (eq .Kind "taxonomy") (eq .Kind "term") }}
+  {{ $dimension := partial "dimension.html" .Data.Plural }}
+  {{ $section = $dimension.english }}
+  {{ if eq .Kind "term" }}
+    {{ $title = partial "term-label.html" (dict "key" .Data.Plural "term" .Data.Term) }}
+  {{ else if eq .Data.Plural "tags" }}
+    {{ $title = "分类" }}
+    {{ $english = "Index" }}
+    {{ $section = $english }}
+  {{ else }}
+    {{ $title = $dimension.name }}
+    {{ $english = $dimension.english }}
+  {{ end }}
+{{ else }}
+  {{ with .Params.chinese }}
+    {{ $title = . }}
+    {{ $english = $.Title }}
+  {{ end }}
+  {{ if partial "is-article.html" . }}
+    {{ $section = .CurrentSection.Title }}
+  {{ end }}
+{{ end }}
+{{ with .File }}
+  {{ if eq .Ext "md" }}{{ $description = $.Description }}{{ end }}
+{{ end }}
+{{ return dict "title" $title "english" $english "section" $section "description" $description }}

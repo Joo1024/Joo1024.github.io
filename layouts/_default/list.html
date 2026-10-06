@@ -2,9 +2,7 @@
 {{ $dimension := dict }}
 {{ if eq .Kind "term" }}{{ $dimension = partial "dimension.html" .Data.Plural }}{{ end }}
 <header class="page-heading">
-  <p class="eyebrow">{{ if eq .Kind "term" }}{{ $dimension.name }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
-  <h1>{{ if eq .Kind "term" }}{{ partial "term-label.html" (dict "key" .Data.Plural "term" .Data.Term) }}{{ else if .Params.chinese }}{{ .Params.chinese }} <span lang="en">{{ .Title }}</span>{{ else }}{{ .Title }}{{ end }}</h1>
-  {{ with .Description }}<p class="page-description">{{ . }}</p>{{ end }}
+  {{ partial "page-title.html" . }}
 </header>
 {{ with .Content }}<div class="prose section-intro">{{ . }}</div>{{ end }}
 {{ $entries := dict "pages" .RegularPages.ByDate.Reverse "descriptions" true }}

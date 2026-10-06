@@ -1,7 +1,7 @@
 {{ define "main" }}
 {{ $dimension := partial "dimension.html" .Data.Plural }}
+<header class="page-heading">{{ partial "page-title.html" . }}</header>
 {{ if eq .Data.Plural "tags" }}
-<header class="page-heading"><p class="eyebrow">Index / 索引</p><h1>分类 <span>Index</span></h1><p class="page-description">时间是经，标签是纬。循着形式、领域、方向与主题，重新遇见不同年份的文字。</p></header>
 {{ $hasWords := false }}
 {{ range site.Data.dimensions }}
   {{ $terms := index site.Taxonomies .key }}
@@ -9,14 +9,12 @@
     {{ $hasWords = true }}
     <section class="dimension-section" id="dimension-{{ .key }}">
       <h2>{{ .name }} <span lang="en">{{ .english }}</span></h2>
-      <p>{{ .description }}</p>
       {{ partial "dimension-index.html" (dict "dimension" . "terms" $terms) }}
     </section>
   {{ end }}
 {{ end }}
 {{ if not $hasWords }}<p class="empty-state">标签可以留空。文字会先沿着时间生长。</p>{{ end }}
 {{ else }}
-<header class="page-heading"><p class="eyebrow">Index / 索引</p><h1>{{ $dimension.name }} <span lang="en">{{ $dimension.english }}</span></h1><p class="page-description">{{ $dimension.description }}</p></header>
 {{ partial "dimension-index.html" (dict "dimension" $dimension "terms" .Data.Terms) }}
 <p class="back-link"><a href="{{ "tags/" | relURL }}">← 返回分类索引</a></p>
 {{ end }}

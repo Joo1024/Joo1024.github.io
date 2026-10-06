@@ -2,9 +2,7 @@
 {{ $isArticle := partial "is-article.html" . }}
 <article class="reading-page">
   <header class="article-heading">
-    <p class="eyebrow">{{ if $isArticle }}{{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ .Params.chinese }} · {{ .Title }}</a>{{ end }}{{ else }}Sanctum / {{ .Title }}{{ end }}</p>
-    <h1>{{ if .Params.chinese }}{{ .Params.chinese }} <span lang="en">{{ .Title }}</span>{{ else }}{{ .Title }}{{ end }}</h1>
-    {{ with .Description }}<p class="article-description">{{ . }}</p>{{ end }}
+    {{ partial "page-title.html" . }}
     <div class="article-meta">
       {{ if $isArticle }}<span>发布于 <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.01.02" }}</time></span>{{ end }}
       {{ if not .Lastmod.IsZero }}<span>更新于 <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2006.01.02" }}</time></span>{{ end }}
@@ -22,6 +20,6 @@
     <div>{{ with .PrevInSection }}<span>上一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} ←</a>{{ end }}</div>
     <div>{{ with .NextInSection }}<span>下一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}</div>
   </nav>
-  {{ else if .Params.later_notes }}<p class="quiet living-note">这是一页持续更新的记录。旧的片段保留在后记里。</p>{{ end }}
+  {{ end }}
 </article>
 {{ end }}

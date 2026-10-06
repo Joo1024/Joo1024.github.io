@@ -1,0 +1,4 @@
+{{ $info := partial "page-info.html" . }}
+<p class="eyebrow">{{ .Site.Title }} / {{ if partial "is-article.html" . }}<a href="{{ .CurrentSection.RelPermalink }}">{{ $info.section }}</a>{{ else }}{{ $info.section }}{{ end }}</p>
+<h1>{{ $info.title }}{{ with $info.english }} <span lang="en">{{ . }}</span>{{ end }}</h1>
+{{ with $info.description }}<p class="page-description">{{ . }}</p>{{ end }}
