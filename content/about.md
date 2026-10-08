@@ -2,7 +2,7 @@
 title: About
 chinese: 关于
 description: 一个人在时间中留下修行痕迹的地方
-lastmod: 2026-10-02
+lastmod: 2026-10-08
 toc: false
 ---
 
@@ -26,3 +26,8 @@ Sanctum 是一个记录思考、练习、创作与时间的地方。
 旧文留在原来的时间里。观点改变时，追加后记，不抹掉来路。
 
 时间是经，标签是纬。文章按日期积累，也由形式、领域、方向与主题串联。
+
+## 外部链接
+
+- [Komoot](https://www.komoot.com/user/3387177964009)
+- [GitHub](https://github.com/Joo1024/Joo1024.github.io)
