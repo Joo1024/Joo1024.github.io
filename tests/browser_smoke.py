@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Optional production browser tests (requires Playwright + Chromium).
+"""Production browser tests, run locally and in the Pages build job.
 
-Build and serve public/ first, then:
-python3 tests/browser_smoke.py --url http://127.0.0.1:8001 --chromium /usr/bin/chromium
+Install requirements-browser.txt and Playwright's Chromium (see README.md).
+Build and serve public/ first, then run with that Python environment:
+python3 tests/browser_smoke.py --url http://127.0.0.1:8001
+Use --chromium /path/to/chromium to select an existing browser instead.
 Pass --screenshots /tmp/sanctum-shots to save reference images.
-This developer check exercises the current architecture and responsive layouts;
-CI uses the content-independent standard-library check_site.py.
+CI also runs check_site.py and the standard-library regression tests.
 """
 import argparse
 from pathlib import Path

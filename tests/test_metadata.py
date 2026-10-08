@@ -199,11 +199,11 @@ class MetadataTest(unittest.TestCase):
         with TemporaryDirectory(prefix='sanctum-fixed-pages-') as tmp:
             root = Path(tmp)
             _, output = self.build(root, articles=False)
-            for name in ('now.md', 'path.md', 'about.md'):
+            for name in ('now.md', 'path.md', 'realms.md', 'roots.md', 'about.md'):
                 shutil.copyfile(ROOT / 'content' / name, root / 'content' / name)
             result, _ = build_site(root)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            for route in ('now', 'path', 'about', 'posts'):
+            for route in ('now', 'path', 'realms', 'roots', 'about', 'cultivation', 'posts'):
                 self.assertTrue((output / route / 'index.html').is_file())
             self.assertFalse(ET.fromstring((output / 'index.xml').read_text()).findall('./channel/item'))
 

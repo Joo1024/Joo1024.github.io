@@ -2,6 +2,7 @@
 /resources/
 /.hugo_build.lock
 /.tools/
+/.venv/
 /.superpowers/
 __pycache__/
 .DS_Store

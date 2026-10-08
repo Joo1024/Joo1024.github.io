@@ -8,7 +8,13 @@
 {{ $entries := dict "pages" .RegularPages.ByDate.Reverse "descriptions" true }}
 {{ with .Params.entries }}
   {{ $pages := slice }}
-  {{ range . }}{{ with site.GetPage . }}{{ $pages = $pages | append . }}{{ end }}{{ end }}
+  {{ range . }}
+    {{ with site.GetPage . }}
+      {{ $pages = $pages | append . }}
+    {{ else }}
+      {{ errorf "Missing page %q referenced by %s; check data/sections.yaml and content/%s.md" . $.RelPermalink . }}
+    {{ end }}
+  {{ end }}
   {{ $entries = dict "pages" $pages }}
 {{ end }}
 {{ partial "entry-list.html" $entries }}

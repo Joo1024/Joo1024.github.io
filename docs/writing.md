@@ -17,7 +17,7 @@ date: 2026-10-02
 从一个真实的念头开始。
 ```
 
-只要求标题和原始发布日期。其余字段按需要填写，文章自动进入文章索引、存档、最近更新和全站 RSS，首页展示最近几篇。文件名决定地址 `/posts/a-question/`；标题、形式与标签变化不会改变 URL。文件名可以用简短英文或中文。
+只要求标题和原始发布日期。其余字段按需要填写，文章自动进入文字列表、存档和全站 RSS，填写的维度会生成分类索引；首页展示最近五篇。文件名决定地址 `/posts/a-question/`；标题、形式与标签变化不会改变 URL。文件名可以用简短英文或中文。
 
 也可运行 `.tools/bin/hugo new content posts/a-question.md`。默认模板创建 `draft: true`；公开前删除此行或改为 `false`。预览草稿用 `.tools/bin/hugo server -D`，生产构建不发布草稿。
 
@@ -75,26 +75,29 @@ taxonomy 配置右侧是 Hugo 读取的 metadata 字段名；写成 `form = 'for
 | `title` | 必填，中文或英文标题 |
 | `date` | 必填，原始发布日；公开后不要为了更新而重写 |
 | `lastmod` | 可选，最后实质更新日；省略时回退到 date |
-| `description` | 可选，一句介绍，用于列表与 SEO；省略时使用站点描述 |
+| `description` | 可选，一句介绍，用于页眉、文章列表与 SEO；省略时不显示介绍，SEO 使用站点描述 |
 | `status` | 可选，`ongoing` 持续中或 `archived` 已归档；note/reflection 属于 form |
 | `later_notes` | 可选后记，包含 `date` 与 Markdown `text` |
 | `toc` | 默认展示可折叠目录；短文可设 `false` |
 | `draft` | `true` 时不发布 |
-| `sample` | 只用于示例文章；自己的记录移除 |
 
 不用填写 `categories`。文章不再按目录分类，这个旧字段会明确报错，提示移除。
 
 `archived` 不会隐藏文章。最后更新早于发布日、无效 status、后记日期晚于 lastmod、数组字段填写错误时，构建会明确报错。未来发布日期默认不发布，预览可加 `--buildFuture`。
 
-## 三个固定单页
+## 修行单页与关于
 
-- `content/about.md`：关于自己与 Sanctum。
 - `content/now.md`：近期投入与近况，有变化时再更新。
-- `content/path.md`：简短的长期方向，允许方向改变或暂时放下。
+- `content/path.md`：长期方向与功法，允许方向改变或暂时放下。
+- `content/realms.md`：当前境界与修为，记录跨时间、跨场景沉淀的能力。
+- `content/roots.md`：自身禀赋与自然倾向，有新的认识时再更新。
+- `content/about.md`：关于自己与 Sanctum。
 
 Now、Path 更新时可以把旧片段追加到 `later_notes`，只修改 `lastmod`。近期行动留在 Now，Path 不需要待办、进度或固定回顾频率。
 
-存档、最近更新和文字总页由 `content/_content.gotmpl` 在构建时创建，各自模板从 posts 读取文章、按时间生成列表，不需要另建 Markdown 索引或填写文章名单。首页三个入口由 `data/sections.yaml` 管理；页首最近更新、存档、标签、关于由 `data/navigation.yaml` 管理。写新文章不需要改这些配置。
+修行总览 `/cultivation/`、文字列表 `/posts/` 和存档 `/archive/` 由 `content/_content.gotmpl` 在构建时创建，不需要另建 Markdown 索引。修行总览复用文字列表的模板，名单与顺序由 `data/sections.yaml` 管理，标题和更新时间来自对应 Markdown。配置项对应的页面必须存在；文件缺失或配置拼写错误会使构建报错。
+
+文字列表和存档自动读取 posts。首页直接读取 Now 的近况，展示最近五篇文章，并提供修行总览、全部文字两个入口。`data/navigation.yaml` 管理修行、文字、关于三个顶级导航；`data/post_navigation.yaml` 管理文字区域的全部文字、存档、分类三个二级导航。写新文章不需要改这些配置。
 
 ## 观点改变：追加后记
 
@@ -110,7 +113,7 @@ later_notes:
       **现在的判断**写在这里，过去的文字仍留在正文中。
 ```
 
-后记在正文末尾按时间排列，首页有旧文后记入口，最近更新按 lastmod 排序，存档按原始 date 分年。RSS 包含全文与后记，保留 pubDate 与唯一地址。部分阅读器会刷新旧条目，部分不会把后记视为新推送，定期查看最近更新更可靠。
+后记在正文末尾按时间排列。首页展示最近追加后记的一篇旧文入口；文字列表和存档仍按原始 `date` 排序，存档按原始 `date` 分年。RSS 包含全文与后记，保留 `pubDate` 与唯一地址。部分阅读器会刷新旧条目，部分不会把后记视为新推送，可从首页入口查看。
 
 ## Markdown
 
@@ -139,7 +142,7 @@ print("small steps")
 内部链接推荐使用 Hugo shortcode，构建时检查目标是否存在：
 
 ```markdown
-[一篇旧文]({{< relref "posts/on-keeping-a-place.md" >}})
+[一篇旧文]({{< relref "posts/on-attachment.md" >}})
 ```
 
 它会解析为文章的 `/posts/文件名/` 地址。普通 Markdown 相对链接也可使用；应以公开 URL 计算相对位置，而不是磁盘目录。HTML 默认不直接执行。
@@ -159,7 +162,7 @@ git commit -m "write: 一个还没有答案的问题"
 git push origin HEAD:main
 ```
 
-推送到 main 后 GitHub Actions 自动构建部署。新文章、新词条、归档和订阅自动更新。示例可逐步删除或替换，无需修改 CI；开发验收 `--examples` 仅在初始示例仍保留时使用。
+推送到 main 后 GitHub Actions 自动构建、检查并部署。新文章、新词条、归档和订阅自动更新。CI 会运行站点检查、Markdown 回归与浏览器检查；任何一项失败都不会发布。浏览器依赖安装与本地运行方法见 [README](../README.md#配置与检查)。
 
 ## 地址与订阅
 

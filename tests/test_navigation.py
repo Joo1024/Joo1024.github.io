@@ -224,6 +224,28 @@ class NavigationTest(unittest.TestCase):
             self.assertFalse((content / 'cultivation.md').exists())
             self.assertFalse(ET.parse(output / 'index.xml').getroot().findall('./channel/item'))
 
+    def test_missing_configured_pages_fail_the_build(self):
+        for name in ('now', 'path', 'realms', 'roots'):
+            with self.subTest(page=name), TemporaryDirectory(prefix='sanctum-missing-page-') as tmp:
+                root = Path(tmp)
+                content = create_content(root)
+                (content / (name + '.md')).unlink()
+                result, _ = build_site(root)
+                self.assertNotEqual(result.returncode, 0, 'A configured page must not disappear silently')
+                self.assertIn(f'Missing page "{name}" referenced by /sanctum/cultivation/', result.stdout + result.stderr)
+
+    def test_misspelled_configured_page_fails_with_the_bad_reference(self):
+        with TemporaryDirectory(prefix='sanctum-misspelled-page-') as tmp:
+            root = Path(tmp)
+            create_content(root)
+            data = root / 'data'
+            shutil.copytree(ROOT / 'data', data)
+            sections = data / 'sections.yaml'
+            sections.write_text(sections.read_text() + '- rootz\n')
+            result, _ = build_site(root, data_dir=data)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('Missing page "rootz" referenced by /sanctum/cultivation/', result.stdout + result.stderr)
+
 
 if __name__ == '__main__':
     unittest.main()

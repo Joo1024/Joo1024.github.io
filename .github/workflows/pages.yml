@@ -21,6 +21,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-browser.txt
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -43,6 +49,17 @@ jobs:
         env:
           HUGO_BIN: ${{ runner.temp }}/hugo-bin/hugo
         run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Install browser test dependencies
+        run: |
+          python3 -m pip install -r requirements-browser.txt
+          python3 -m playwright install --with-deps --only-shell chromium
+      - name: Check browser behavior
+        run: |
+          python3 -m http.server 8001 --bind 127.0.0.1 --directory public >"$RUNNER_TEMP/browser-server.log" 2>&1 &
+          browser_server_pid=$!
+          trap 'kill "$browser_server_pid" 2>/dev/null || true' EXIT
+          curl --fail --silent --show-error --retry 8 --retry-connrefused --retry-delay 1 http://127.0.0.1:8001/ > /dev/null
+          python3 -u tests/browser_smoke.py --url http://127.0.0.1:8001
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
