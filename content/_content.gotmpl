@@ -4,6 +4,7 @@
   {{ if in $seen . }}{{ errorf "Duplicate page %s in data/sections.yaml" . }}{{ end }}
   {{ $seen = $seen | append . }}
 {{ end }}
-{{ .AddPage (dict "kind" "section" "path" "posts" "title" "Posts" "params" (dict "chinese" "文字")) }}
+{{ .AddPage (dict "kind" "section" "path" "posts" "title" "Posts" "params" (dict "chinese" "文章")) }}
 {{ .AddPage (dict "kind" "page" "path" "cultivation" "title" "Cultivation" "layout" "list" "params" (dict "chinese" "修行" "entries" site.Data.sections)) }}
 {{ .AddPage (dict "kind" "page" "path" "archive" "title" "Archive" "layout" "archive" "params" (dict "chinese" "存档")) }}
+{{ .AddPage (dict "kind" "section" "path" "notes" "title" "Notes" "params" (dict "chinese" "札记")) }}

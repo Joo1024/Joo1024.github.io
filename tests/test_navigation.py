@@ -103,7 +103,7 @@ class NavigationTest(unittest.TestCase):
             'now': ('cultivation', 'now'), 'path': ('cultivation', 'path'),
             'realms': ('cultivation', 'realms'), 'roots': ('cultivation', 'roots'),
             'posts': ('posts', 'posts'), 'posts/entry6': ('posts', 'posts'),
-            'archive': ('posts', 'archive'),
+            'archive': ('posts', 'archive'), 'notes': ('notes', None),
             'tags': ('posts', 'tags'), 'forms/reflection': ('posts', 'tags'),
             'domains/mind': ('posts', 'tags'), 'paths/明心': ('posts', 'tags'),
             'tags/练习': ('posts', 'tags'), 'about': ('about', None),
@@ -113,7 +113,7 @@ class NavigationTest(unittest.TestCase):
             with self.subTest(route=route):
                 nav = Navigation(self.html(route)).groups
                 self.assertEqual([a['href'] for a in nav['utility-nav']],
-                                 ['/sanctum/cultivation/', '/sanctum/posts/', '/sanctum/about/'])
+                                 ['/sanctum/cultivation/', '/sanctum/posts/', '/sanctum/notes/', '/sanctum/about/'])
                 active = [a['href'] for a in nav['utility-nav'] if a.get('aria-current')]
                 self.assertEqual(active, [f'/sanctum/{primary}/'] if primary else [])
                 if primary == 'posts':
@@ -131,7 +131,7 @@ class NavigationTest(unittest.TestCase):
             'now': ('今朝', 'Now'), 'path': ('道途', 'Path'),
             'roots': ('灵根', 'Roots'), 'realms': ('境界', 'Realms'),
             'about': ('关于', 'About'), 'cultivation': ('修行', 'Cultivation'),
-            'posts': ('文字', 'Posts'), 'archive': ('存档', 'Archive'),
+            'posts': ('文章', 'Posts'), 'notes': ('札记', 'Notes'), 'archive': ('存档', 'Archive'),
             'tags': ('分类', 'Index'), 'forms': ('形式', 'Forms'),
             'domains': ('领域', 'Domains'), 'paths': ('方向', 'Paths'),
             'forms/reflection': ('随笔', 'Forms'), 'domains/mind': ('心智', 'Domains'),

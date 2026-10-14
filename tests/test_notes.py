@@ -19,6 +19,8 @@ class NotesTest(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             result, output = self.build(Path(tmp), 'domains: [mind]\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            html = (output / 'notes/2025-03-01-01/index.html').read_text()
+            self.assertIn('href="/sanctum/notes/" aria-current="location"', html)
             self.assertIn('Note body.', (output / 'notes/2025-03-01-01/index.html').read_text())
             self.assertIn('Unique note title', (output / 'notes/index.html').read_text())
             for path in ('index.html', 'archive/index.html', 'posts/index.html', 'index.xml'):

@@ -124,7 +124,7 @@ class MetadataTest(unittest.TestCase):
             result, output = self.build(Path(tmp), 'form: practice\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertTrue((output / 'posts/entry/index.html').is_file())
-            old_routes = ('reflection', 'practice', 'making', 'notes', 'reading', 'journey',
+            old_routes = ('reflection', 'practice', 'making', 'reading', 'journey',
                           'yearly', 'categories', 'categories/practice', 'types', 'types/practice', 'updates')
             for route in old_routes:
                 for filename in ('index.html', 'index.xml'):

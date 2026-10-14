@@ -1,6 +1,8 @@
 - path: cultivation/
   name: 修行
 - path: posts/
-  name: 文字
+  name: 文章
+- path: notes/
+  name: 札记
 - path: about/
   name: 关于

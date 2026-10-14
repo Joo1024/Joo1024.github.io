@@ -10,7 +10,7 @@
   </nav>
 </header>
 {{ if eq $context.primary "posts" }}
-<nav class="section-nav" aria-label="文字导航">
+<nav class="section-nav" aria-label="文章导航">
   {{ range .Site.Data.post_navigation }}
   {{ $url := printf "%s/" .slug | relURL }}
   <a href="{{ $url }}" {{ if eq $page.RelPermalink $url }}aria-current="page"{{ else if eq $context.secondary .slug }}aria-current="location"{{ end }}>{{ .chinese }}</a>

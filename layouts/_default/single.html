@@ -16,7 +16,7 @@
   {{ end }}
   <div class="prose">{{ .Content }}{{ partial "later-notes.html" . }}</div>
   {{ if $isArticle }}
-  <nav class="post-navigation" aria-label="按时间相邻的文字">
+  <nav class="post-navigation" aria-label="按时间相邻的文章">
     <div>{{ with .PrevInSection }}<span>上一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} ←</a>{{ end }}</div>
     <div>{{ with .NextInSection }}<span>下一篇</span><a href="{{ .RelPermalink }}">{{ .Title }} →</a>{{ end }}</div>
   </nav>

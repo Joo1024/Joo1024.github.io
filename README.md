@@ -24,7 +24,7 @@
 
 Notes 与 Posts 均只要求 `title`、`date`，支持统一可选 `sources` 来源列表（`note/book/article/video/ai/other`）；内部札记使用 `kind: note` 与相对于 `content/` 的 `path`。文章短记形式为 `form: brief`。札记独立生成 `/notes/` 页面，不进入文章时间线或全站 RSS；来源暂只保存数据，不开发双向链接。详见[写作指南](docs/writing.md#札记-notes)。
 
-修行总览、文字列表、存档、分类与 RSS 自动生成，首页读取 Now 的近况并展示最近五篇文章。顶级导航是修行、文字、关于；文字下有全部文字、存档、分类三个入口。旧文实质更新时填写 `lastmod`，观点变化时可追加 `later_notes`，保留当时的文字。具体格式见[写作指南](docs/writing.md)。
+修行总览、文章列表、存档、分类与 RSS 自动生成，首页读取 Now 的近况并展示最近五篇文章。顶级导航是修行、文章、札记、关于；文章下有全部文章、存档、分类三个入口。旧文实质更新时填写 `lastmod`，观点变化时可追加 `later_notes`，保留当时的文字。具体格式见[写作指南](docs/writing.md)。
 
 ## 本地预览
 
@@ -66,7 +66,7 @@ git push origin HEAD:main
 
 - [hugo.toml](hugo.toml)：站点地址、语言与构建配置。
 - [data/sections.yaml](data/sections.yaml)：修行总览的页面名单与顺序；引用的页面必须存在，否则构建报错。
-- [data/navigation.yaml](data/navigation.yaml)、[data/post_navigation.yaml](data/post_navigation.yaml)：顶级导航与文字区域的二级导航。
+- [data/navigation.yaml](data/navigation.yaml)、[data/post_navigation.yaml](data/post_navigation.yaml)：顶级导航与文章区域的二级导航。
 - [data/dimensions.yaml](data/dimensions.yaml)：维度名称与常用词的显示别名。
 - [layouts/](layouts/)、[assets/](assets/)：模板、样式与配色脚本。
 

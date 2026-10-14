@@ -32,7 +32,7 @@ def run(base, chromium, screenshots):
         article_count = page.locator('.entry-list .entry-title').count()
         page.goto(base + '/', wait_until='networkidle')
         assert page.title() == 'Sanctum'
-        assert page.locator('.utility-nav a').all_text_contents() == ['修行', '文字', '关于']
+        assert page.locator('.utility-nav a').all_text_contents() == ['修行', '文章', '札记', '关于']
         assert page.locator('.home-now-summary').inner_text()
         assert page.locator('.home-links a').count() == 2
         assert page.locator('.home-sections').count() == 0
@@ -93,7 +93,7 @@ def run(base, chromium, screenshots):
         print('PASS cultivation overview, page headings, archive, classification, article tables and TOC')
 
         routes = ('/', '/cultivation/', '/now/', '/path/', '/realms/', '/roots/',
-                  '/about/', '/posts/', '/posts/cultivation-realms/',
+                  '/about/', '/notes/', '/notes/2026-10-14-01/', '/posts/', '/posts/cultivation-realms/',
                   '/posts/cultivation-roots-and-methods/', '/archive/', '/tags/',
                   '/forms/', '/forms/reflection/', '/domains/', '/domains/mind/',
                   '/paths/', '/paths/明心/')
@@ -124,12 +124,15 @@ def run(base, chromium, screenshots):
                     if route != '/cultivation/':
                         expected_title = {'/now/': 'Now', '/path/': 'Path', '/realms/': 'Realms', '/roots/': 'Roots'}[route]
                         assert page.locator('.article-heading .eyebrow').inner_text() == 'Sanctum / ' + expected_title
+                elif route.startswith('/notes/'):
+                    assert current.count() == 1 and current.get_attribute('href').endswith('/notes/'), route
+                    assert page.locator('.section-nav').count() == 0
                 elif route == '/about/':
                     assert current.count() == 1 and current.get_attribute('href').endswith('/about/')
                     assert page.locator('.section-nav').count() == 0
                 else:
                     assert current.count() == 1 and current.get_attribute('href').endswith('/posts/'), route
-                    assert page.locator('.section-nav a').all_text_contents() == ['全部文字', '存档', '分类']
+                    assert page.locator('.section-nav a').all_text_contents() == ['全部文章', '存档', '分类']
             shared_styles = []
             for route in ('/cultivation/', '/posts/'):
                 page.goto(base + route)
