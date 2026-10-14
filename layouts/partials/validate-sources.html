@@ -1,0 +1,32 @@
+{{/* Shared optional provenance for posts and notes; no reverse index. */}}
+{{ $page := . }}
+{{ if isset .Params "sources" }}
+  {{ if not (reflect.IsSlice .Params.sources) }}
+    {{ errorf "sources must be a list of objects in %s" .File.Path }}
+  {{ else }}
+    {{ range .Params.sources }}
+      {{ if not (reflect.IsMap .) }}
+        {{ errorf "sources entries must be objects in %s" $page.File.Path }}
+      {{ else }}
+        {{ if not (in (slice "note" "book" "article" "video" "ai" "other") .kind) }}{{ errorf "sources.kind must be note/book/article/video/ai/other in %s" $page.File.Path }}{{ end }}
+        {{ $source := . }}
+        {{ range slice "title" "url" "path" }}
+          {{ if isset $source . }}
+            {{ $value := index $source . }}
+            {{ if ne (printf "%T" $value) "string" }}{{ errorf "sources.%s must be a nonempty string in %s" . $page.File.Path }}
+            {{ else if not (strings.TrimSpace $value) }}{{ errorf "sources.%s must be a nonempty string in %s" . $page.File.Path }}{{ end }}
+          {{ end }}
+        {{ end }}
+        {{ if eq .kind "note" }}
+          {{ if ne (printf "%T" .path) "string" }}
+            {{ errorf "sources note requires path relative to content/ in %s" $page.File.Path }}
+          {{ else if not (findRE `^notes/[0-9]{4}-[0-9]{2}-[0-9]{2}-(0[1-9]|[1-9][0-9])\.md$` .path) }}
+            {{ errorf "sources note path must be notes/YYYY-MM-DD-NN.md in %s" $page.File.Path }}
+          {{ else if not (fileExists (printf "content/%s" .path)) }}
+            {{ errorf "sources note path does not exist: %s in %s" .path $page.File.Path }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}

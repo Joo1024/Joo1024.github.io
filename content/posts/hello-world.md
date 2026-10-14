@@ -6,7 +6,7 @@ description: 这间书房更早的一页，保留最初的记录。
 tags: [杂记, 开始]
 status: archived
 toc: false
-form: note
+form: brief
 ---
 
 # Hello World

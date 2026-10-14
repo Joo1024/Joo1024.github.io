@@ -1,22 +1,32 @@
 {{/* Validate source content regardless of the selected page layout. */}}
 {{ $isArticle := partial "is-article.html" . }}
+{{ $isNote := and .IsPage (eq .Section "notes") }}
 {{ $fixedFiles := slice "about.md" }}
 {{ range site.Data.sections }}
   {{ $fixedFiles = $fixedFiles | append (printf "%s.md" .) }}
 {{ end }}
 {{ with .File }}
   {{/* Content-adapter pages point to _content.gotmpl, not an authored article. */}}
-  {{ if and (ne .Ext "gotmpl") (not $isArticle) (not (in $fixedFiles .Path)) }}{{ errorf "Put articles directly in content/posts/: %s" .Path }}{{ end }}
+  {{ if and (ne .Ext "gotmpl") (not $isArticle) (not $isNote) (not (in $fixedFiles .Path)) }}{{ errorf "Put articles directly in content/posts/: %s" .Path }}{{ end }}
 {{ end }}
-{{ if $isArticle }}
+{{ if or $isArticle $isNote }}
 {{ if not .Params.title }}{{ errorf "Missing original title in %s" .File.Path }}{{ end }}
 {{ if gt (strings.Count "/" .File.Path) 1 }}{{ errorf "Put articles directly in content/posts/: %s" .File.Path }}{{ end }}
 {{ if isset .Params "categories" }}{{ errorf "Remove categories from %s; use optional form, domains, paths and tags" .File.Path }}{{ end }}
 {{ if isset .Params "type" }}{{ errorf "type is reserved by Hugo; use form for article format in %s" .File.Path }}{{ end }}
+{{ if $isNote }}
+  {{ if isset .Params "form" }}{{ errorf "Notes do not use form in %s" .File.Path }}{{ end }}
+  {{ if not (findRE `^notes/[0-9]{4}-[0-9]{2}-[0-9]{2}-(0[1-9]|[1-9][0-9])\.md$` .File.Path) }}{{ errorf "Use flat content/notes/YYYY-MM-DD-NN.md (01–99): %s" .File.Path }}
+  {{ else }}
+    {{ $filenameDate := time.AsTime (substr .File.LogicalName 0 10) }}
+  {{ end }}
+{{ end }}
 {{ if isset .Params "form" }}
   {{ if ne (printf "%T" .Params.form) "string" }}{{ errorf "form must be a single nonempty string in %s" .File.Path }}
   {{ else if not (strings.TrimSpace .Params.form) }}{{ errorf "form must be a single nonempty string in %s" .File.Path }}{{ end }}
+  {{ if eq .Params.form "note" }}{{ errorf "Use form: brief instead of form: note in %s" .File.Path }}{{ end }}
 {{ end }}
+{{ partial "validate-sources.html" . }}
 {{ $page := . }}
 {{ range slice "domains" "paths" "tags" }}
   {{ $field := . }}

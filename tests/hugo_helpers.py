@@ -19,9 +19,16 @@ def create_content(root):
 
 
 def build_site(root, layout_dir=None, data_dir=None):
+    # Give each fixture a project filesystem, so fileExists sees its content,
+    # including unpublished notes. Share only read-only site implementation.
+    for directory in ('assets', 'data', 'layouts', 'static'):
+        target = root / directory
+        if not target.exists():
+            target.symlink_to(ROOT / directory, target_is_directory=True)
+    shutil.copyfile(ROOT / 'hugo.toml', root / 'hugo.toml')
     output = root / 'public'
     command = [os.environ.get('HUGO_BIN', str(ROOT / '.tools/bin/hugo')),
-               '--source', str(ROOT), '--contentDir', str(root / 'content'),
+               '--source', str(root),
                '--destination', str(output), '--baseURL', BASE]
     if layout_dir:
         command.extend(['--layoutDir', str(layout_dir)])

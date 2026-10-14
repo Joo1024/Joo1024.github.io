@@ -1,6 +1,6 @@
 # 在 Sanctum 写作
 
-原始念头可以留在 flomo、卡片日记或任何地方。准备公开时，整理成 Markdown，放进 `content/posts/`，提交到 Git；无需进入 CMS。
+原始材料、摘录与尚未充分消化的观点放在 `content/notes/`；形成独立表达后，整理成 `content/posts/` 中的文章。两者都使用 Markdown，无需进入 CMS。
 
 时间是经，标签是纬。档案可以有空白，生活不需要为档案服务。
 
@@ -38,7 +38,7 @@ tags: [倒立, 自由]
 
 | 字段 | 用途 | 示例 |
 | --- | --- | --- |
-| `form` | 单个写作形式 | reflection 随笔、note 短记、practice 实践记录、making 作品记录 |
+| `form` | 单个写作形式 | reflection 随笔、brief 短记、practice 实践记录、making 作品记录 |
 | `domains` | 涉及的人生领域，平面数组 | `[mind, body]`；常用 mind/body/work/life/craft |
 | `paths` | 长期愿意走下去的方向，平面数组 | `[明心, 自在]` |
 | `tags` | 具体主题，平面数组 | `[AI, 死亡, 瓦尔登湖]` |
@@ -76,7 +76,7 @@ taxonomy 配置右侧是 Hugo 读取的 metadata 字段名；写成 `form = 'for
 | `date` | 必填，原始发布日；公开后不要为了更新而重写 |
 | `lastmod` | 可选，最后实质更新日；省略时回退到 date |
 | `description` | 可选，一句介绍，用于页眉、文章列表与 SEO；省略时不显示介绍，SEO 使用站点描述 |
-| `status` | 可选，`ongoing` 持续中或 `archived` 已归档；note/reflection 属于 form |
+| `status` | 可选，`ongoing` 持续中或 `archived` 已归档；brief/reflection 属于 form |
 | `later_notes` | 可选后记，包含 `date` 与 Markdown `text` |
 | `toc` | 默认展示可折叠目录；短文可设 `false` |
 | `draft` | `true` 时不发布 |
@@ -171,3 +171,44 @@ git push origin HEAD:main
 文章链接、RSS 条目与 sitemap 使用同一个公开地址。RSS 的 guid 也使用该地址；发布日期由原始 `date` 决定，正文与后记更新不会改变它。
 
 全站订阅为 `/index.xml`。`/posts/index.xml`、四个维度及其词条都有独立订阅，阅读器中使用页面提供的 RSS 地址即可。
+
+## 札记 Notes
+
+札记直接放在 `content/notes/YYYY-MM-DD-NN.md`，不建立子目录。日期使用有效日历日期，同一天编号从 `01` 递增至 `99`；创建前检查已有文件，不能覆盖。文件名作为稳定标识，修改标题或正文不改文件名，不另加 id。
+
+```yaml
+---
+title: 凝练不等于深刻
+date: 2026-10-14
+domains: [mind]
+paths: [明心]
+tags: [阅读]
+sources:
+  - kind: book
+    title: 一本书
+---
+```
+
+正文写摘录、问题或自己的理解。仅 `title`、`date` 必填；`lastmod`、`description`、`domains`、`paths`、`tags`、`sources` 等按需填写。保留原始 `date`，实质更新时改 `lastmod`，可以持续编辑正文，无需强制追加后记。Notes 不使用文章形式 `form`；Posts 的短记形式改为 `form: brief`，不要再用 `form: note`。
+
+札记使用现有模板生成 `/notes/文件名/` 和 `/notes/` 列表，不进入首页最近文章、文字列表、文章存档或全站 RSS。可用维度归类，也可通过内部链接访问；不新增顶级导航。
+
+## 统一来源 sources
+
+Notes 与 Posts 均可填写可选的 `sources` 列表，或 `sources: []`。每项是对象，`kind` 必须为 `note`、`book`、`article`、`video`、`ai`、`other` 之一。其他来源可按需提供非空字符串 `title`、`url`，不强制补齐未知信息。
+
+```yaml
+sources:
+  - kind: note
+    path: notes/2026-10-14-01.md
+  - kind: article
+    title: 相关资料
+    url: https://example.com/article
+  - kind: ai
+    title: 一次讨论
+    url: https://chatgpt.com/...
+```
+
+`kind: note` 必须给出相对于 `content/` 的 `path`，指向实际存在的札记 Markdown 文件。不能填写绝对路径、公开 URL、`content/` 前缀、`..` 或文章路径。构建会校验列表、对象、来源类型、字符串字段及札记文件存在性。来源作为数据保留，暂不渲染来源列表；如需正文可点击链接，使用 `relref`。
+
+不要新增 `based_on`，不维护反向链接、自动索引或图谱。不要用 Hugo 保留字段 `type` 表达札记或来源类型；来源的 `kind` 只放在 `sources` 元素内部。
