@@ -1,6 +1,6 @@
 # 在 Sanctum 写作
 
-原始材料、摘录与尚未充分消化的观点放在 `content/notes/`；形成独立表达后，整理成 `content/posts/` 中的文章。两者都使用 Markdown，无需进入 CMS。
+原始材料、摘录与尚未充分消化的观点保存在私有仓库 `sanctum-notebook/notes/`；形成愿意公开的独立表达后，再整理成本站 `content/posts/` 中的文章。两者都使用 Markdown，无需进入 CMS；本站不保存札记。
 
 时间是经，标签是纬。档案可以有空白，生活不需要为档案服务。
 
@@ -97,7 +97,7 @@ Now、Path 更新时可以把旧片段追加到 `later_notes`，只修改 `lastm
 
 修行总览 `/cultivation/`、文章列表 `/posts/` 和存档 `/archive/` 由 `content/_content.gotmpl` 在构建时创建，不需要另建 Markdown 索引。修行总览复用文章列表的模板，名单与顺序由 `data/sections.yaml` 管理，标题和更新时间来自对应 Markdown。配置项对应的页面必须存在；文件缺失或配置拼写错误会使构建报错。
 
-文章列表和存档自动读取 posts。首页直接读取 Now 的近况，展示最近五篇文章，并提供修行总览、全部文章两个入口。`data/navigation.yaml` 管理修行、文章、札记、关于四个顶级导航；`data/post_navigation.yaml` 管理文章区域的全部文章、存档、分类三个二级导航。写新文章不需要改这些配置。
+文章列表和存档自动读取 posts。首页直接读取 Now 的近况，展示最近五篇文章，并提供修行总览、全部文章两个入口。`data/navigation.yaml` 管理修行、文章、关于三个顶级导航；`data/post_navigation.yaml` 管理文章区域的全部文章、存档、分类三个二级导航。写新文章不需要改这些配置。
 
 ## 观点改变：追加后记
 
@@ -172,43 +172,31 @@ git push origin HEAD:main
 
 全站订阅为 `/index.xml`。`/posts/index.xml`、四个维度及其词条都有独立订阅，阅读器中使用页面提供的 RSS 地址即可。
 
-## 札记 Notes
+## 私有札记与公开文章
 
-札记直接放在 `content/notes/YYYY-MM-DD-NN.md`，不建立子目录。日期使用有效日历日期，同一天编号从 `01` 递增至 `99`；创建前检查已有文件，不能覆盖。文件名作为稳定标识，修改标题或正文不改文件名，不另加 id。
+私人札记保存在同级私有仓库 `sanctum-notebook/notes/YYYY-MM-DD-NN.md`，不进入博客。文件名使用原始日期与同日未占用的两位编号 `01`–`99`，创建前检查，不覆盖或重命名已有笔记；具体格式见私有仓库 README。
+
+两者共用 `title`、`date`、`lastmod`、`description`、`domains`、`paths`、`tags` 与 `sources`。札记不使用 `form`；文章按需填写，短记使用 `form: brief`，不用 `form: note`。私有札记保留原始记录时间，公开文章的 `date` 为首次公开日期。
+
+札记整理成文章时，保留私有原稿，复制、整理正文到 `content/posts/`，选择稳定文件名并按需添加 `form`。将文章转为私有札记时，移除 `form`，使用未占用的札记文件名，保留原始日期。两者不自动同步，也不生成跨仓库索引。
+
+本站不生成 `/notes/`、札记导航或札记 RSS。构建会拒绝 `content/notes/` 中的材料，包括草稿和未来发布的札记；不要依靠 `draft` 或 `status` 保护隐私。历史上已公开的札记，迁走当前文件不会消除公开 Git 历史。
+
+## 来源 sources
+
+文章可填写可选的 `sources` 列表，或 `sources: []`。每项是对象，`kind` 为 `note`、`book`、`article`、`video`、`ai`、`other` 之一，与私有札记保持兼容。按需提供适合公开的非空字符串 `title`、`url`，不强制补齐未知信息。
 
 ```yaml
----
-title: 凝练不等于深刻
-date: 2026-10-14
-domains: [mind]
-paths: [明心]
-tags: [阅读]
 sources:
   - kind: book
     title: 一本书
----
-```
-
-正文写摘录、问题或自己的理解。仅 `title`、`date` 必填；`lastmod`、`description`、`domains`、`paths`、`tags`、`sources` 等按需填写。保留原始 `date`，实质更新时改 `lastmod`，可以持续编辑正文，无需强制追加后记。Notes 不使用文章形式 `form`；Posts 的短记形式改为 `form: brief`，不要再用 `form: note`。
-
-札记使用现有模板生成 `/notes/文件名/` 和 `/notes/` 列表，不进入首页最近文章、文章列表、文章存档或全站 RSS。可用维度归类，也可通过内部链接访问；顶部「札记」可进入札记列表。
-
-## 统一来源 sources
-
-Notes 与 Posts 均可填写可选的 `sources` 列表，或 `sources: []`。每项是对象，`kind` 必须为 `note`、`book`、`article`、`video`、`ai`、`other` 之一。其他来源可按需提供非空字符串 `title`、`url`，不强制补齐未知信息。
-
-```yaml
-sources:
-  - kind: note
-    path: notes/2026-10-14-01.md
   - kind: article
     title: 相关资料
     url: https://example.com/article
   - kind: ai
     title: 一次讨论
-    url: https://chatgpt.com/...
 ```
 
-`kind: note` 必须给出相对于 `content/` 的 `path`，指向实际存在的札记 Markdown 文件。不能填写绝对路径、公开 URL、`content/` 前缀、`..` 或文章路径。构建会校验列表、对象、来源类型、字符串字段及札记文件存在性。来源作为数据保留，暂不渲染来源列表；如需正文可点击链接，使用 `relref`。
+`kind: note` 仍可描述适合公开的笔记来源，并按需提供公开标题或链接，但本站不保存关联札记。私有仓库内部可使用相对于其根目录的 `sources.path: notes/YYYY-MM-DD-NN.md`；这种私有路径与来源关系留在私有仓库，公开文章的任何来源项都不接受 `path`。发布前检查标题、链接和正文是否适合公开，不为保留私有来源而补造公开链接。
 
-不要新增 `based_on`，不维护反向链接、自动索引或图谱。不要用 Hugo 保留字段 `type` 表达札记或来源类型；来源的 `kind` 只放在 `sources` 元素内部。
+来源暂作为数据保留，不渲染来源列表。不要新增 `based_on`，不维护反向链接、自动索引或图谱。不要用 Hugo 保留字段 `type` 表达形式或来源；来源的 `kind` 只放在 `sources` 元素内部。

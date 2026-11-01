@@ -19,8 +19,8 @@ def create_content(root):
 
 
 def build_site(root, layout_dir=None, data_dir=None):
-    # Give each fixture a project filesystem, so fileExists sees its content,
-    # including unpublished notes. Share only read-only site implementation.
+    # Give each fixture a project filesystem so the private-notes guard sees
+    # its content, including drafts. Share only read-only site implementation.
     for directory in ('assets', 'data', 'layouts', 'static'):
         target = root / directory
         if not target.exists():

@@ -1,4 +1,7 @@
 {{/* Generate the shared page list, chronological posts and archive. */}}
+{{ if fileExists "content/notes" }}
+  {{ if readDir "content/notes" }}{{ errorf "Keep private notes in sanctum-notebook/notes/, not content/notes/" }}{{ end }}
+{{ end }}
 {{ $seen := slice }}
 {{ range site.Data.sections }}
   {{ if in $seen . }}{{ errorf "Duplicate page %s in data/sections.yaml" . }}{{ end }}
@@ -7,4 +10,3 @@
 {{ .AddPage (dict "kind" "section" "path" "posts" "title" "Posts" "params" (dict "chinese" "文章")) }}
 {{ .AddPage (dict "kind" "page" "path" "cultivation" "title" "Cultivation" "layout" "list" "params" (dict "chinese" "修行" "entries" site.Data.sections)) }}
 {{ .AddPage (dict "kind" "page" "path" "archive" "title" "Archive" "layout" "archive" "params" (dict "chinese" "存档")) }}
-{{ .AddPage (dict "kind" "section" "path" "notes" "title" "Notes" "params" (dict "chinese" "札记")) }}

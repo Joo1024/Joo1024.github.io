@@ -24,6 +24,5 @@
     {{ end }}
   {{ end }}
 {{ end }}
-{{ if eq .Section "notes" }}{{ $primary = "notes" }}{{ end }}
 {{ if eq .RelPermalink ("about/" | relURL) }}{{ $primary = "about" }}{{ end }}
 {{ return (dict "primary" $primary "secondary" $secondary) }}

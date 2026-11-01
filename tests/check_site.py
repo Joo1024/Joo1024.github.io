@@ -74,6 +74,7 @@ def check(root, base):
             except ET.ParseError as exc:
                 problems.append(f'Invalid {route}: {exc}')
     home = read('index.html')
+    require(not (root / 'notes').exists(), 'Private notes must not be present in the public output')
     home_document = Document(home)
     require('Sanctum' in home, 'Home must identify Sanctum')
     browse_links = home_document.browse_links
