@@ -81,7 +81,7 @@ class NavigationTest(unittest.TestCase):
         posts = content / 'posts'
         posts.mkdir()
         for n in range(1, 7):
-            (posts / f'entry{n}.md').write_text(
+            (posts / f'2025-01-0{n}-01.md').write_text(
                 f'---\ntitle: Entry {n}\ndate: 2025-01-0{n}\n'
                 'form: reflection\ndomains: [mind]\npaths: [明心]\ntags: [练习]\n'
                 '---\nArticle body.\n')
@@ -102,7 +102,7 @@ class NavigationTest(unittest.TestCase):
             'cultivation': ('cultivation', None),
             'now': ('cultivation', 'now'), 'path': ('cultivation', 'path'),
             'realms': ('cultivation', 'realms'), 'roots': ('cultivation', 'roots'),
-            'posts': ('posts', 'posts'), 'posts/entry6': ('posts', 'posts'),
+            'posts': ('posts', 'posts'), 'posts/2025-01-06-01': ('posts', 'posts'),
             'archive': ('posts', 'archive'),
             'tags': ('posts', 'tags'), 'forms/reflection': ('posts', 'tags'),
             'domains/mind': ('posts', 'tags'), 'paths/明心': ('posts', 'tags'),
@@ -136,7 +136,7 @@ class NavigationTest(unittest.TestCase):
             'domains': ('领域', 'Domains'), 'paths': ('方向', 'Paths'),
             'forms/reflection': ('随笔', 'Forms'), 'domains/mind': ('心智', 'Domains'),
             'paths/明心': ('明心', 'Paths'), 'tags/练习': ('练习', 'Topics'),
-            'posts/entry6': ('Entry 6', 'Posts'),
+            'posts/2025-01-06-01': ('Entry 6', 'Posts'),
         }
         for route, (title, section) in cases.items():
             with self.subTest(route=route):
@@ -161,8 +161,8 @@ class NavigationTest(unittest.TestCase):
         self.assertNotIn('home-sections', html)
         recent = html.split('id="recent-heading"', 1)[1].split('</section>', 1)[0]
         links = Document(recent).links
-        self.assertEqual([link for link in links if '/posts/entry' in link],
-                         [f'/sanctum/posts/entry{n}/' for n in (6, 5, 4, 3, 2)])
+        self.assertEqual([link for link in links if '/posts/2025-01-' in link],
+                         [f'/sanctum/posts/2025-01-0{n}-01/' for n in (6, 5, 4, 3, 2)])
         self.assertIn('/sanctum/now/', Document(html).links)
         self.assertIn('/sanctum/cultivation/', Document(html).links)
         self.assertIn('/sanctum/posts/', Document(html).links)
@@ -192,7 +192,7 @@ class NavigationTest(unittest.TestCase):
         self.assertNotIn('archive-nav', html)
         self.assertIn('year-2025', Document(html).ids)
         for n in range(1, 7):
-            self.assertIn(f'/sanctum/posts/entry{n}/', Document(html).links)
+            self.assertIn(f'/sanctum/posts/2025-01-0{n}-01/', Document(html).links)
 
     def test_fixed_pages_are_in_sitemap_but_not_article_feeds(self):
         sitemap = (self.output / 'sitemap.xml').read_text()
@@ -201,7 +201,7 @@ class NavigationTest(unittest.TestCase):
         for route in ('index.xml', 'posts/index.xml', 'forms/reflection/index.xml'):
             items = ET.parse(self.output / route).getroot().findall('./channel/item')
             self.assertEqual(len(items), 6)
-            self.assertTrue(all('/posts/entry' in item.findtext('link') for item in items))
+            self.assertTrue(all('/posts/2025-01-' in item.findtext('link') for item in items))
 
     def test_generated_site_has_no_broken_links_under_a_base_path(self):
         errors = StringIO()

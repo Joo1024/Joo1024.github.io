@@ -19,7 +19,7 @@
 | [content/about.md](content/about.md) | 关于自己与 Sanctum |
 | [content/posts/](content/posts/) | 按时间积累的文章，每篇一个 Markdown 文件 |
 
-文章直接放在 `content/posts/`，不按主题建立子目录。只需填写 `title` 和原始发布日期 `date`；`form` 表示形式，`domains` 表示领域，`paths` 表示方向，`tags` 表示主题，均可省略。`form` 是单值，其余三个维度是数组。
+文章直接放在 `content/posts/`，不按主题建立子目录。文件名统一为 `YYYY-MM-DD-NN.md`，日期与 `date` 一致，同日编号从 `01` 到 `99`，首篇也带编号；创建前检查，不覆盖，不因内容更新或新增同日文章而改名。公开地址为 `/posts/YYYY-MM-DD-NN/`，不保留旧名称地址或跳转。只需填写 `title` 和原始发布日期 `date`；`form` 表示形式，`domains` 表示领域，`paths` 表示方向，`tags` 表示主题，均可省略。`form` 是单值，其余三个维度是数组。
 
 博客只保存公开文章；札记、摘录与未完成的思考保存在私有仓库 `sanctum-notebook/notes/`，本站不生成札记页面、导航或订阅。两者共用 `title`、`date`、维度和 `sources` 等字段，整理成文章时按需添加 `form`，短记使用 `form: brief`。公开来源使用可选 `sources` 列表（`note/book/article/video/ai/other`），仅保留适合公开的 `title`、`url`，不携带私有笔记路径。详见[写作指南](docs/writing.md#私有札记与公开文章)。
 
@@ -38,7 +38,7 @@ bash scripts/install-hugo.sh
 
 ## 写作与发布
 
-创建 `content/posts/a-question.md`：
+创建 `content/posts/2026-10-02-01.md`：
 
 ```markdown
 ---
@@ -52,7 +52,7 @@ date: 2026-10-02
 提交并推送到 `main`：
 
 ```sh
-git add content/posts/a-question.md
+git add content/posts/2026-10-02-01.md
 git commit -m "write: 一个值得留下的问题"
 git push origin HEAD:main
 ```

@@ -6,7 +6,7 @@
 
 ## 最简单的一篇
 
-创建 `content/posts/a-question.md`：
+创建 `content/posts/2026-10-02-01.md`：
 
 ```markdown
 ---
@@ -17,9 +17,9 @@ date: 2026-10-02
 从一个真实的念头开始。
 ```
 
-只要求标题和原始发布日期。其余字段按需要填写，文章自动进入文章列表、存档和全站 RSS，填写的维度会生成分类索引；首页展示最近五篇。文件名决定地址 `/posts/a-question/`；标题、形式与标签变化不会改变 URL。文件名可以用简短英文或中文。
+只要求标题和原始发布日期。其余字段按需要填写，文章自动进入文章列表、存档和全站 RSS，填写的维度会生成分类索引；首页展示最近五篇。文件名决定地址 `/posts/2026-10-02-01/`；标题、形式与标签变化不会改变 URL。文件名统一为 `YYYY-MM-DD-NN.md`：日期取元信息 `date` 的原始日期，不取操作系统的文件创建时间；同日两位编号 `01`–`99`，第一篇也使用 `01`。创建前检查已有文件，使用未占用的下一个编号，不覆盖旧文件。建立后不因新增同日文章或标题、正文更新而重新编号。构建会检查命名格式及文件名日期与 `date` 是否一致。
 
-也可运行 `.tools/bin/hugo new content posts/a-question.md`。默认模板创建 `draft: true`；公开前删除此行或改为 `false`。预览草稿用 `.tools/bin/hugo server -D`，生产构建不发布草稿。
+也可运行 `.tools/bin/hugo new content posts/2026-10-02-01.md`。默认模板创建 `draft: true`；公开前删除此行或改为 `false`。预览草稿用 `.tools/bin/hugo server -D`，生产构建不发布草稿。
 
 ## 可选的四个维度
 
@@ -47,7 +47,7 @@ tags: [倒立, 自由]
 
 词汇开放。例如 `form: letter`、`domains: [friendship]`、`paths: [闲游]` 会直接生成对应索引，无需登记配置。常用英文词的中文显示别名保存在 `data/dimensions.yaml`，它不是白名单；新词原样显示。
 
-阅读、行旅、年度回顾通常可使用 `form: reflection`，再加 `[阅读]`、`[行旅]` 或 `[年度回顾]` 主题。每年的回顾也只是一篇普通文章，例如 `posts/2026.md`，原始日期会让它自然进入对应年份的存档。
+阅读、行旅、年度回顾通常可使用 `form: reflection`，再加 `[阅读]`、`[行旅]` 或 `[年度回顾]` 主题。每年的回顾也只是一篇普通文章，例如 `posts/2026-12-31-01.md`，原始日期会让它自然进入对应年份的存档。
 
 `/tags/` 集中展示非空维度；各维度也有独立索引：`/forms/`、`/domains/`、`/paths/`。点击任意词条，按时间查看跨年份的文章。所有这些索引由 Hugo 原生生成，不需要维护文章名单。
 
@@ -142,7 +142,7 @@ print("small steps")
 内部链接推荐使用 Hugo shortcode，构建时检查目标是否存在：
 
 ```markdown
-[一篇旧文]({{< relref "posts/on-attachment.md" >}})
+[一篇旧文]({{< relref "posts/2026-10-03-01.md" >}})
 ```
 
 它会解析为文章的 `/posts/文件名/` 地址。普通 Markdown 相对链接也可使用；应以公开 URL 计算相对位置，而不是磁盘目录。HTML 默认不直接执行。
@@ -157,7 +157,7 @@ print("small steps")
 .tools/bin/hugo --minify --cleanDestinationDir
 python3 tests/check_site.py public
 
-git add content/posts/a-question.md
+git add content/posts/2026-10-02-01.md
 git commit -m "write: 一个还没有答案的问题"
 git push origin HEAD:main
 ```
@@ -166,9 +166,9 @@ git push origin HEAD:main
 
 ## 地址与订阅
 
-文章公开地址统一为 `/posts/文件名/`，不填写 `url` 或 `aliases`。重命名文件会改变公开地址，修改标题、形式与标签不会。
+文章公开地址统一为 `/posts/YYYY-MM-DD-NN/`，不填写 `slug`、`url` 或 `aliases`。重命名文件会改变公开地址，修改标题、形式与标签不会。旧英文名及未带编号的日期地址不保留跳转或兼容页面。
 
-文章链接、RSS 条目与 sitemap 使用同一个公开地址。RSS 的 guid 也使用该地址；发布日期由原始 `date` 决定，正文与后记更新不会改变它。
+文章链接、RSS 条目与 sitemap 使用同一个公开地址。RSS 的 guid 也使用该地址，文件改名会使订阅器视为新的条目；发布日期由原始 `date` 决定，正文与后记更新不会改变它。
 
 全站订阅为 `/index.xml`。`/posts/index.xml`、四个维度及其词条都有独立订阅，阅读器中使用页面提供的 RSS 地址即可。
 
@@ -178,7 +178,7 @@ git push origin HEAD:main
 
 两者共用 `title`、`date`、`lastmod`、`description`、`domains`、`paths`、`tags` 与 `sources`。札记不使用 `form`；文章按需填写，短记使用 `form: brief`，不用 `form: note`。私有札记保留原始记录时间，公开文章的 `date` 为首次公开日期。
 
-札记整理成文章时，保留私有原稿，复制、整理正文到 `content/posts/`，选择稳定文件名并按需添加 `form`。将文章转为私有札记时，移除 `form`，使用未占用的札记文件名，保留原始日期。两者不自动同步，也不生成跨仓库索引。
+札记整理成文章时，保留私有原稿，复制、整理正文到 `content/posts/`，按文章的首次公开日期选择未占用的 `YYYY-MM-DD-NN.md` 文件名，并按需添加 `form`。将文章转为私有札记时，移除 `form`，使用未占用的札记文件名，保留原始日期。两者不自动同步，也不生成跨仓库索引。
 
 本站不生成 `/notes/`、札记导航或札记 RSS。构建会拒绝 `content/notes/` 中的材料，包括草稿和未来发布的札记；不要依靠 `draft` 或 `status` 保护隐私。历史上已公开的札记，迁走当前文件不会消除公开 Git 历史。
 

@@ -2,8 +2,9 @@
 
 - 修改前检查 git status，保留已有改动；提交、推送和发布遵循用户当次授权。
 - 使用现有 Hugo 与 Markdown，不引入第三方框架。
-- 本仓库只保存公开 Posts，放在 content/posts/，不建立子目录；私人札记放在同级私有仓库 sanctum-notebook/notes/，不放回 blog。
+- 本仓库只保存公开 Posts，放在 content/posts/，不建立子目录；文件名 YYYY-MM-DD-NN.md，日期与 date 一致，编号 01–99，首篇也用 01，创建前检查、不覆盖，建立后不因新增同日文章或内容更新而改名；私人札记放在同级私有仓库 sanctum-notebook/notes/，不放回 blog。
 - 私有札记文件名 YYYY-MM-DD-NN.md，编号 01–99；转换时检查同日编号，禁止覆盖，建立后不重命名。不要擅自把临时材料改写成公开内容。
+- Posts 公开地址为 /posts/YYYY-MM-DD-NN/；不添加 slug、url 或 aliases，旧文章名地址不做兼容。
 - Posts 的 title/date 必填，date 为首次公开日期，公开后保留；私有札记保留原始记录日期，lastmod 记录实质更新，迁移本身不改日期。其他字段按需填写。
 - Posts 的短记 form 为 brief；note 不再用作 form。私有札记不使用 form，转为文章时按需添加。保留其他形式和维度词汇的开放性。
 - 来源统一用可选 sources 对象列表；kind 为 note/book/article/video/ai/other，按需提供适合公开的 title/url。公开文章不接受 sources.path；私有札记路径及来源关系保留在 sanctum-notebook。

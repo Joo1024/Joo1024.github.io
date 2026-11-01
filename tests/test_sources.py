@@ -10,7 +10,7 @@ class SourcesTest(unittest.TestCase):
     def build(self, root, metadata=''):
         content = create_content(root)
         (content / 'posts').mkdir()
-        (content / 'posts/entry.md').write_text(
+        (content / 'posts/2025-03-02-01.md').write_text(
             '---\ntitle: Post\ndate: 2025-03-02\nform: brief\n' + metadata + '---\nPost.\n')
         return build_site(root)
 

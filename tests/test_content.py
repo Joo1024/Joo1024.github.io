@@ -19,7 +19,7 @@ class ContentTest(unittest.TestCase):
             root = Path(tmp)
             section = create_content(root) / 'posts'
             section.mkdir()
-            (section / 'empty.md').write_text('---\ntitle: Empty\ndate: 2026-01-01\nlater_notes: []\n---\nContent.\n')
+            (section / '2026-01-01-01.md').write_text('---\ntitle: Empty\ndate: 2026-01-01\nlater_notes: []\n---\nContent.\n')
             result, output = build_site(root)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             home = Document((output / 'index.html').read_text())
@@ -31,7 +31,7 @@ class ContentTest(unittest.TestCase):
             root = Path(tmp)
             section = create_content(root) / 'posts'
             section.mkdir()
-            (section / 'entry.md').write_text('''---
+            (section / '2025-01-01-01.md').write_text('''---
 title: Fixture
 date: 2025-01-01
 lastmod: 2026-01-03
@@ -58,12 +58,12 @@ Original body.[^1]
 
 ![Site mark](../../favicon.svg)
 
-[Other](../other/)
+[Other](../2025-01-02-01/)
 ''')
-            (section / 'other.md').write_text('---\ntitle: Other\ndate: 2025-01-02\n---\nOther article.\n')
+            (section / '2025-01-02-01.md').write_text('---\ntitle: Other\ndate: 2025-01-02\n---\nOther article.\n')
             result, output = build_site(root)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            article = Document((output / 'posts/entry/index.html').read_text())
+            article = Document((output / 'posts/2025-01-01-01/index.html').read_text())
             self.assertFalse(article.duplicate_ids, 'Body and later notes must have unique heading/footnote IDs')
             refs = [link for link in article.links if link.startswith('#') and 'fn:' in link]
             self.assertEqual(len(refs), 3)

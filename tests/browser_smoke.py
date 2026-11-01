@@ -76,7 +76,7 @@ def run(base, chromium, screenshots):
         assert page.locator('.article-heading .eyebrow').inner_text() == 'Sanctum / Realms'
         assert '当前修为尚待整理' in page.locator('.prose').inner_text()
         assert page.locator('.theory-links').count() == 0
-        page.goto(base + '/posts/cultivation-roots-and-methods/')
+        page.goto(base + '/posts/2026-10-05-02/')
         assert page.locator('.prose h2').all_text_contents() == ['定义', '灵根谱系', '功法谱系']
         assert page.locator('.prose table').count() == 2
         assert '双主灵根' not in page.locator('.prose').inner_text()
@@ -85,7 +85,7 @@ def run(base, chromium, screenshots):
         assert page.locator('.year-nav a').count() > 0
         page.goto(base + '/tags/')
         assert page.locator('.page-heading h1').inner_text().startswith('分类')
-        page.goto(base + '/posts/cultivation-realms/')
+        page.goto(base + '/posts/2026-10-05-01/')
         assert page.locator('.prose table').count() == 6
         page.locator('.article-toc > summary').click()
         page.locator('#TableOfContents a').first.click()
@@ -93,8 +93,8 @@ def run(base, chromium, screenshots):
         print('PASS cultivation overview, page headings, archive, classification, article tables and TOC')
 
         routes = ('/', '/cultivation/', '/now/', '/path/', '/realms/', '/roots/',
-                  '/about/', '/posts/', '/posts/cultivation-realms/',
-                  '/posts/cultivation-roots-and-methods/', '/archive/', '/tags/',
+                  '/about/', '/posts/', '/posts/2026-10-05-01/',
+                  '/posts/2026-10-05-02/', '/archive/', '/tags/',
                   '/forms/', '/forms/reflection/', '/domains/', '/domains/mind/',
                   '/paths/', '/paths/明心/')
         for width in (320, 375, 768, 1440):
@@ -142,19 +142,19 @@ def run(base, chromium, screenshots):
                 }'''))
             assert shared_styles[0] == shared_styles[1], (width, 'Cultivation and Posts must use the same heading and list styles')
             if width == 375 and screenshots:
-                for name, route in (('home-mobile', '/'), ('cultivation-mobile', '/cultivation/'), ('article-mobile', '/posts/cultivation-realms/')):
+                for name, route in (('home-mobile', '/'), ('cultivation-mobile', '/cultivation/'), ('article-mobile', '/posts/2026-10-05-01/')):
                     page.goto(base + route)
                     page.screenshot(path=str(screenshots / (name + '.png')), full_page=True)
         print(f'PASS {len(routes) * 4} responsive route/viewport checks (320–1440px), region highlighting and contextual navigation')
 
-        page.goto(base + '/posts/hello-world/')
+        page.goto(base + '/posts/2026-01-09-01/')
         assert page.locator('.prose code').inner_text().strip() == 'console.log("hello");'
         print('PASS Hello World at its canonical post URL')
         context.close()
 
         offline = browser.new_context(java_script_enabled=False, color_scheme='dark')
         nojs = offline.new_page()
-        nojs.goto(base + '/posts/cultivation-realms/')
+        nojs.goto(base + '/posts/2026-10-05-01/')
         assert nojs.locator('.prose table').count() == 6
         assert nojs.locator('#theme-toggle').is_hidden()
         nojs.locator('.article-toc summary').click()

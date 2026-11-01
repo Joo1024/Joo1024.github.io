@@ -13,13 +13,13 @@ from hugo_helpers import ROOT, BASE, build_site, create_content
 
 
 class MetadataTest(unittest.TestCase):
-    def build(self, root, metadata='', directory='posts', articles=True, layout_dir=None):
+    def build(self, root, metadata='', directory='posts', articles=True, layout_dir=None, filename='2025-03-01-01.md'):
         content = create_content(root)
         (content / 'now.md').write_text('---\ntitle: Now\nlastmod: 2025-01-01\n---\nLiving page.\n')
         if articles:
             section = content / directory
             section.mkdir(parents=True, exist_ok=True)
-            (section / 'entry.md').write_text('---\ntitle: Field journal\ndate: 2025-03-01\n' + metadata + '---\n\n## Observations\n\nOne entry.\n')
+            (section / filename).write_text('---\ntitle: Field journal\ndate: 2025-03-01\n' + metadata + '---\n\n## Observations\n\nOne entry.\n')
         return build_site(root, layout_dir=layout_dir)
 
     def html(self, output, route):
@@ -29,7 +29,7 @@ class MetadataTest(unittest.TestCase):
         with TemporaryDirectory(prefix='sanctum-dimensions-') as tmp:
             result, output = self.build(Path(tmp), 'form: practice\ndomains: [mind, body]\npaths: [明心, 精进]\ntags: [AI, 倒立]\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            article = Document((output / 'posts/entry/index.html').read_text())
+            article = Document((output / 'posts/2025-03-01-01/index.html').read_text())
             for route in ('/sanctum/forms/practice/', '/sanctum/domains/mind/', '/sanctum/domains/body/'):
                 self.assertIn(route, article.links)
                 self.assertIn('Field journal', self.html(output, route))
@@ -49,7 +49,7 @@ class MetadataTest(unittest.TestCase):
                 self.assertIn('Field journal', (output / path).read_text())
             rss = ET.fromstring((output / 'index.xml').read_text())
             self.assertEqual(len(rss.findall('./channel/item')), 1)
-            self.assertEqual(rss.findtext('./channel/item/link'), BASE + 'posts/entry/')
+            self.assertEqual(rss.findtext('./channel/item/link'), BASE + 'posts/2025-03-01-01/')
             self.assertEqual(len(rss.findall('./channel/item/category')), 7)
             self.assertNotIn('Living page', (output / 'index.xml').read_text())
 
@@ -68,7 +68,7 @@ class MetadataTest(unittest.TestCase):
         with TemporaryDirectory(prefix='sanctum-vocabulary-') as tmp:
             result, output = self.build(Path(tmp), 'form: letter\ndomains: [friendship]\npaths: [闲游]\ntags: []\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            article = Document((output / 'posts/entry/index.html').read_text())
+            article = Document((output / 'posts/2025-03-01-01/index.html').read_text())
             self.assertIn('/sanctum/forms/letter/', article.links)
             self.assertIn('/sanctum/domains/friendship/', article.links)
             self.assertNotIn('dimension-tags', Document((output / 'tags/index.html').read_text()).ids)
@@ -103,7 +103,7 @@ class MetadataTest(unittest.TestCase):
             with self.subTest(status=status), TemporaryDirectory(prefix='sanctum-valid-status-') as tmp:
                 result, output = self.build(Path(tmp), 'form: reflection\nstatus: ' + status + '\n')
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-                self.assertIn(label, (output / 'posts/entry/index.html').read_text())
+                self.assertIn(label, (output / 'posts/2025-03-01-01/index.html').read_text())
 
     def test_form_does_not_select_hugo_content_templates(self):
         with TemporaryDirectory(prefix='sanctum-form-template-') as tmp:
@@ -114,7 +114,7 @@ class MetadataTest(unittest.TestCase):
             (layouts / 'reflection/single.html').write_text('{{ define "main" }}Wrong content type template{{ end }}')
             result, output = self.build(root, 'form: reflection\n', layout_dir=layouts)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            article = (output / 'posts/entry/index.html').read_text()
+            article = (output / 'posts/2025-03-01-01/index.html').read_text()
             self.assertIn('One entry.', article)
             self.assertNotIn('Wrong content type template', article)
             self.assertIn('/sanctum/forms/reflection/', Document(article).links)
@@ -123,7 +123,7 @@ class MetadataTest(unittest.TestCase):
         with TemporaryDirectory(prefix='sanctum-no-legacy-') as tmp:
             result, output = self.build(Path(tmp), 'form: practice\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertTrue((output / 'posts/entry/index.html').is_file())
+            self.assertTrue((output / 'posts/2025-03-01-01/index.html').is_file())
             old_routes = ('reflection', 'practice', 'making', 'reading', 'journey',
                           'yearly', 'categories', 'categories/practice', 'types', 'types/practice', 'updates')
             for route in old_routes:
@@ -167,7 +167,7 @@ class MetadataTest(unittest.TestCase):
             with self.subTest(field=field), TemporaryDirectory(prefix='sanctum-missing-field-') as tmp:
                 root = Path(tmp)
                 result, output = self.build(root)
-                article = root / 'content/posts/entry.md'
+                article = root / 'content/posts/2025-03-01-01.md'
                 lines = [line for line in article.read_text().splitlines() if not line.startswith(field + ':')]
                 article.write_text('\n'.join(lines) + '\n')
                 result, _ = build_site(root)
@@ -178,12 +178,43 @@ class MetadataTest(unittest.TestCase):
         with TemporaryDirectory(prefix='sanctum-post-url-') as tmp:
             result, output = self.build(Path(tmp), 'form: practice\n')
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertTrue((output / 'posts/entry/index.html').is_file())
+            self.assertTrue((output / 'posts/2025-03-01-01/index.html').is_file())
             for path in ('index.xml', 'posts/index.xml', 'forms/practice/index.xml'):
                 rss = ET.fromstring((output / path).read_text())
-                self.assertEqual(rss.findtext('./channel/item/link'), BASE + 'posts/entry/', path)
-                self.assertEqual(rss.findtext('./channel/item/guid'), BASE + 'posts/entry/', path)
+                self.assertEqual(rss.findtext('./channel/item/link'), BASE + 'posts/2025-03-01-01/', path)
+                self.assertEqual(rss.findtext('./channel/item/guid'), BASE + 'posts/2025-03-01-01/', path)
                 self.assertIn('2025', rss.findtext('./channel/item/pubDate'), path)
+
+    def test_post_filename_requires_date_and_two_digit_sequence(self):
+        for filename in ('entry.md', '2025-03-01.md', '2025-03-01-00.md', '2025-03-01-1.md', '2025-03-01-100.md'):
+            with self.subTest(filename=filename), TemporaryDirectory() as tmp:
+                result, _ = self.build(Path(tmp), filename=filename)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('Use flat content/posts/YYYY-MM-DD-NN.md', result.stdout + result.stderr)
+
+    def test_post_filename_date_must_match_original_date(self):
+        for filename in ('2025-03-02-01.md', '2025-02-30-01.md'):
+            with self.subTest(filename=filename), TemporaryDirectory() as tmp:
+                result, _ = self.build(Path(tmp), filename=filename)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('Post filename date must match date', result.stdout + result.stderr)
+
+    def test_same_day_posts_have_distinct_urls_and_keep_them_after_updates(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.build(root)
+            posts = root / 'content/posts'
+            (posts / '2025-03-01-02.md').write_text('---\ntitle: Second post\ndate: 2025-03-01\n---\nBody.\n')
+            first = posts / '2025-03-01-01.md'
+            first.write_text(first.read_text().replace('title: Field journal', 'title: Updated title\nlastmod: 2025-03-02'))
+            result, output = build_site(root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            expected = {BASE + f'posts/2025-03-01-{n:02}/' for n in (1, 2)}
+            for route in ('index.xml', 'posts/index.xml'):
+                items = ET.parse(output / route).getroot().findall('./channel/item')
+                self.assertEqual({item.findtext('link') for item in items}, expected)
+                self.assertEqual({item.findtext('guid') for item in items}, expected)
+            self.assertIn('Updated title', (output / 'posts/2025-03-01-01/index.html').read_text())
 
     def test_empty_site_has_valid_empty_indices_and_feeds(self):
         with TemporaryDirectory(prefix='sanctum-empty-') as tmp:
@@ -212,7 +243,7 @@ class MetadataTest(unittest.TestCase):
             with self.subTest(metadata=metadata), TemporaryDirectory(prefix='sanctum-unpublished-') as tmp:
                 result, output = self.build(Path(tmp), metadata)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-                self.assertFalse((output / 'posts/entry/index.html').exists())
+                self.assertFalse((output / 'posts/2025-03-01-01/index.html').exists())
                 self.assertFalse(ET.fromstring((output / 'index.xml').read_text()).findall('./channel/item'))
 
     def test_articles_outside_the_flat_directory_fail_clearly(self):
@@ -226,7 +257,7 @@ class MetadataTest(unittest.TestCase):
         with TemporaryDirectory(prefix='sanctum-navigation-') as tmp:
             result, output = self.build(Path(tmp))
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            for path in ('index.html', 'posts/entry/index.html', 'archive/index.html'):
+            for path in ('index.html', 'posts/2025-03-01-01/index.html', 'archive/index.html'):
                 html = (output / path).read_text()
                 header = Document(html.split('<header class="site-header">', 1)[1].split('</header>', 1)[0])
                 footer = Document(html.split('<footer class="site-footer">', 1)[1].split('</footer>', 1)[0])
