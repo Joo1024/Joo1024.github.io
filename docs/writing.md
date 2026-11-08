@@ -38,7 +38,7 @@ tags: [倒立, 自由]
 
 | 字段 | 用途 | 示例 |
 | --- | --- | --- |
-| `form` | 单个写作形式 | reflection 随笔、brief 短记、practice 实践记录、making 作品记录 |
+| `form` | 单个写作形式 | reflection 随笔、brief 短记、excerpt 摘录、practice 实践记录、making 作品记录 |
 | `domains` | 涉及的人生领域，平面数组 | `[mind, body]`；常用 mind/body/work/life/craft |
 | `paths` | 长期愿意走下去的方向，平面数组 | `[明心, 自在]` |
 | `tags` | 具体主题，平面数组 | `[AI, 死亡, 瓦尔登湖]` |
@@ -47,7 +47,7 @@ tags: [倒立, 自由]
 
 词汇开放。例如 `form: letter`、`domains: [friendship]`、`paths: [闲游]` 会直接生成对应索引，无需登记配置。常用英文词的中文显示别名保存在 `data/dimensions.yaml`，它不是白名单；新词原样显示。
 
-阅读、行旅、年度回顾通常可使用 `form: reflection`，再加 `[阅读]`、`[行旅]` 或 `[年度回顾]` 主题。每年的回顾也只是一篇普通文章，例如 `posts/2026-12-31-01.md`，原始日期会让它自然进入对应年份的存档。
+阅读、行旅、年度回顾通常可使用 `form: reflection`，再加 `[阅读]`、`[行旅]` 或 `[年度回顾]` 主题。以摘录或整理外部材料为主的文章使用 `form: excerpt`。每年的回顾也只是一篇普通文章，例如 `posts/2026-12-31-01.md`，原始日期会让它自然进入对应年份的存档。
 
 `/tags/` 集中展示非空维度；各维度也有独立索引：`/forms/`、`/domains/`、`/paths/`。点击任意词条，按时间查看跨年份的文章。所有这些索引由 Hugo 原生生成，不需要维护文章名单。
 

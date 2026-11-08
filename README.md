@@ -21,7 +21,7 @@
 
 文章直接放在 `content/posts/`，不按主题建立子目录。文件名统一为 `YYYY-MM-DD-NN.md`，日期与 `date` 一致，同日编号从 `01` 到 `99`，首篇也带编号；创建前检查，不覆盖，不因内容更新或新增同日文章而改名。公开地址为 `/posts/YYYY-MM-DD-NN/`，不保留旧名称地址或跳转。只需填写 `title` 和原始发布日期 `date`；`form` 表示形式，`domains` 表示领域，`paths` 表示方向，`tags` 表示主题，均可省略。`form` 是单值，其余三个维度是数组。
 
-博客只保存公开文章；札记、摘录与未完成的思考保存在私有仓库 `sanctum-notebook/notes/`，本站不生成札记页面、导航或订阅。两者共用 `title`、`date`、维度和 `sources` 等字段，整理成文章时按需添加 `form`，短记使用 `form: brief`。公开来源使用可选 `sources` 列表（`note/book/article/video/ai/other`），仅保留适合公开的 `title`、`url`，不携带私有笔记路径。详见[写作指南](docs/writing.md#私有札记与公开文章)。
+博客只保存公开文章；原始札记、摘录素材与未完成的思考保存在私有仓库 `sanctum-notebook/notes/`，本站不生成札记页面、导航或订阅。两者共用 `title`、`date`、维度和 `sources` 等字段，整理成文章时按需添加 `form`，短记使用 `form: brief`，摘录使用 `form: excerpt`。公开来源使用可选 `sources` 列表（`note/book/article/video/ai/other`），仅保留适合公开的 `title`、`url`，不携带私有笔记路径。详见[写作指南](docs/writing.md#私有札记与公开文章)。
 
 修行总览、文章列表、存档、分类与 RSS 自动生成，首页读取 Now 的近况并展示最近五篇文章。顶级导航是修行、文章、关于；文章下有全部文章、存档、分类三个入口。旧文实质更新时填写 `lastmod`，观点变化时可追加 `later_notes`，保留当时的文字。具体格式见[写作指南](docs/writing.md)。
 
